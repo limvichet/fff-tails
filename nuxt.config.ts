@@ -52,7 +52,8 @@ export default defineNuxtConfig({
     preset: 'github-pages',
     // បើចង់ប្រើ SSR: true ត្រូវថែម prerender ឱ្យគ្រប់ route
     prerender: {
-      routes: ['/', '/dashboard']
+      routes: ['/', '/app/dashboard'],
+      failOnError: false, 
     }
   },
 })
