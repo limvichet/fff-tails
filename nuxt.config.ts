@@ -26,5 +26,8 @@ export default defineNuxtConfig({
       extensions: ['.vue'],
       global: true // This is key for Islands
     }
-  ]
+  ],
+  routeRules: {
+    '/': { redirect: '/dashboard' },
+  },
 })
