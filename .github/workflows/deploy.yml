@@ -18,10 +18,15 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
+        with:
+          # Required when using a custom token to avoid auth conflicts
+          persist-credentials: false
 
       - name: Setup PNPM
         uses: pnpm/action-setup@v4
-        # Version is automatically read from your package.json
+        with:
+          # This fixes your "No pnpm version specified" error
+          version: 9
 
       - name: Use Node.js 22
         uses: actions/setup-node@v4
@@ -31,27 +36,16 @@ jobs:
 
       - name: Install & Generate 🔧
         run: |
-          pnpm install --no-frozen-lockfile
-          # Run generate. We use || true to prevent the workflow from hard-crashing,
-          # but we still check for the output folder below.
-          pnpm generate || true
-          
-          # Nuxt 4/3 often outputs to .output/public. 
-          # If 'dist' doesn't exist, we move '.output/public' to 'dist'
-          if [ -d ".output/public" ]; then
-            echo "Moving .output/public to dist..."
-            cp -r .output/public dist
-          elif [ ! -d "dist" ]; then
-            echo "Error: No build output found in dist or .output/public"
-            exit 1
-          fi
+          pnpm install --frozen-lockfile
+          pnpm generate
         env:
           NUXT_APP_BASE_URL: ${{ vars.NUXT_APP_BASE_URL }}
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: dist # This folder is now guaranteed to exist or the job fails above
+          # Pointing directly to Nuxt's default output folder
+          folder: .output/public
           repository-name: limvichet/fff-tails
           branch: gh-pages
           token: ${{ secrets.FFF_DEPLOY_TOKEN }}
