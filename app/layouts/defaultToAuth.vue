@@ -1,5 +1,7 @@
 <template>
   <div>
-    <slot />
+    <LayoutThemeProvider>
+      <slot />
+    </LayoutThemeProvider>
   </div>
 </template>
