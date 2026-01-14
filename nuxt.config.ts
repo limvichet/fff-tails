@@ -14,5 +14,10 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxt/image',
     'nuxt-og-image'
-  ]
+  ],
+  ogImage: {
+    defaults: {
+      renderer: "satori",
+    },
+  },
 })
