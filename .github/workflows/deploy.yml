@@ -26,7 +26,7 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           # This fixes your "No pnpm version specified" error
-          version: 9
+          version: 9.1.0
 
       - name: Use Node.js 22
         uses: actions/setup-node@v4
