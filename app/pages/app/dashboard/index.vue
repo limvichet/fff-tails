@@ -2,7 +2,7 @@
   definePageMeta({
     layout: "auth",
     guestOnly: true,
-    path: '/dashboard',
+    path: '/app/dashboard',
     //requiresAuth: true,
   });
 

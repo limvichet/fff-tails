@@ -32,7 +32,7 @@ export default defineNuxtConfig({
   ],
 
   routeRules: {
-    '/': { redirect: '/dashboard' },
+    '/': { redirect: 'app/dashboard' },
   },
 
   // Ensure Tailwind v4 works with Nuxt's layer system
