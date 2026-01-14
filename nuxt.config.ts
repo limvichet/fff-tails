@@ -20,4 +20,11 @@ export default defineNuxtConfig({
       renderer: "satori",
     },
   },
+  components: [
+    {
+      path: '~/components/OgImage',
+      extensions: ['.vue'],
+      global: true // This is key for Islands
+    }
+  ]
 })
