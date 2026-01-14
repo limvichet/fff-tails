@@ -3,7 +3,7 @@
     <main>
       <slot></slot>
       <div class="fixed bottom-10 right-10 z-[99]">
-        <common-theme-toggler size="lg"/>
+        <common-theme-toggler/>
       </div>
     </main>
   </div>
