@@ -38,5 +38,13 @@ export default defineNuxtConfig({
   // Ensure Tailwind v4 works with Nuxt's layer system
   features: {
     inlineStyles: false
-  }
+  },
+  app: {
+    baseURL: '/fff-tails/',
+    buildAssetsDir: 'assets',
+  },
+  ssr: false,
+  nitro: {
+    preset: 'github-pages',
+  },
 })
