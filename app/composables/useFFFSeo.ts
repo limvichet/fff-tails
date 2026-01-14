@@ -1,7 +1,7 @@
 import type { ResolvableValue } from "@unhead/vue";
 
 export const defaultSeo = {
-  desc: "Welcome to 1EZ Platform! Created to improve your productivity!",
+  desc: "Welcome to FFF Platform! Created to improve your productivity!",
   title: "FFF tails",
   site: "https://limvichet.github.io/fff-tails/",
 };
