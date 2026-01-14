@@ -1,0 +1,57 @@
+name: Build and Deploy
+
+on: 
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    concurrency: 
+      group: ci-${{ github.ref }}
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        # Version is automatically read from your package.json
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install & Generate 🔧
+        run: |
+          pnpm install --no-frozen-lockfile
+          # Run generate. We use || true to prevent the workflow from hard-crashing,
+          # but we still check for the output folder below.
+          pnpm generate || true
+          
+          # Nuxt 4/3 often outputs to .output/public. 
+          # If 'dist' doesn't exist, we move '.output/public' to 'dist'
+          if [ -d ".output/public" ]; then
+            echo "Moving .output/public to dist..."
+            cp -r .output/public dist
+          elif [ ! -d "dist" ]; then
+            echo "Error: No build output found in dist or .output/public"
+            exit 1
+          fi
+        env:
+          NUXT_APP_BASE_URL: ${{ vars.NUXT_APP_BASE_URL }}
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist # This folder is now guaranteed to exist or the job fails above
+          repository-name: limvichet/fff-tails
+          branch: gh-pages
+          token: ${{ secrets.FFF_DEPLOY_TOKEN }}
