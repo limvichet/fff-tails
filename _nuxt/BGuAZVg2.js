@@ -1,1 +1,0 @@
-import{_ as o}from"./3-BKaawU.js";import{_ as n,y as r,z as a,C as s,D as _,H as c}from"./B4iPlvPo.js";import"./CbOg4ucj.js";const l={};function u(e,d){const t=o;return a(),r("div",null,[s(t,null,{default:_(()=>[c(e.$slots,"default")]),_:3})])}const p=n(l,[["render",u]]);export{p as default};
