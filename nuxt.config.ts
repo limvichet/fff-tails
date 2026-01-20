@@ -3,16 +3,14 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   compatibilityDate: '2025-07-15',
   future: { compatibilityVersion: 4},
-  css: ['@/assets/css/main.css'],
+  css: ['~/assets/css/main.css'],
   vite: {
-    plugins: [
-      tailwindcss(),
-    ],
+    plugins: [tailwindcss()],
   },
   modules: ['@nuxt/fonts', '@nuxt/icon', '@nuxt/image', "@nuxtjs/color-mode", 'nuxt-og-image'],
-  site: {
-    url: 'https://limvichet.github.io/fff-tails',
-  },
+  // site: {
+  //   url: 'https://limvichet.github.io/fff-tails',
+  // },
   // app: {
   //   baseURL: process.env.NODE_ENV === 'production' ? '/fff-tails/' : '/',
   // },
