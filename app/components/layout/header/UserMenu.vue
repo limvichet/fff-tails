@@ -57,10 +57,14 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { UserCircleIcon, ChevronDownIcon, LogoutIcon, SettingsIcon, InfoCircleIcon } from '@/icons'
 import { RouterLink } from 'vue-router'
 import { ref, onMounted, onUnmounted } from 'vue'
+
+const { user, logout } = useAuth();
+const route = useRoute();
+const loggingOut = () => logout();
 
 const dropdownOpen = ref(false)
 const dropdownRef = ref(null)
@@ -81,7 +85,8 @@ const closeDropdown = () => {
 
 const signOut = () => {
   // Implement sign out logic here
-  console.log('Signing out...')
+  // console.log('Signing out...')
+  loggingOut();
   closeDropdown()
 }
 

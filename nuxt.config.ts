@@ -1,59 +1,70 @@
 import tailwindcss from "@tailwindcss/vite";
-
 export default defineNuxtConfig({
-  // Nuxt 4 ប្រើ 'future' flag ដើម្បីឱ្យស្គាល់រចនាសម្ព័ន្ធ folder ថ្មីបានល្អ
-  future: {
-    compatibilityVersion: 4,
-  },
-  
-  compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-
-  // កែសម្រួល Path CSS ឱ្យប្រើ Alias (~~/ តំណាងឱ្យ root)
-  css: ['~/assets/css/main.css'],
-
-  vite: {
-    plugins: [
-      tailwindcss(),
-    ],
-  },
-
-  modules: [
-    '@nuxt/eslint',
-    '@nuxt/fonts',
-    '@nuxt/icon',
-    '@nuxt/image',
-    'nuxt-og-image'
-  ],
-
-  // កំណត់ Site URL សម្រាប់ OG Image (ចាំបាច់ណាស់)
+  compatibilityDate: '2025-07-15',
+  future: { compatibilityVersion: 4},
+  css: ['@/assets/css/main.css'],
+  vite: { plugins: [tailwindcss()] },
+  modules: ['@nuxt/fonts', '@nuxt/icon', '@nuxt/image', "@nuxtjs/color-mode", 'nuxt-og-image'],
   site: {
     url: 'https://limvichet.github.io/fff-tails',
   },
-
+  app: {
+    baseURL: process.env.NODE_ENV === 'production' ? '/fff-tails/' : '/',
+  },
+  colorMode: {
+    storageKey: 'fff-color-theme',
+    fallback: 'light',
+    classSuffix: ''
+  },
+  fonts: {
+    families: [
+      {
+        name: "Roboto",
+        weights: [400, 500, 600, 700, 800, 900],
+      },
+      {
+        name: "Siemreap",
+        subsets: ['khmer'],
+        weights: [400],
+      },
+    ],
+  },
+  $development: {
+    runtimeConfig: {
+      apiBaseUrl: process.env.NUXT_API_BASE_URL,
+      public: {
+        siteUrl: "http://localhost:3000",
+      },
+    },
+  },
+  $production: {
+    runtimeConfig: {
+      apiBaseUrl: process.env.NUXT_API_BASE_URL,
+      public: {
+        siteUrl:
+          process.env.NUXT_PUBLIC_SITE_URL ||
+          "https://limvichet.github.io/fff-tails",
+      },
+    },
+  },
+  nitro: {
+    preset: 'github-pages',
+    prerender: {
+      failOnError: false, 
+    }
+  },
   ogImage: {
-    enabled : false,
+    enabled : true,
     defaults: {
       renderer: "satori",
     },
   },
-
-  app: {
-    // ត្រូវប្រាកដថា process.env.NODE_ENV ដើរត្រឹមត្រូវ
-    baseURL: process.env.NODE_ENV === 'production' ? '/fff-tails/' : '/',
-    // buildAssetsDir: 'assets',
+  experimental: {
+    viewTransition: true
   },
-
-  // បើប្រើ GitHub Pages គួរកំណត់ ssr: false (Static Site) 
-  // បើ ssr: true អ្នកត្រូវប្រើប្រព័ន្ធបង្កប់ (Prerendering)
   ssr: true, 
-
-  nitro: {
-    preset: 'github-pages',
-    // បើចង់ប្រើ SSR: true ត្រូវថែម prerender ឱ្យគ្រប់ route
-    prerender: {
-      routes: ['/', '/app/dashboard'],
-      failOnError: false, 
-    }
+  routeRules: {
+    "/": { static: true },
   },
 })

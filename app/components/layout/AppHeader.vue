@@ -1,3 +1,37 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useSidebar } from '@/composables/useSidebar'
+import ThemeToggler from '../common/ThemeToggler.vue'
+import SearchBar from './header/SearchBar.vue'
+import HeaderLogo from './header/HeaderLogo.vue'
+import NotificationMenu from './header/NotificationMenu.vue'
+import UserMenu from './header/UserMenu.vue'
+
+const { toggleSidebar, toggleMobileSidebar, isMobileOpen } = useSidebar()
+
+const handleToggle = () => {
+  if (window.innerWidth >= 1024) {
+    toggleSidebar()
+  } else {
+    toggleMobileSidebar()
+  }
+}
+
+const dropdownOpen = ref(false)
+const notifying = ref(false)
+
+const toggleDropdown = () => {
+  dropdownOpen.value = !dropdownOpen.value
+  notifying.value = false
+}
+
+const isApplicationMenuOpen = ref(false)
+
+const toggleApplicationMenu = () => {
+  isApplicationMenuOpen.value = !isApplicationMenuOpen.value
+}
+</script>
+
 <template>
   <header
     class="sticky top-0 flex w-full bg-white border-gray-200 z-99999 dark:border-gray-800 dark:bg-gray-900 lg:border-b"
@@ -84,36 +118,4 @@
   </header>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue'
-import { useSidebar } from '@/composables/useSidebar'
-import ThemeToggler from '../common/ThemeToggler.vue'
-import SearchBar from './header/SearchBar.vue'
-import HeaderLogo from './header/HeaderLogo.vue'
-import NotificationMenu from './header/NotificationMenu.vue'
-import UserMenu from './header/UserMenu.vue'
 
-const { toggleSidebar, toggleMobileSidebar, isMobileOpen } = useSidebar()
-
-const handleToggle = () => {
-  if (window.innerWidth >= 1024) {
-    toggleSidebar()
-  } else {
-    toggleMobileSidebar()
-  }
-}
-
-const dropdownOpen = ref(false)
-const notifying = ref(false)
-
-const toggleDropdown = () => {
-  dropdownOpen.value = !dropdownOpen.value
-  notifying.value = false
-}
-
-const isApplicationMenuOpen = ref(false)
-
-const toggleApplicationMenu = () => {
-  isApplicationMenuOpen.value = !isApplicationMenuOpen.value
-}
-</script>

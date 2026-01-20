@@ -160,8 +160,18 @@ layer(base);
   --z-index-9999: 9999;
   --z-index-99999: 99999;
   --z-index-999999: 999999;
+
+  --font-sans: var(--font-sans-serif);
+  --font-moul: var(--font-sans-kh-moul);
 }
 
+@theme inline {
+    /* custom fonts */
+  --font-sans-en: "Roboto";
+  --font-sans-kh: "Siemreap";
+  --font-sans-kh-moul: "Moul";
+  --font-sans-serif: var(--font-sans-en), var(--font-sans-kh), system-ui, sans-serif;
+}
 /*
   The default border color has changed to `currentColor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still

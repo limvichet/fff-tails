@@ -1,8 +1,9 @@
 <script setup lang="ts">
   definePageMeta({
     layout: "auth",
-    guestOnly: true,
-    path: '/app/dashboard',
+    requiresAuth: true,
+    // guestOnly: true,
+    // path: '/app/dashboard',
     //requiresAuth: true,
   });
 
@@ -21,8 +22,6 @@
       <div class="aspect-video rounded-xl bg-muted/50 border" />
       <div class="aspect-video rounded-xl bg-muted/50 border" />
     </div>
-    <div
-      class="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min border"
-    />
+    <div class="min-h-screen flex-1 rounded-xl bg-muted/50 md:min-h-min border" />
   </div>
 </template>
