@@ -31,7 +31,7 @@ export default defineNuxtConfig({
       public: {
         siteUrl:
           process.env.NUXT_PUBLIC_SITE_URL ||
-          "https://fff-tails.netlify.app/",
+          "https://fff-tails.netlify.app",
       },
     },
   },
