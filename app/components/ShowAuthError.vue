@@ -31,21 +31,8 @@ const errorMessage = computed(() => {
         <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
       </svg>
       
-      <p class="text-sm font-medium text-red-800">
+      <p class="text-sm font-medium public:text-red-700 dark:text-red-400">
         {{ errorMessage }}
-      </p>
-    </div>
-  </div>
-  <div 
-    v-else="errorMessage" 
-    class="w-full rounded-md border border-red-200 bg-red-50 p-3"
-  >
-    <div class="flex items-center gap-2">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600 shrink-0">
-        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-      </svg>
-      
-      <p class="text-sm font-medium text-red-800">
       </p>
     </div>
   </div>

@@ -17,19 +17,6 @@ export default defineNuxtConfig({
     fallback: 'light',
     classSuffix: ''
   },
-  fonts: {
-    families: [
-      {
-        name: "Roboto",
-        weights: [400, 500, 600, 700, 800, 900],
-      },
-      {
-        name: "Siemreap",
-        subsets: ['khmer'],
-        weights: [400],
-      },
-    ],
-  },
   $development: {
     runtimeConfig: {
       apiBaseUrl: process.env.NUXT_API_BASE_URL,
@@ -66,5 +53,8 @@ export default defineNuxtConfig({
   ssr: true, 
   routeRules: {
     "/": { static: true },
+    '/signin': { redirect: '/app/signin' },
+    '/signup': { redirect: '/app/signup' },
+    '/dashboard': { redirect: '/app/dashboard' },
   },
 })

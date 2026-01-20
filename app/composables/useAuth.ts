@@ -31,12 +31,22 @@ export const useAuth = () => {
     }
   };
 
-  const logout = async () => {
+const logout = async () => {
+  try {
+    // 1. Tell the server to kill the session
     await $fetch("/api/auth/logout", { method: "POST" });
+    
+    // 2. Clear the local cookie/state
+    const token = useCookie('auth_token', { path: '/' }); // Match the path!
+    token.value = null;
     user.value = null;
-    // Redirect to login page after logout
-    await navigateTo("/signin", { replace: true });
-  };
+
+    // 3. Redirect to your designated "Logged Out" entry point
+    return await navigateTo("/app/signin", { replace: true });
+  } catch (error) {
+    console.error("Logout failed", error);
+  }
+};
 
   const fetchUser = async (headers: HeadersInit = {}) => {
     try {

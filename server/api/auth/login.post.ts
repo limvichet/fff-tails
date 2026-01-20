@@ -27,15 +27,6 @@ export default defineEventHandler(async (event) => {
       maxAge: 60 * 60 * 24, // 1 days
     });
 
-    if (location_code) {
-      const encrypted = encryptString(location_code, secretKey);
-      setCookie(event, "loc-code", encrypted, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24, // 1 days
-      });
-    }
   } catch (error: any) {
     throw customCreateError(error, "Can't login!");
   }

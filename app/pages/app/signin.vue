@@ -64,14 +64,13 @@ const isSubmitted = ref(false);
           </div>
           <div class="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
             <div>
-              <div class="mb-5 sm:mb-8">
+              <div class="mb-2 sm:mb-8">
                 <h1
-                  class="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md"
+                  class="mb-1 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md"
                 >
                   Sign In
                 </h1>
                 <p class="text-sm text-gray-500 dark:text-gray-400">
-                  <ShowAuthError :err="err" />
                   Enter your email and password to sign in!
                 </p>
               </div>
@@ -90,7 +89,7 @@ const isSubmitted = ref(false);
                         for="email"
                         class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
                       >
-                        Email<span v-if="isSubmitted || errors.email" class="text-error-500">{{ errors.email }}</span>
+                        Email <span v-if="isSubmitted || errors.email" class="text-red-500 font-normal text-[12px]">{{ errors.email }}</span>
                       </label>
                       <input
                        v-model="fields.email.model.value"
@@ -108,7 +107,7 @@ const isSubmitted = ref(false);
                         for="password"
                         class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
                       >
-                        Password<span v-if="isSubmitted || errors.password" class="text-error-500">{{ errors.password }}</span>
+                        Password <span v-if="isSubmitted || errors.password" class="text-red-500 font-normal text-[12px]"> {{ errors.password }}</span>
                       </label>
                       <div class="relative">
                         <input
@@ -183,6 +182,8 @@ const isSubmitted = ref(false);
                           <span>{{ loading ? 'Signing in...' : 'Sign In' }}</span>
                         </button>
                     </div>
+
+                     <ShowAuthError :err="err" />
                   </div>
                 </form>
 
@@ -208,5 +209,7 @@ const isSubmitted = ref(false);
       </div>
     </div>
   </LayoutFullScreenLayout>
+
+ 
 </template>
 
