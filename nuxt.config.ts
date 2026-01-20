@@ -11,9 +11,6 @@ export default defineNuxtConfig({
   // site: {
   //   url: 'https://limvichet.github.io/fff-tails',
   // },
-  // app: {
-  //   baseURL: process.env.NODE_ENV === 'production' ? '/fff-tails/' : '/',
-  // },
   colorMode: {
     storageKey: 'fff-color-theme',
     fallback: 'light',
@@ -33,12 +30,12 @@ export default defineNuxtConfig({
       public: {
         siteUrl:
           process.env.NUXT_PUBLIC_SITE_URL ||
-          "https://limvichet.github.io/fff-tails",
+          "https://fff-tails.netlify.app/",
       },
     },
   },
   nitro: {
-    // preset: 'github-pages',
+    preset: 'static',
     prerender: {
       failOnError: false, 
     }
