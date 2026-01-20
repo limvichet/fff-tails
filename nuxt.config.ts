@@ -51,7 +51,6 @@ export default defineNuxtConfig({
   },
   ssr: true, 
   routeRules: {
-    "/": { static: true },
     '/signin': { redirect: '/app/signin' },
     '/signup': { redirect: '/app/signup' },
     '/dashboard': { redirect: '/app/dashboard' },
