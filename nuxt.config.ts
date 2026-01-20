@@ -8,13 +8,14 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
   modules: ['@nuxt/fonts', '@nuxt/icon', '@nuxt/image', "@nuxtjs/color-mode", 'nuxt-og-image'],
-  // site: {
-  //   url: 'https://limvichet.github.io/fff-tails',
-  // },
   colorMode: {
     storageKey: 'fff-color-theme',
     fallback: 'light',
     classSuffix: ''
+  },
+  // Set to '/' for Netlify
+  app: {
+    baseURL: '/',
   },
   $development: {
     runtimeConfig: {
@@ -35,7 +36,6 @@ export default defineNuxtConfig({
     },
   },
   nitro: {
-    preset: 'static',
     prerender: {
       failOnError: false, 
     }
