@@ -248,8 +248,8 @@ const menuGroups = [
         icon: UserGroupIcon,
         name: "Customers",
         subItems: [
-          { name: "Create", path: "/Customers/create", pro: false },
-          { name: "Search", path: "/Customers/index", pro: false },
+          { name: "Create", path: "/app/dashboard/customers/create", pro: false },
+          { name: "Search", path: "/app/dashboard/customers/index", pro: false },
         ],
       },
       {

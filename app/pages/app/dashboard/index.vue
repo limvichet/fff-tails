@@ -8,7 +8,7 @@
   });
 
   useFFFSeo({
-    title: `${defaultSeo.title} - Dashboard`,
+    title: `${defaultSeo.title} - Home`,
     description:
       "This is your dashboard where you can manage many things about your account!",
   });
