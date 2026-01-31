@@ -1,1 +1,5 @@
-/api/* http://fffapi.1ez.x10.bz/:splat  200
+/api/* http://fffapi.1ez.x10.bz/api/:splat  200
+
+# Specific Laravel Routes
+/api/auth/* http://fffapi.1ez.x10.bz/api/auth/:splat          200
+/api/admin-public/* http://fffapi.1ez.x10.bz/api/admin-public/:splat  200
