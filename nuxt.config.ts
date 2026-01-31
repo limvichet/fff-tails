@@ -30,9 +30,7 @@ export default defineNuxtConfig({
       apiBaseUrl: process.env.NUXT_API_BASE_URL,
       public: {
         apiBaseUrl: "/api",
-        siteUrl:
-          process.env.NUXT_PUBLIC_SITE_URL ||
-          "https://fff-tails.netlify.app",
+        siteUrl: "https://fff-tails.netlify.app",
       },
     },
   },
