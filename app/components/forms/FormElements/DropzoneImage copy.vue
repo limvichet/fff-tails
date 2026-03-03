@@ -11,7 +11,7 @@
           </svg>
         </div>
         <p class="text-blue-400 font-medium text-sm text-center leading-tight">
-          Browse File to upload!
+          Brows File to upload!
         </p>
       </div>
 
@@ -32,7 +32,9 @@
             <path d="M16 18l-2-2-2 2"></path>
           </svg>
         </div>
-        <span class="truncate text-sm tracking-tight">{{ fileName || 'Not selected file' }}</span>
+        <span class="truncate text-sm tracking-tight">
+          {{ fileName || 'Not selected file' }}
+        </span>
       </div>
       
       <button v-if="fileName" @click.stop="clearFile" class="hover:scale-110 transition-transform shrink-0">
@@ -50,7 +52,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import Dropzone from 'dropzone'
 import 'dropzone/dist/dropzone.css'
@@ -61,7 +63,7 @@ const props = defineProps({
 
 const fileName = ref('')
 const dropzoneId = `dz-${Math.random().toString(36).slice(2, 7)}`
-let dropzoneInstance: Dropzone | null = null
+let dropzoneInstance = null
 
 const clearFile = () => {
   if (dropzoneInstance) {
@@ -79,7 +81,7 @@ onMounted(() => {
     acceptedFiles: 'image/*',
     previewsContainer: '#preview-slot',
     thumbnailWidth: 1000,
-    thumbnailHeight: undefined,
+    thumbnailHeight: null,
     previewTemplate: `
       <div class="dz-preview dz-image-preview w-full h-full flex items-center justify-center">
         <div class="dz-image w-full h-full flex justify-center items-center overflow-hidden rounded-xl">
@@ -89,17 +91,16 @@ onMounted(() => {
     `,
     init: function () {
       this.on('addedfile', (file) => {
-        if (this.files.length > 1 && this.files[0]) this.removeFile(this.files[0])
+        if (this.files.length > 1) this.removeFile(this.files[0])
         fileName.value = file.name
 
+        // Click to preview in new page logic
         file.previewElement.addEventListener('click', (e) => {
           e.preventDefault()
           e.stopPropagation()
           if (file.dataURL) {
             const newWindow = window.open()
-            if (newWindow) {
-              newWindow.document.write(`<img src="${file.dataURL}" style="max-width:100%">`)
-            }
+            newWindow.document.write(`<img src="${file.dataURL}" style="max-width:100%">`)
           }
         })
       })
@@ -116,7 +117,9 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-:deep(.dz-preview), :deep(.dz-image), :deep(.dz-image img) {
+:deep(.dz-preview), 
+:deep(.dz-image), 
+:deep(.dz-image img) {
   width: 100% !important;
   height: 100% !important;
   display: flex !important;
@@ -125,7 +128,16 @@ onBeforeUnmount(() => {
   background: transparent !important;
   opacity: 1 !important;
 }
-:deep(.dz-image img) { transition: transform 0.3s ease; }
-:deep(.dz-details), :deep(.dz-progress), :deep(.dz-error-message), :deep(.dz-success-mark), :deep(.dz-error-mark) { display: none !important; }
+
+/* Hover Resize specific styling */
+:deep(.dz-image img) {
+  transition: transform 0.3s ease;
+}
+
+:deep(.dz-details), :deep(.dz-progress), :deep(.dz-error-message), 
+:deep(.dz-success-mark), :deep(.dz-error-mark) {
+  display: none !important;
+}
+
 :deep(.dz-preview) { margin: 0 !important; }
 </style>

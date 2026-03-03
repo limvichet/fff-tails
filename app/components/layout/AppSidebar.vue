@@ -249,7 +249,7 @@ const menuGroups = [
         name: "Customers",
         subItems: [
           { name: "Create", path: "/app/dashboard/customers/create", pro: false },
-          { name: "Search", path: "/app/dashboard/customers/index", pro: false },
+          { name: "Search", path: "/app/dashboard/customers", pro: false },
         ],
       },
       {

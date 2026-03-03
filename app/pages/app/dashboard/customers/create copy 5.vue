@@ -5,12 +5,12 @@
       <ComponentCard title="1. Basic">
 
         <!-- id -->
-        <!-- <div class="" v-if="formReady">
+        <div class="hidden">
           <div class="flex items-center justify-between">
             <label class="label">ID</label><span class="text-red-500 text-sm">{{ errors.id }}</span>
           </div>
-          <input v-model="form.id" type="number" class="input"/>
-        </div> -->
+          <input v-model="form.id" type="text" class="input" />
+        </div>
 
         <!-- cust_title_1 -->
         <div>
@@ -198,15 +198,15 @@
         <div>
           <label class="label">ID Card Image 1</label>
           <input type="file" @change="onFileChange1" class="input" />
-          <div v-if="form.img1_src" class="mt-4">
+          <div v-if="form.image_src1" class="mt-4">
             <div class="relative group w-full">
-              <a :href="form.img1_src" target="_blank" rel="noopener noreferrer" class="block">
-                <img :src="form.img1_src" @click="openImg1"
+              <a :href="form.image_src1" target="_blank" rel="noopener noreferrer" class="block">
+                <img :src="form.image_src1" @click="openImage1"
                   class="w-full h-70 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
               </a>
               <div
                 class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full shadow flex items-center gap-2 pointer-events-none">
-                <input type="checkbox" v-model="form.img1_check"
+                <input type="checkbox" v-model="form.check_image1"
                   class="w-4 h-4 text-blue-600 rounded pointer-events-auto" />
                 <span class="text-sm text-gray-700">Check</span>
               </div>
@@ -218,15 +218,15 @@
         <div>
           <label class="label">ID Card Image 2</label>
           <input type="file" @change="onFileChange2" class="input" />
-          <div v-if="form.img2_src" class="mt-4">
+          <div v-if="form.image_src2" class="mt-4">
             <div class="relative group w-full">
-              <a :href="form.img2_src" target="_blank" rel="noopener noreferrer" class="block">
-                <img :src="form.img2_src" @click="openImg2"
+              <a :href="form.image_src2" target="_blank" rel="noopener noreferrer" class="block">
+                <img :src="form.image_src2" @click="openImage2"
                   class="w-full h-70 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
               </a>
               <div
                 class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full shadow flex items-center gap-2 pointer-events-none">
-                <input type="checkbox" v-model="form.img2_check"
+                <input type="checkbox" v-model="form.check_image2"
                   class="w-4 h-4 text-blue-600 rounded pointer-events-auto" />
                 <span class="text-sm text-gray-700">Check</span>
               </div>
@@ -310,282 +310,278 @@
 </template>
 
 <script setup lang="ts">
+import { useForm, useField } from 'vee-validate'
+import { toTypedSchema } from '@vee-validate/zod'
+import { z } from 'zod'
 
-/* PAGE META */
-definePageMeta({
-  layout: "auth",
-  requiresAuth: true,
-  breadcrumb: { title: "Customers", subTitle: "Create" }
-})
-
-import { z } from "zod"
-import { reactive, ref, onMounted, watch } from "vue"
-import ComponentCard from "@/components/common/ComponentCard.vue"
-import type { CustomerFormDataResponse } from "~/types/customer"
+import { ref, reactive, onMounted } from 'vue'
+import ComponentCard from '@/components/common/ComponentCard.vue'
+import type { CustomerFormDataResponse } from '~/types/customer'
 
 const { successMsg, errorMsg } = useMessage()
-const loading = ref(false)
-const errors = reactive<Record<string, string>>({})
-const formReady = ref(false)
 
-/* FETCH FORM DATA */
+// --- Form Data & Select Options ---
+const customerFormData = ref<CustomerFormDataResponse | null>(null)
 const nameTitles = ref<Array<{ id: number; label: string }>>([])
 const identifications = ref<Array<{ id: number; label: string }>>([])
 const idLicenses = ref<Array<{ id: number; label: string }>>([])
 const occupations = ref<Array<{ id: number; label: string }>>([])
 
-
-
 const fetchCustomerFormData = async () => {
   try {
-    const data = await $fetch<CustomerFormDataResponse>(
-      "/api/admin-secure/customers-form-data"
-    )
-
-    const mapOptions = (obj: any) =>
-      Object.entries(obj).map(([id, label]) => ({
-        id: Number(id),
-        label: String(label),
-      }))
-
-    nameTitles.value = mapOptions(data.nameTitles)
-    identifications.value = mapOptions(data.identifications)
-    idLicenses.value = mapOptions(data.idLicenses)
-    occupations.value = mapOptions(data.occupations)
-
-    formReady.value = true
-
+    const data = await $fetch('/api/admin-secure/customers-form-data')
+    customerFormData.value = {
+      ...data,
+      nameTitles: Object.entries(data.nameTitles).map(([id, label]) => ({ id: Number(id), label: String(label) })),
+      identifications: Object.entries(data.identifications).map(([id, label]) => ({ id: Number(id), label: String(label) })),
+      idLicenses: Object.entries(data.idLicenses).map(([id, label]) => ({ id: Number(id), label: String(label) })),
+      occupations: Object.entries(data.occupations).map(([id, label]) => ({ id: Number(id), label: String(label) })),
+    }
+    nameTitles.value = customerFormData.value.nameTitles
+    identifications.value = customerFormData.value.identifications
+    idLicenses.value = customerFormData.value.idLicenses
+    occupations.value = customerFormData.value.occupations
   } catch (err: any) {
-    errorMsg.value = err?.statusMessage || "Failed to load form data"
+    errorMsg.value = err?.statusMessage || 'Failed to load customer form data'
   }
 }
 
 onMounted(fetchCustomerFormData)
 
-/* FORM STATE */
+// --- Form State ---
 const form = reactive({
-  id: null as number | null,
-
+  id: '',
   cust_title_1: -1,
-  cust_name_1: "",
-  cust_dob_1: "",
-  cust_idcardnum_1: "",
+  cust_name_1: '',
+  cust_dob_1: '',
+  cust_idcardnum_1: '',
   iden_id_1: -1,
-  cust_idcardnum_date_1: "",
+  cust_idcardnum_date_1: '',
   idli_id_1: -1,
   occu_id_1: -1,
-  cust_phone_1: "",
+  cust_phone_1: '',
 
-  cust_title_2: -1,
-  cust_name_2: "",
-  cust_dob_2: "",
-  cust_idcardnum_2: "",
+  cust_title_2: '',
+  cust_name_2: '',
+  cust_dob_2: '',
+  cust_idcardnum_2: '',
   iden_id_2: -1,
-  cust_idcardnum_date_2: "",
+  cust_idcardnum_date_2: -1,
   idli_id_2: -1,
   occu_id_2: -1,
-  cust_phone_2: "",
+  cust_phone_2: '',
 
-  cust_account_num: "",
-  cust_atm_num: "",
-  cust_facebook: "",
-  cust_telegram: "",
-  cust_address: "",
+  cust_account_num: '',
+  cust_atm_num: '',
+  cust_facebook: '',
+  cust_telegram: '',
 
-  img1: null as File | null,
-  img1_src: null as string | null,
-  img1_check: false,
+  cust_address: '',
 
-  img2: null as File | null,
-  img2_src: null as string | null,
-  img2_check: false,
+  active: '1',
+  check_image1: false,
+  image1: null as File | null,
+  image_src1: null as string | null,
+
+  check_image2: false,
+  image2: null as File | null,
+  image_src2: null as string | null,
 })
 
+const img1 = ref<File | null>(null)
+const loading = ref(false)
+const errors = reactive<Record<string, string>>({})
 
-/* VALIDATION ZOD */
-const schema = z.object({
-  // Primary ID
-  id: z.number().nullable().optional(),
-
-  // ===== Customer 1 (Required) =====
-  cust_title_1: z.number().min(0, "Please select title"),
-  iden_id_1: z.number().min(0, "Please select identity"),
-  idli_id_1: z.number().min(0, "Please select license"),
-  occu_id_1: z.number().min(0, "Please select occupation"),
-
-  cust_name_1: z.string().nonempty("Required"),
-  cust_dob_1: z.string().nonempty("Required"),
-  cust_idcardnum_1: z.string().nonempty("Required"),
-  cust_idcardnum_date_1: z.string().nonempty("Required"),
-  cust_phone_1: z.string().nonempty("Required"),
-  cust_address: z.string().nonempty("Required"),
-
-  // ===== Customer 2 (Optional Section) =====
-  cust_title_2: z.number().optional(),
-  iden_id_2: z.number().optional(),
-  idli_id_2: z.number().optional(),
-  occu_id_2: z.number().optional(),
-
-  cust_name_2: z.string().optional(),
-  cust_dob_2: z.string().optional(),
-  cust_idcardnum_2: z.string().optional(),
-  cust_idcardnum_date_2: z.string().optional(),
-  cust_phone_2: z.string().optional(),
-
-  // ===== Extra Optional Info =====
-  cust_account_num: z.string().optional(),
-  cust_atm_num: z.string().optional(),
-  cust_facebook: z.string().optional(),
-  cust_telegram: z.string().optional(),
+//  schema
+const customerSchema = z.object({
+  id: z.string().nonempty('Input is required'),
+  cust_title_1: z.number().min(0, 'Please select one'),
+  iden_id_1: z.number().min(0, 'Please select one'),
+  idli_id_1: z.number().min(0, 'Please select one'),
+  occu_id_1: z.number().min(0, 'Please select one'),
+  cust_name_1: z.string().nonempty('Input is required'),
+  cust_dob_1: z.string().nonempty('Input is required'),
+  // iden_id_1: z.string().nonempty('Identity type is required'),
+  cust_idcardnum_1: z.string().nonempty('Input is required'),
+  cust_idcardnum_date_1: z.string().nonempty('Input is required'),
+  // idli_id_1: z.string().nonempty('Issue place is required'),
+  // occu_id_1: z.string().nonempty('Occupation is required'),
+  cust_phone_1: z.string().nonempty('Input is required'),
+  cust_address: z.string().nonempty('Input is required'),
+  // active: z.enum(['0', '1']),
+  // check_image1: z.boolean(),
 })
 
-const validateField = (field: keyof typeof schema.shape) => {
+const fieldsToValidate = [
+  "cust_name_1",
+  "cust_phone_1",
+  "cust_address",
+  "cust_idcardnum_1"
+] as const
+
+type LiveField = typeof fieldsToValidate[number] // "cust_name_1" | "cust_phone_1" | "cust_address" | "cust_idcardnum_1"
+
+const validateField = (field: LiveField) => {
   try {
-    schema.shape[field].parse(form[field])
+    const schemaForField = customerSchema.shape[field]
+    schemaForField.parse(form[field])
     errors[field] = ""
   } catch (err: any) {
     errors[field] = err.errors?.[0]?.message || ""
   }
 }
 
-Object.keys(schema.shape).forEach((field) => {
+
+fieldsToValidate.forEach((field) => {
   watch(
-    () => form[field as keyof typeof form],
-    () => validateField(field as keyof typeof schema.shape)
+    () => form[field],
+    () => validateField(field)
   )
 })
 
-/* SUBMIT */
+
+
+
+
+
+const openImage1 = () => {
+  if (!form.image_src1) return
+
+  const newTab = window.open()
+  if (newTab) {
+    newTab.document.write(`
+      <html>
+        <head><title>Preview</title></head>
+        <body style="margin:0">
+          <img src="${form.image_src1}" style="width:100%" />
+        </body>
+      </html>
+    `)
+    newTab.document.close()
+  }
+}
+
+const openImage2 = () => {
+  if (!form.image_src2) return
+
+  const newTab = window.open()
+  if (newTab) {
+    newTab.document.write(`
+      <html>
+        <head><title>Preview</title></head>
+        <body style="margin:0">
+          <img src="${form.image_src2}" style="width:100%" />
+        </body>
+      </html>
+    `)
+    newTab.document.close()
+  }
+}
+
+
+// --- Submit Form ---
 const submitForm = async () => {
   loading.value = true
-  errorMsg.value = ""
-  successMsg.value = ""
-
-  Object.keys(errors).forEach((k) => (errors[k] = ""))
+  Object.keys(errors).forEach(k => (errors[k] = ""))
 
   try {
-    console.log("FORM BEFORE PARSE:", form)
-    const parsed = schema.parse(form)
-
-    console.log("PARSED FORM:", parsed)
+    const parsed = customerSchema.parse(form) // validate entire form
     const fd = new FormData()
+    Object.entries(parsed).forEach(([k, v]) => fd.append(k, String(v)))
+    if (img1.value) fd.append("img1", img1.value)
+    if (form.image2) fd.append("img2", form.image2)
 
-    Object.entries(parsed).forEach(([k, v]) => {
-      // Convert -1 to null
-      if (v === -1 || v === "") {
-        fd.append(k, "")
-      } else {
-        fd.append(k, String(v))
-      }
-    })
-
-    if (form.img1 && form.img1_check) fd.append("img1", form.img1)
-    if (form.img2 && form.img2_check) fd.append("img2", form.img2)
-    if (form.img1_check) fd.append("img1_check", "1")
-    if (form.img2_check) fd.append("img2_check", "1")
-
-
-    console.log("FORM DATA ENTRIES:", Array.from(fd.entries())) // debug
-
-    const res =await $fetch<{ success: boolean; message: string; id: number }>("/api/admin-secure/customers", {
-      method: "POST",
-      body: fd,
-    })
-
+    await $fetch("/api/admin-secure/customers", { method: "POST", body: fd })
     successMsg.value = "Customer created successfully!"
-
-    // Get ID safely
-    // const newId = form.id !== null ? form.id : await $fetch<number>("/api/admin-secure/customers-last-id") + 1
-
-    if (res && res.id) {
-      await navigateTo(`/app/dashboard/customers/${res.id}`)
-    }
-
-
   } catch (err: any) {
-    if (err.errors) {
-      err.errors.forEach((e: any) => {
-        errors[e.path[0]] = e.message
-      })
-    } else {
+    if (err.errors) err.errors.forEach((e: any) => (errors[e.path[0]] = e.message))
+    else {
       errorMsg.value = "Error while saving customer"
+      console.error(err)
     }
   } finally {
     loading.value = false
   }
 }
 
-/* IMAGE HANDLER (Reusable) */
-const handleImageChange = (
-  event: Event,
-  imageKey: "img1" | "img2",
-  previewKey: "img1_src" | "img2_src",
-  checkKey: "img1_check" | "img2_check"
-) => {
-  const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
 
-  if (!file) {
-    form[imageKey] = null
-    form[previewKey] = null
-    form[checkKey] = false
+// --- Page Meta ---
+definePageMeta({
+  layout: 'auth',
+  requiresAuth: true,
+  breadcrumb: { title: 'Customers', subTitle: 'Create' },
+})
+
+
+// img1
+const props = defineProps<{ customer: any }>();
+
+// Compute initial preview URL
+const imgPreview1 = ref(
+  props.customer
+    ? `/storage/imgs/indentification/1/${props.customer.id}.jpg`
+    : '/imgs/CardPhoto.png'
+);
+
+// Check if image exists (backend logic can prefill)
+const checkImage1 = ref(
+  props.customer ? 1 : 0
+);
+
+// Handle file change
+const onFileChange1 = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files.length) {
+    const file1 = target.files?.[0]
+  if (!file1) {
+    form.image1 = null
+    form.check_image1 = false
+    form.image_src1 = null
     return
   }
 
-  form[imageKey] = file
-  form[checkKey] = true
+  form.image1 = file1
+  form.check_image1 = true   // ✅ auto check here
 
   const reader = new FileReader()
-  reader.onload = () => (form[previewKey] = reader.result as string)
-  reader.readAsDataURL(file)
-}
-
-const onFileChange1 = (e: Event) =>
-  handleImageChange(e, "img1", "img1_src", "img1_check")
-
-const onFileChange2 = (e: Event) =>
-  handleImageChange(e, "img2", "img2_src", "img2_check")
-
-
-
-const openImg1 = () => {
-  if (!form.img1_src) return
-
-  const newTab = window.open()
-  if (newTab) {
-    newTab.document.write(`
-      <html>
-        <head><title>Preview</title></head>
-        <body style="margin:0">
-          <img src="${form.img1_src}" style="width:100%" />
-        </body>
-      </html>
-    `)
-    newTab.document.close()
+  reader.onload = () => {
+    form.image_src1 = reader.result as string
   }
-}
-
-const openImg2 = () => {
-  if (!form.img2_src) return
-
-  const newTab = window.open()
-  if (newTab) {
-    newTab.document.write(`
-      <html>
-        <head><title>Preview</title></head>
-        <body style="margin:0">
-          <img src="${form.img2_src}" style="width:100%" />
-        </body>
-      </html>
-    `)
-    newTab.document.close()
+  reader.readAsDataURL(file1)
   }
-}
+};
+
+const onFileChange2 = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files.length) {
+    const file2 = target.files?.[0]
+  if (!file2) {
+    form.image2 = null
+    form.check_image2 = false
+    form.image_src2 = null
+    return
+  }
+
+  form.image2 = file2
+  form.check_image2 = true   // ✅ auto check here
+
+  const reader = new FileReader()
+  reader.onload = () => {
+    form.image_src2 = reader.result as string
+  }
+  reader.readAsDataURL(file2)
+  }
+};
 
 
+// Remove image
+// const removeImage1 = () => {
+//   img1.value = null;
+//   imgPreview1.value = '/imgs/CardPhoto.png';
+//   checkImage1.value = 0;
+// };
 
 </script>
-
 
 <style scoped>
 .label { display: block; margin-bottom: 4px; font-size: 14px; color: #555; }

@@ -3,7 +3,7 @@ import type { User } from "~/types/auth";
 
 const useUser = () => useState<User | null>("user", () => null);
 
-export const useAuth = () => {
+export const useAuth1 = () => {
   const user = useUser();
   const isAuthenticated = computed(() => !!user.value);
   const loading = ref<boolean>(false);
@@ -37,12 +37,22 @@ const logout = async () => {
   }
 };
 
-    const fetchUser = async (headers: HeadersInit = {}) => {
+  const fetchUser = async (headers: { cookie?: string | undefined; } = {}) => {
     try {
       loading.value = true;
-      // pass the headers from the plugin here.
+      const token = useCookie<string>('token').value;
       const fetchedUser = await $fetch<User>("/api/admin-secure/user", {
-        headers,
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        onResponseError({ response }) {
+          if (response.status === 401) {
+            // Silently handle guest status
+          }
+        }
       });
 
       user.value = fetchedUser;

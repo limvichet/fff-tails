@@ -4,7 +4,7 @@
 
 
 
-  import { loginFormFull } from "~/schemas/auth";
+  import { schema } from "~/schemas/auth";
 
   definePageMeta({
     layout: "default-to-auth",
@@ -30,7 +30,7 @@ const isSubmitted = ref(false);
 
 
   const { fields, meta, handleSubmit, errors } = useCustomFields({
-    validationSchema: loginFormFull,
+    validationSchema: schema,
   });
 
 
@@ -90,12 +90,10 @@ const isSubmitted = ref(false);
                   <div class="space-y-5">
                     <!-- Email -->
                     <div>
-                      <label
-                        for="email"
-                        class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-                      >
-                        Email <span v-if="isSubmitted || errors.email" class="text-red-500 font-normal text-[12px]">{{ errors.email }}</span>
-                      </label>
+                      <div class="flex items-center justify-between">
+                        <label for="email" class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"> Email </label>
+                        <span v-if="isSubmitted || errors.email" class="text-red-500 font-normal text-[12px]">{{ errors.email }}</span>
+                      </div>
                       <input
                        v-model="fields.email.model.value"
                         v-bind="fields.email.props"
@@ -108,12 +106,10 @@ const isSubmitted = ref(false);
                     </div>
                     <!-- Password -->
                     <div>
-                      <label
-                        for="password"
-                        class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
-                      >
-                        Password <span v-if="isSubmitted || errors.password" class="text-red-500 font-normal text-[12px]"> {{ errors.password }}</span>
-                      </label>
+                        <div class="flex items-center justify-between">
+                          <label for="password" class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"> Password </label>
+                          <span v-if="isSubmitted || errors.password" class="text-red-500 font-normal text-[12px]"> {{ errors.password }}</span>
+                        </div>
                       <div class="relative">
                         <input
                            v-model="fields.password.model.value"
@@ -203,10 +199,10 @@ const isSubmitted = ref(false);
             <CommonGridShape />
             <div class="flex flex-col items-center max-w-xs">
               <router-link to="/" class="block mb-4">
-                <img width="{231}" height="{48}" src="/images/logo/auth-logo.svg" alt="Logo" />
+                <img width="{231}" height="{48}" src="/images/logo/auth-logo2.svg" alt="Logo" />
               </router-link>
               <p class="text-center text-gray-400 dark:text-white/60">
-                Free and Open-Source Tailwind CSS Admin Dashboard Template
+                Admin Dashboard
               </p>
             </div>
           </div>

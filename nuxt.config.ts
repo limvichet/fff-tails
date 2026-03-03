@@ -13,24 +13,19 @@ export default defineNuxtConfig({
     fallback: 'light',
     classSuffix: ''
   },
-  // Set to '/' for Netlify
   app: {
     baseURL: '/',
   },
   $development: {
     runtimeConfig: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
-      public: {
-        siteUrl: process.env.NUXT_PUBLIC_SITE_URL
-      },
+      public: { siteUrl: process.env.NUXT_PUBLIC_SITE_URL }
     },
   },
   $production: {
     runtimeConfig: {
       apiBaseUrl: process.env.NUXT_API_BASE_URL,
-      public: {
-        siteUrl: process.env.NUXT_PUBLIC_SITE_URL,
-      },
+      public: { siteUrl: process.env.NUXT_PUBLIC_SITE_URL }
     },
   },
   nitro: {
@@ -47,7 +42,6 @@ export default defineNuxtConfig({
   experimental: {
     viewTransition: true
   },
-  ssr: true, 
   routeRules: {
     '/signin': { redirect: '/app/signin' },
     '/signup': { redirect: '/app/signup' },

@@ -1,6 +1,14 @@
 <template>
-  <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-    <!-- LEFT 1 Basic -->
+  <!-- Messages -->
+  <div v-if="errorMsg" class="mb-3 p-2 rounded bg-red-500/20 text-red-300 text-sm">
+    {{ errorMsg }}
+  </div>
+  <div v-if="successMsg" class="mb-3 p-2 rounded bg-emerald-500/20 text-emerald-300 text-sm">
+    {{ successMsg }}
+  </div>
+
+  <div v-if="customer" class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+     <!-- LEFT 1 Basic -->
     <div class="space-y-4">
       <ComponentCard title="1. Basic">
 
@@ -294,7 +302,7 @@
       <!-- submit -->  
       <div class="flex justify-end mt-4">
         <button
-          @click="submitForm"
+          @click="updateForm"
           :disabled="loading"
           class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
         >
@@ -304,9 +312,11 @@
 
     </ComponentCard>
   </div>
+  </div>
 
-</div>
-
+  <div v-else class="text-center py-10">
+    Loading...
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -315,26 +325,24 @@
 definePageMeta({
   layout: "auth",
   requiresAuth: true,
-  breadcrumb: { title: "Customers", subTitle: "Create" }
+  breadcrumb: { title: "Customers", subTitle: "Detail" },
 })
 
 import { z } from "zod"
-import { reactive, ref, onMounted, watch } from "vue"
+import { useRoute } from "vue-router"
 import ComponentCard from "@/components/common/ComponentCard.vue"
-import type { CustomerFormDataResponse } from "~/types/customer"
+import type { Customer, CustomerFormDataResponse } from "~/types/customer"
 
 const { successMsg, errorMsg } = useMessage()
 const loading = ref(false)
-const errors = reactive<Record<string, string>>({})
 const formReady = ref(false)
+const errors = reactive<Record<string, string>>({})
 
 /* FETCH FORM DATA */
 const nameTitles = ref<Array<{ id: number; label: string }>>([])
 const identifications = ref<Array<{ id: number; label: string }>>([])
 const idLicenses = ref<Array<{ id: number; label: string }>>([])
 const occupations = ref<Array<{ id: number; label: string }>>([])
-
-
 
 const fetchCustomerFormData = async () => {
   try {
@@ -352,8 +360,9 @@ const fetchCustomerFormData = async () => {
     identifications.value = mapOptions(data.identifications)
     idLicenses.value = mapOptions(data.idLicenses)
     occupations.value = mapOptions(data.occupations)
-
+    
     formReady.value = true
+
 
   } catch (err: any) {
     errorMsg.value = err?.statusMessage || "Failed to load form data"
@@ -361,6 +370,9 @@ const fetchCustomerFormData = async () => {
 }
 
 onMounted(fetchCustomerFormData)
+
+const route = useRoute()
+const id = route.params.id
 
 /* FORM STATE */
 const form = reactive({
@@ -400,6 +412,127 @@ const form = reactive({
   img2_src: null as string | null,
   img2_check: false,
 })
+
+type ApiResponse<T> = {
+  success: boolean
+  data: T
+}
+
+const headers = useRequestHeaders(["cookie"]);
+const { data } = await useAsyncData<ApiResponse<Customer>>(
+  `customer-${id}`,
+  () => $fetch(`/api/admin-secure/customers/${id}`, { headers }),
+)
+
+const customer = computed(() => data.value?.data ?? null)
+
+/* IMAGE HANDLER (Reusable) */
+const handleImageChange = (
+  event: Event,
+  imageKey: "img1" | "img2",
+  previewKey: "img1_src" | "img2_src",
+  checkKey: "img1_check" | "img2_check"
+) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+
+  if (!file) {
+    form[imageKey] = null
+    form[previewKey] = null
+    form[checkKey] = false
+    return
+  }
+
+  form[imageKey] = file
+  form[checkKey] = true
+
+  const reader = new FileReader()
+  reader.onload = () => (form[previewKey] = reader.result as string)
+  reader.readAsDataURL(file)
+}
+
+const onFileChange1 = (e: Event) =>
+  handleImageChange(e, "img1", "img1_src", "img1_check")
+
+const onFileChange2 = (e: Event) =>
+  handleImageChange(e, "img2", "img2_src", "img2_check")
+
+const openImg1 = () => {
+  if (!form.img1_src) return
+
+  const newTab = window.open()
+  if (newTab) {
+    newTab.document.write(`
+      <html>
+        <head><title>Preview</title></head>
+        <body style="margin:0">
+          <img src="${form.img1_src}" style="width:100%" />
+        </body>
+      </html>
+    `)
+    newTab.document.close()
+  }
+}
+
+const openImg2 = () => {
+  if (!form.img2_src) return
+
+  const newTab = window.open()
+  if (newTab) {
+    newTab.document.write(`
+      <html>
+        <head><title>Preview</title></head>
+        <body style="margin:0">
+          <img src="${form.img2_src}" style="width:100%" />
+        </body>
+      </html>
+    `)
+    newTab.document.close()
+  }
+}
+
+/* DATE FORMAT HELPER */
+function formatDateForInput(date: string | null) {
+  if (!date) return ""
+
+  // already correct
+  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return date
+  }
+
+  // convert dd-MM-yyyy → yyyy-MM-dd
+  const [d, m, y] = date.split("-")
+
+  return `${y}-${m}-${d}`
+}
+
+watch( customer, (c) => {
+    if (!c) return
+
+    Object.assign(form, {
+      ...c,
+
+      // ⭐ FIX DATE FORMAT FOR INPUT TYPE="date"
+      cust_dob_1: formatDateForInput(c.cust_dob_1 ?? ""),
+      cust_idcardnum_date_1: formatDateForInput(c.cust_idcardnum_date_1 ?? ""),
+
+      cust_dob_2: formatDateForInput(c.cust_dob_2 ?? ""),
+      cust_idcardnum_date_2: formatDateForInput(c.cust_idcardnum_date_2 ?? ""),
+
+      // image preview from backend
+      img1_src: c.img1_url ?? null,
+      img2_src: c.img2_url ?? null,
+
+      img1_check: !!c.img1_url,
+      img2_check: !!c.img2_url,
+    })
+
+    formReady.value = true
+  },
+  { immediate: true }
+)
+
+
 
 
 /* VALIDATION ZOD */
@@ -455,13 +588,15 @@ Object.keys(schema.shape).forEach((field) => {
   )
 })
 
-/* SUBMIT */
-const submitForm = async () => {
+
+/* UPDATE */
+const updateForm = async () => {
   loading.value = true
   errorMsg.value = ""
   successMsg.value = ""
 
-  Object.keys(errors).forEach((k) => (errors[k] = ""))
+  // clear old errors
+  Object.keys(errors).forEach(k => errors[k] = "")
 
   try {
     console.log("FORM BEFORE PARSE:", form)
@@ -471,7 +606,6 @@ const submitForm = async () => {
     const fd = new FormData()
 
     Object.entries(parsed).forEach(([k, v]) => {
-      // Convert -1 to null
       if (v === -1 || v === "") {
         fd.append(k, "")
       } else {
@@ -484,23 +618,15 @@ const submitForm = async () => {
     if (form.img1_check) fd.append("img1_check", "1")
     if (form.img2_check) fd.append("img2_check", "1")
 
-
     console.log("FORM DATA ENTRIES:", Array.from(fd.entries())) // debug
 
-    const res =await $fetch<{ success: boolean; message: string; id: number }>("/api/admin-secure/customers", {
-      method: "POST",
+    /* ✅ REQUEST */
+    await $fetch(`/api/admin-secure/customers/${id}`, {
+      method: "PUT",
       body: fd,
     })
 
-    successMsg.value = "Customer created successfully!"
-
-    // Get ID safely
-    // const newId = form.id !== null ? form.id : await $fetch<number>("/api/admin-secure/customers-last-id") + 1
-
-    if (res && res.id) {
-      await navigateTo(`/app/dashboard/customers/${res.id}`)
-    }
-
+    successMsg.value = "Customer updated successfully!"
 
   } catch (err: any) {
     if (err.errors) {
@@ -514,75 +640,6 @@ const submitForm = async () => {
     loading.value = false
   }
 }
-
-/* IMAGE HANDLER (Reusable) */
-const handleImageChange = (
-  event: Event,
-  imageKey: "img1" | "img2",
-  previewKey: "img1_src" | "img2_src",
-  checkKey: "img1_check" | "img2_check"
-) => {
-  const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
-
-  if (!file) {
-    form[imageKey] = null
-    form[previewKey] = null
-    form[checkKey] = false
-    return
-  }
-
-  form[imageKey] = file
-  form[checkKey] = true
-
-  const reader = new FileReader()
-  reader.onload = () => (form[previewKey] = reader.result as string)
-  reader.readAsDataURL(file)
-}
-
-const onFileChange1 = (e: Event) =>
-  handleImageChange(e, "img1", "img1_src", "img1_check")
-
-const onFileChange2 = (e: Event) =>
-  handleImageChange(e, "img2", "img2_src", "img2_check")
-
-
-
-const openImg1 = () => {
-  if (!form.img1_src) return
-
-  const newTab = window.open()
-  if (newTab) {
-    newTab.document.write(`
-      <html>
-        <head><title>Preview</title></head>
-        <body style="margin:0">
-          <img src="${form.img1_src}" style="width:100%" />
-        </body>
-      </html>
-    `)
-    newTab.document.close()
-  }
-}
-
-const openImg2 = () => {
-  if (!form.img2_src) return
-
-  const newTab = window.open()
-  if (newTab) {
-    newTab.document.write(`
-      <html>
-        <head><title>Preview</title></head>
-        <body style="margin:0">
-          <img src="${form.img2_src}" style="width:100%" />
-        </body>
-      </html>
-    `)
-    newTab.document.close()
-  }
-}
-
-
 
 </script>
 

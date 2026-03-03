@@ -20,6 +20,7 @@
     "@vee-validate/zod": "^4.15.1",
     "dropzone": "6.0.0-beta.2",
     "flatpickr": "^4.6.13",
+    "form-data": "^4.0.5",
     "nuxt": "^4.2.2",
     "nuxt-og-image": "^5.1.13",
     "tailwindcss": "^4.1.18",

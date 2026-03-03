@@ -1,37 +1,21 @@
-// types/auth.ts
-export interface LoginUserResponse {
+export interface User {
+    id:               number;
+    email:            string;
+    active:           number;
+    emp_id:           number;
+    lastdate_login:   null;
+    created_by:       null;
+    updated_by:       number;
+    created_at:       string;
+    updated_at:       string;
+    identifier_token: string;
+}
+
+export type LoginRES = {
   user: User;
   token: string;
-}
+  message: string;
+  code: number;
+};
 
-export interface RegisterUserResponse {
-  user: {
-    id: number;
-    name: string;
-    email: string;
-    updated_at: string;
-    created_at: string;
-  };
-  token: string;
-}
 
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  email_verified_at: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface LoginRequestBody {
-  email: string;
-  password: string;
-}
-
-export interface RegisterRequestBody {
-  name: string;
-  email: string;
-  password: string;
-  password_confirmation: string;
-}

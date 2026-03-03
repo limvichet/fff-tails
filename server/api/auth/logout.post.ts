@@ -2,20 +2,30 @@ export default defineEventHandler(async (event) => {
   const { apiBaseUrl } = useRuntimeConfig(event);
 
   try {
-    await $fetch(`${apiBaseUrl}/admin-secure/logout`, {
+
+    const token = getCookie(event, "token")
+
+    if (!token)
+      throw createError({
+        statusCode: UNAUTHORIZED.code,
+        statusMessage: UNAUTHORIZED.message,
+    });
+
+    await $fetch(`${apiBaseUrl}/api/admin-secure/logout`, {
       method: "POST",
       headers: {
         Accept: "application/json",
-        Authorization: `Bearer ${getCookie(event, "auth-token")!}`,
+        Authorization: `Bearer ${getCookie(event, "token")!}`,
       },
     });
 
-    // Clear the httpOnly cookie
-    deleteCookie(event, "auth-token");
+
+    deleteCookie(event, "token");
     return { success: true };
+    
   } catch (error: any) {
-    // remove cookie even the request fails
-    deleteCookie(event, "auth-token");
+      
+    deleteCookie(event, "token");
     throw customCreateError(error, "Can't logout!");
   }
 });

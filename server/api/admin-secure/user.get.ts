@@ -1,20 +1,21 @@
-import { getCookie } from "h3";
 import { User } from "~/types/auth";
+import { getCookie, createError } from "h3"
 
 export default defineEventHandler(async (event) => {
-  // get API BASE URL from runtime config
+
   const { apiBaseUrl } = useRuntimeConfig(event);
 
-  // get the body of request
   try {
-    const token = getCookie(event, "auth-token");
+
+    const token = getCookie(event, "token")
+
     if (!token)
       throw createError({
         statusCode: UNAUTHORIZED.code,
         statusMessage: UNAUTHORIZED.message,
-      });
+    });
 
-    const res = await $fetch<User>(`${apiBaseUrl}/admin-secure/user`, {
+    const res = await $fetch<User>(`${apiBaseUrl}/api/admin-secure/user`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -24,7 +25,12 @@ export default defineEventHandler(async (event) => {
     });
 
     return res;
-  } catch (error: any) {
-    throw customCreateError(error, "Can't get user!");
+
+  } catch (err: any) {
+    throw createError({
+      statusCode: err?.statusCode || 500,
+      statusMessage: err?.statusMessage || 'Failed to fetch user data from backend',
+    })
   }
+
 });

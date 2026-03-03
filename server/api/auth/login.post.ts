@@ -1,31 +1,35 @@
-import { loginFormFull, LoginREQ, LoginRES } from "~/schemas/auth";
-import { encryptString } from "~~/server/utils/helpers";
+import { LoginRES } from "~/types/auth";
+import { LoginREQ, schema } from "~/schemas/auth";
 
 export default defineEventHandler(async (event) => {
   try {
-    const { apiBaseUrl, secretKey } = useRuntimeConfig(event);
-    const body: LoginREQ = await readBody(event);
+    const { apiBaseUrl } = useRuntimeConfig(event);
+    const body = await readBody<LoginREQ>(event);
+    const parsed = schema.safeParse(body);
 
-    const parsedBody = loginFormFull.parse(body);
-    const {
-      token,
-      user: { location_code },
-    } = await $fetch<LoginRES>(`${apiBaseUrl}/admin-public/login`, {
+    if (!parsed.success) {
+      throw createError({
+        statusCode: 422,
+        statusMessage: "Validation error",
+        data: parsed.error.flatten().fieldErrors,
+      })
+    }
+
+    const { token, user } = await $fetch<LoginRES>(`${apiBaseUrl}/api/admin-public/login`, {
       method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(parsedBody),
+      headers: { Accept: "application/json", "Content-Type": "application/json" },
+      body: parsed.data,
     });
 
     // Set secure HTTP-only cookie
-    setCookie(event, "auth-token", token, {
+    setCookie(event, "token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 60 * 60 * 24, // 1 days
     });
+
+    return { user, token };
 
   } catch (error: any) {
     throw customCreateError(error, "Can't login!");
