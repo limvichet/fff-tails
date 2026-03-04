@@ -1,0 +1,1 @@
+import{_ as o}from"./CFtlCMIL.js";import{_ as r,c as n,o as a,b as c,w as s,r as _}from"./Ck3MtgJb.js";import"./CTAYLKXO.js";const l={};function u(e,d){const t=o;return a(),n("div",null,[c(t,null,{default:s(()=>[_(e.$slots,"default")]),_:3})])}const p=r(l,[["render",u]]);export{p as default};
