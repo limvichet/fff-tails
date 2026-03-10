@@ -297,6 +297,17 @@ layer(base);
   }
 }
 
+
+/* Light mode */
+.input-invalid {
+  @apply border-red-500 bg-red-100 text-red-700;
+}
+
+/* Dark mode */
+.dark .input-invalid {
+  @apply border-red-400 bg-red-900/30 text-red-300;
+}
+
 .sidebar:hover {
   width: 290px;
 }

@@ -47,4 +47,5 @@ export default defineNuxtConfig({
     '/signup': { redirect: '/app/signup' },
     '/dashboard': { redirect: '/app/dashboard' },
   },
+  
 })

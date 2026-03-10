@@ -1,3 +1,273 @@
+<script setup lang="ts">
+
+definePageMeta({
+  layout: "auth",
+  requiresAuth: true,
+  breadcrumb: { title: "Customers", subTitle: "Create" }
+})
+
+import { z } from "zod"
+import { reactive, ref, onMounted, watch } from "vue"
+import ComponentCard from "@/components/common/ComponentCard.vue"
+import ComponentSubmitCard from "@/components/common/ComponentSubmitCard.vue"
+import type { CustomerFormDataResponse } from "~/types/customer"
+
+const { successMsg, errorMsg, success } = useMessage()
+const loading = ref(false)
+const errors = reactive<Record<string, string>>({})
+const formReady = ref(false)
+
+/* FETCH FORM DATA */
+const nameTitles = ref<Array<{ id: number; label: string }>>([])
+const identifications = ref<Array<{ id: number; label: string }>>([])
+const idLicenses = ref<Array<{ id: number; label: string }>>([])
+const occupations = ref<Array<{ id: number; label: string }>>([])
+
+const fetchCustomerFormData = async () => {
+  try {
+    const data = await $fetch<CustomerFormDataResponse>(
+      "/api/admin-secure/customers-form-data"
+    )
+
+    const mapOptions = (obj: any) =>
+      Object.entries(obj).map(([id, label]) => ({
+        id: Number(id),
+        label: String(label),
+      }))
+
+    nameTitles.value = mapOptions(data.nameTitles)
+    identifications.value = mapOptions(data.identifications)
+    idLicenses.value = mapOptions(data.idLicenses)
+    occupations.value = mapOptions(data.occupations)
+
+    formReady.value = true
+
+  } catch (err: any) {
+    errorMsg.value = err?.statusMessage || "Failed to load form data"
+  }
+}
+
+onMounted(fetchCustomerFormData)
+
+/* FORM STATE */
+const form = reactive({
+  id: null as number | null,
+
+  cust_title_1: -1,
+  cust_name_1: "",
+  cust_dob_1: "",
+  cust_idcardnum_1: "",
+  iden_id_1: -1,
+  cust_idcardnum_date_1: "",
+  idli_id_1: -1,
+  occu_id_1: -1,
+  cust_phone_1: "",
+
+  cust_title_2: -1,
+  cust_name_2: "",
+  cust_dob_2: "",
+  cust_idcardnum_2: "",
+  iden_id_2: -1,
+  cust_idcardnum_date_2: "",
+  idli_id_2: -1,
+  occu_id_2: -1,
+  cust_phone_2: "",
+
+  cust_account_num: "",
+  cust_atm_num: "",
+  cust_facebook: "",
+  cust_telegram: "",
+  cust_address: "",
+
+  img1: null as File | null,
+  img1_src: null as string | null,
+  img1_check: false,
+
+  img2: null as File | null,
+  img2_src: null as string | null,
+  img2_check: false,
+})
+
+
+/* VALIDATION ZOD */
+const schema = z.object({
+  // Primary ID
+  id: z.number().nullable().optional(),
+
+  // ===== Customer 1 (Required) =====
+  cust_title_1: z.number().min(0, "Please select"),
+  iden_id_1: z.number().min(0, "Please select"),
+  idli_id_1: z.number().min(0, "Please select"),
+  occu_id_1: z.number().min(0, "Please select"),
+
+  cust_name_1: z.string().nonempty("Required"),
+  cust_dob_1: z.string().nonempty("Required"),
+  cust_idcardnum_1: z.string().nonempty("Required"),
+  cust_idcardnum_date_1: z.string().nonempty("Required"),
+  cust_phone_1: z.string().nonempty("Required"),
+  cust_address: z.string().nonempty("Required"),
+
+  // ===== Customer 2 (Optional Section) =====
+  cust_title_2: z.number().optional(),
+  iden_id_2: z.number().optional(),
+  idli_id_2: z.number().optional(),
+  occu_id_2: z.number().optional(),
+
+  cust_name_2: z.string().optional(),
+  cust_dob_2: z.string().optional(),
+  cust_idcardnum_2: z.string().optional(),
+  cust_idcardnum_date_2: z.string().optional(),
+  cust_phone_2: z.string().optional(),
+
+  // ===== Extra Optional Info =====
+  cust_account_num: z.string().optional(),
+  cust_atm_num: z.string().optional(),
+  cust_facebook: z.string().optional(),
+  cust_telegram: z.string().optional(),
+})
+
+const validateField = (field: keyof typeof schema.shape) => {
+  try {
+    schema.shape[field].parse(form[field])
+    errors[field] = ""
+  } catch (err: any) {
+    errors[field] = err.errors?.[0]?.message || ""
+  }
+}
+
+Object.keys(schema.shape).forEach((field) => {
+  watch(
+    () => form[field as keyof typeof form],
+    () => validateField(field as keyof typeof schema.shape)
+  )
+})
+
+/* SUBMIT */
+const submitForm = async () => {
+  loading.value = true
+  errorMsg.value = null
+  successMsg.value = null
+
+  Object.keys(errors).forEach((k) => (errors[k] = ""))
+
+  try {
+    // console.log("FORM BEFORE PARSE:", form)
+    const parsed = schema.parse(form)
+
+    // console.log("PARSED FORM:", parsed)
+    const fd = new FormData()
+
+    Object.entries(parsed).forEach(([k, v]) => {
+      // Convert -1 to null
+      if (v === -1 || v === "") {
+        fd.append(k, "")
+      } else {
+        fd.append(k, String(v))
+      }
+    })
+
+    if (form.img1 && form.img1_check) fd.append("img1", form.img1)
+    if (form.img2 && form.img2_check) fd.append("img2", form.img2)
+    if (form.img1_check) fd.append("img1_check", "1")
+    if (form.img2_check) fd.append("img2_check", "1")
+
+
+    console.log("FORM DATA ENTRIES:", Array.from(fd.entries())) // debug
+
+    const res =await $fetch<{ success: boolean; message: string; id: number }>("/api/admin-secure/customers", {
+      method: "POST",
+      body: fd,
+    })
+
+    success("Customer created successfully!")
+
+    if (res && res.id) {
+      await navigateTo(`/app/dashboard/customers/${res.id}`)
+    }
+
+
+  } catch (err: any) {
+    if (err.errors) {
+      err.errors.forEach((e: any) => {
+        errors[e.path[0]] = e.message
+      })
+    } else {
+      errorMsg.value = "Error while saving customer"
+    }
+  } finally {
+    loading.value = false
+  }
+}
+
+/* IMAGE HANDLER (Reusable) */
+const handleImageChange = (
+  event: Event,
+  imageKey: "img1" | "img2",
+  previewKey: "img1_src" | "img2_src",
+  checkKey: "img1_check" | "img2_check"
+) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+
+  if (!file) {
+    form[imageKey] = null
+    form[previewKey] = null
+    form[checkKey] = false
+    return
+  }
+
+  form[imageKey] = file
+  form[checkKey] = true
+
+  const reader = new FileReader()
+  reader.onload = () => (form[previewKey] = reader.result as string)
+  reader.readAsDataURL(file)
+}
+
+const onFileChange1 = (e: Event) =>
+  handleImageChange(e, "img1", "img1_src", "img1_check")
+
+const onFileChange2 = (e: Event) =>
+  handleImageChange(e, "img2", "img2_src", "img2_check")
+
+
+
+const openImg1 = () => {
+  if (!form.img1_src) return
+
+  const newTab = window.open()
+  if (newTab) {
+    newTab.document.write(`
+      <html>
+        <head><title>Preview</title></head>
+        <body style="margin:0">
+          <img src="${form.img1_src}" style="width:100%" />
+        </body>
+      </html>
+    `)
+    newTab.document.close()
+  }
+}
+
+const openImg2 = () => {
+  if (!form.img2_src) return
+
+  const newTab = window.open()
+  if (newTab) {
+    newTab.document.write(`
+      <html>
+        <head><title>Preview</title></head>
+        <body style="margin:0">
+          <img src="${form.img2_src}" style="width:100%" />
+        </body>
+      </html>
+    `)
+    newTab.document.close()
+  }
+}
+</script>
+
+
 <template>
   <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
     <!-- LEFT 1 Basic -->
@@ -281,18 +551,18 @@
 
   <!-- Right 5.Address Information -->
   <div class="sm:col-span-2">
-    <ComponentCard title="5.Address Infomation"> 
+    <ComponentSubmitCard title="5.Address Infomation"> 
 
       <!-- cust_address -->
         <div>
           <div class="flex items-center justify-between">
             <label class="label">Address</label><span class="text-red-500 text-sm">{{ errors.cust_address }}</span>
           </div>
-          <textarea v-model="form.cust_address" class="input" rows="9" />
+          <textarea v-model="form.cust_address" class="input" rows="6" />
         </div>
 
       <!-- submit -->  
-      <div class="flex justify-end mt-4">
+      <template #footer>
         <button
           @click="submitForm"
           :disabled="loading"
@@ -300,291 +570,15 @@
         >
           {{ loading ? "Saving..." : "Save Customer" }}
         </button>
-      </div>
+      </template>
 
-    </ComponentCard>
+    </ComponentSubmitCard>
   </div>
 
 </div>
 
 </template>
 
-<script setup lang="ts">
-
-/* PAGE META */
-definePageMeta({
-  layout: "auth",
-  requiresAuth: true,
-  breadcrumb: { title: "Customers", subTitle: "Create" }
-})
-
-import { z } from "zod"
-import { reactive, ref, onMounted, watch } from "vue"
-import ComponentCard from "@/components/common/ComponentCard.vue"
-import type { CustomerFormDataResponse } from "~/types/customer"
-
-const { successMsg, errorMsg } = useMessage()
-const loading = ref(false)
-const errors = reactive<Record<string, string>>({})
-const formReady = ref(false)
-
-/* FETCH FORM DATA */
-const nameTitles = ref<Array<{ id: number; label: string }>>([])
-const identifications = ref<Array<{ id: number; label: string }>>([])
-const idLicenses = ref<Array<{ id: number; label: string }>>([])
-const occupations = ref<Array<{ id: number; label: string }>>([])
-
-
-
-const fetchCustomerFormData = async () => {
-  try {
-    const data = await $fetch<CustomerFormDataResponse>(
-      "/api/admin-secure/customers-form-data"
-    )
-
-    const mapOptions = (obj: any) =>
-      Object.entries(obj).map(([id, label]) => ({
-        id: Number(id),
-        label: String(label),
-      }))
-
-    nameTitles.value = mapOptions(data.nameTitles)
-    identifications.value = mapOptions(data.identifications)
-    idLicenses.value = mapOptions(data.idLicenses)
-    occupations.value = mapOptions(data.occupations)
-
-    formReady.value = true
-
-  } catch (err: any) {
-    errorMsg.value = err?.statusMessage || "Failed to load form data"
-  }
-}
-
-onMounted(fetchCustomerFormData)
-
-/* FORM STATE */
-const form = reactive({
-  id: null as number | null,
-
-  cust_title_1: -1,
-  cust_name_1: "",
-  cust_dob_1: "",
-  cust_idcardnum_1: "",
-  iden_id_1: -1,
-  cust_idcardnum_date_1: "",
-  idli_id_1: -1,
-  occu_id_1: -1,
-  cust_phone_1: "",
-
-  cust_title_2: -1,
-  cust_name_2: "",
-  cust_dob_2: "",
-  cust_idcardnum_2: "",
-  iden_id_2: -1,
-  cust_idcardnum_date_2: "",
-  idli_id_2: -1,
-  occu_id_2: -1,
-  cust_phone_2: "",
-
-  cust_account_num: "",
-  cust_atm_num: "",
-  cust_facebook: "",
-  cust_telegram: "",
-  cust_address: "",
-
-  img1: null as File | null,
-  img1_src: null as string | null,
-  img1_check: false,
-
-  img2: null as File | null,
-  img2_src: null as string | null,
-  img2_check: false,
-})
-
-
-/* VALIDATION ZOD */
-const schema = z.object({
-  // Primary ID
-  id: z.number().nullable().optional(),
-
-  // ===== Customer 1 (Required) =====
-  cust_title_1: z.number().min(0, "Please select title"),
-  iden_id_1: z.number().min(0, "Please select identity"),
-  idli_id_1: z.number().min(0, "Please select license"),
-  occu_id_1: z.number().min(0, "Please select occupation"),
-
-  cust_name_1: z.string().nonempty("Required"),
-  cust_dob_1: z.string().nonempty("Required"),
-  cust_idcardnum_1: z.string().nonempty("Required"),
-  cust_idcardnum_date_1: z.string().nonempty("Required"),
-  cust_phone_1: z.string().nonempty("Required"),
-  cust_address: z.string().nonempty("Required"),
-
-  // ===== Customer 2 (Optional Section) =====
-  cust_title_2: z.number().optional(),
-  iden_id_2: z.number().optional(),
-  idli_id_2: z.number().optional(),
-  occu_id_2: z.number().optional(),
-
-  cust_name_2: z.string().optional(),
-  cust_dob_2: z.string().optional(),
-  cust_idcardnum_2: z.string().optional(),
-  cust_idcardnum_date_2: z.string().optional(),
-  cust_phone_2: z.string().optional(),
-
-  // ===== Extra Optional Info =====
-  cust_account_num: z.string().optional(),
-  cust_atm_num: z.string().optional(),
-  cust_facebook: z.string().optional(),
-  cust_telegram: z.string().optional(),
-})
-
-const validateField = (field: keyof typeof schema.shape) => {
-  try {
-    schema.shape[field].parse(form[field])
-    errors[field] = ""
-  } catch (err: any) {
-    errors[field] = err.errors?.[0]?.message || ""
-  }
-}
-
-Object.keys(schema.shape).forEach((field) => {
-  watch(
-    () => form[field as keyof typeof form],
-    () => validateField(field as keyof typeof schema.shape)
-  )
-})
-
-/* SUBMIT */
-const submitForm = async () => {
-  loading.value = true
-  errorMsg.value = ""
-  successMsg.value = ""
-
-  Object.keys(errors).forEach((k) => (errors[k] = ""))
-
-  try {
-    console.log("FORM BEFORE PARSE:", form)
-    const parsed = schema.parse(form)
-
-    console.log("PARSED FORM:", parsed)
-    const fd = new FormData()
-
-    Object.entries(parsed).forEach(([k, v]) => {
-      // Convert -1 to null
-      if (v === -1 || v === "") {
-        fd.append(k, "")
-      } else {
-        fd.append(k, String(v))
-      }
-    })
-
-    if (form.img1 && form.img1_check) fd.append("img1", form.img1)
-    if (form.img2 && form.img2_check) fd.append("img2", form.img2)
-    if (form.img1_check) fd.append("img1_check", "1")
-    if (form.img2_check) fd.append("img2_check", "1")
-
-
-    console.log("FORM DATA ENTRIES:", Array.from(fd.entries())) // debug
-
-    const res =await $fetch<{ success: boolean; message: string; id: number }>("/api/admin-secure/customers", {
-      method: "POST",
-      body: fd,
-    })
-
-    successMsg.value = "Customer created successfully!"
-
-    // Get ID safely
-    // const newId = form.id !== null ? form.id : await $fetch<number>("/api/admin-secure/customers-last-id") + 1
-
-    if (res && res.id) {
-      await navigateTo(`/app/dashboard/customers/${res.id}`)
-    }
-
-
-  } catch (err: any) {
-    if (err.errors) {
-      err.errors.forEach((e: any) => {
-        errors[e.path[0]] = e.message
-      })
-    } else {
-      errorMsg.value = "Error while saving customer"
-    }
-  } finally {
-    loading.value = false
-  }
-}
-
-/* IMAGE HANDLER (Reusable) */
-const handleImageChange = (
-  event: Event,
-  imageKey: "img1" | "img2",
-  previewKey: "img1_src" | "img2_src",
-  checkKey: "img1_check" | "img2_check"
-) => {
-  const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
-
-  if (!file) {
-    form[imageKey] = null
-    form[previewKey] = null
-    form[checkKey] = false
-    return
-  }
-
-  form[imageKey] = file
-  form[checkKey] = true
-
-  const reader = new FileReader()
-  reader.onload = () => (form[previewKey] = reader.result as string)
-  reader.readAsDataURL(file)
-}
-
-const onFileChange1 = (e: Event) =>
-  handleImageChange(e, "img1", "img1_src", "img1_check")
-
-const onFileChange2 = (e: Event) =>
-  handleImageChange(e, "img2", "img2_src", "img2_check")
-
-
-
-const openImg1 = () => {
-  if (!form.img1_src) return
-
-  const newTab = window.open()
-  if (newTab) {
-    newTab.document.write(`
-      <html>
-        <head><title>Preview</title></head>
-        <body style="margin:0">
-          <img src="${form.img1_src}" style="width:100%" />
-        </body>
-      </html>
-    `)
-    newTab.document.close()
-  }
-}
-
-const openImg2 = () => {
-  if (!form.img2_src) return
-
-  const newTab = window.open()
-  if (newTab) {
-    newTab.document.write(`
-      <html>
-        <head><title>Preview</title></head>
-        <body style="margin:0">
-          <img src="${form.img2_src}" style="width:100%" />
-        </body>
-      </html>
-    `)
-    newTab.document.close()
-  }
-}
-
-
-
-</script>
 
 
 <style scoped>

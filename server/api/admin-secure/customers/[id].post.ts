@@ -1,3 +1,5 @@
+/* update */
+
 import {
   getCookie,
   createError,

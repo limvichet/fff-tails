@@ -17,6 +17,8 @@ const { errorMsg, successMsg, success } = useMessage()
 const isDeleteModal = ref(false)
 const selectedCustomerId = ref<number | null>(null)
 
+  successMsg.value = null
+  errorMsg.value = null
 
 // --------------------
 // Types

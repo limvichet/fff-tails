@@ -253,10 +253,14 @@ const menuGroups = [
         ],
       },
       {
-        icon: CalenderIcon,
-        name: "Calendar",
-        path: "/others/calendar",
+        icon: TableIcon,
+        name: "Loan Records",
+        subItems: [
+          { name: "Create", path: "/app/dashboard/loanrecords/create", pro: false },
+          { name: "Search", path: "/app/dashboard/loanrecords", pro: false },
+        ],
       },
+
     ],
   },
   {

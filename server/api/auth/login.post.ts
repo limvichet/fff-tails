@@ -1,24 +1,64 @@
-import { LoginRES } from "~/types/auth";
-import { LoginREQ, schema } from "~/schemas/auth";
+// import { LoginRES } from "~/types/auth";
+// import { LoginREQ, schema } from "~/schemas/auth";
+
+type User = {
+  id: number;
+  email: string;
+  active: number;
+  emp_id: number;
+  lastdate_login: null;
+  created_by: null;
+  updated_by: number;
+  created_at: string;
+  updated_at: string;
+  identifier_token: string;
+}
+
+type LoginResponse = {
+  user: User;
+  token: string;
+  message: string;
+  code: number;
+}
+
+type LoginRequest = {
+  email: string;
+  password: string;
+}
 
 export default defineEventHandler(async (event) => {
   try {
     const { apiBaseUrl } = useRuntimeConfig(event);
-    const body = await readBody<LoginREQ>(event);
-    const parsed = schema.safeParse(body);
+    const body = await readBody<LoginRequest>(event);
+    // const parsed = schema.safeParse(body);
 
-    if (!parsed.success) {
+    // Manual validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(body.email)) {
       throw createError({
         statusCode: 422,
-        statusMessage: "Validation error",
-        data: parsed.error.flatten().fieldErrors,
+        statusMessage: "Invalid email format"
+      })
+    }
+    if (!body.password) {
+      throw createError({
+        statusCode: 422,
+        statusMessage: "Please enter your password!"
       })
     }
 
-    const { token, user } = await $fetch<LoginRES>(`${apiBaseUrl}/api/admin-public/login`, {
+    // if (!parsed.success) {
+    //   throw createError({
+    //     statusCode: 422,
+    //     statusMessage: "Validation error",
+    //     data: parsed.error.flatten().fieldErrors,
+    //   })
+    // }
+
+    const { token, user } = await $fetch<LoginResponse>(`${apiBaseUrl}/api/admin-public/login`, {
       method: "POST",
       headers: { Accept: "application/json", "Content-Type": "application/json" },
-      body: parsed.data,
+      body: body,
     });
 
     // Set secure HTTP-only cookie

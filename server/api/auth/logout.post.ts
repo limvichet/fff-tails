@@ -14,13 +14,12 @@ export default defineEventHandler(async (event) => {
     await $fetch(`${apiBaseUrl}/api/admin-secure/logout`, {
       method: "POST",
       headers: {
-        Accept: "application/json",
         Authorization: `Bearer ${getCookie(event, "token")!}`,
       },
     });
 
 
-    deleteCookie(event, "token");
+    deleteCookie(event, "token", { path: "/" });
     return { success: true };
     
   } catch (error: any) {

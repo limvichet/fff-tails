@@ -26,7 +26,7 @@
             <label class="label">Title</label><span class="text-red-500 text-sm">{{ errors.cust_title_1 }}</span>
           </div>
           <select v-model.number="form.cust_title_1" class="input">
-            <option value="-1"> Choose one ... </option>
+            <option value="-1"> Choose ... </option>
             <option v-for="dd in nameTitles" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
           </select>
         </div>
@@ -61,7 +61,7 @@
             <label class="label">Identity Type</label><span class="text-red-500 text-sm">{{ errors.iden_id_1 }}</span>
           </div>
           <select v-model="form.iden_id_1" class="input">
-            <option value="-1"> Choose one ... </option>
+            <option value="-1"> Choose ... </option>
             <option v-for="dd in identifications" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
           </select>
         </div>
@@ -80,7 +80,7 @@
             <label class="label">Identification Licenses</label><span class="text-red-500 text-sm">{{ errors.idli_id_1 }}</span>
           </div>
           <select v-model="form.idli_id_1" class="input">
-            <option value="-1"> Choose one ... </option>
+            <option value="-1"> Choose ... </option>
             <option v-for="dd in idLicenses" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
           </select>
         </div>
@@ -91,7 +91,7 @@
             <label class="label">Occupation</label><span class="text-red-500 text-sm">{{ errors.occu_id_1 }}</span>
           </div>
           <select v-model="form.occu_id_1" class="input">
-            <option value="-1"> Choose one ... </option>
+            <option value="-1"> Choose ... </option>
             <option v-for="dd in occupations" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
           </select>
         </div>
@@ -117,7 +117,7 @@
             <label class="label">Title</label><span class="text-red-500 text-sm">{{ errors.cust_title_2 }}</span>
           </div>
           <select v-model.number="form.cust_title_2" class="input">
-            <option value="-1"> Choose one ... </option>
+            <option value="-1"> Choose ... </option>
             <option v-for="dd in nameTitles" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
           </select>
         </div>
@@ -152,7 +152,7 @@
             <label class="label">Identity Type</label><span class="text-red-500 text-sm">{{ errors.iden_id_2 }}</span>
           </div>
           <select v-model="form.iden_id_2" class="input">
-            <option value="-1"> Choose one ... </option>
+            <option value="-1"> Choose ... </option>
             <option v-for="dd in identifications" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
           </select>
         </div>
@@ -171,7 +171,7 @@
             <label class="label">Identification Licenses</label><span class="text-red-500 text-sm">{{ errors.idli_id_2 }}</span>
           </div>
           <select v-model="form.idli_id_2" class="input">
-            <option value="-1"> Choose one ... </option>
+            <option value="-1"> Choose ... </option>
             <option v-for="dd in idLicenses" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
           </select>
         </div>
@@ -182,7 +182,7 @@
             <label class="label">Occupation</label><span class="text-red-500 text-sm">{{ errors.occu_id_2 }}</span>
           </div>
           <select v-model="form.occu_id_2" class="input">
-            <option value="-1"> Choose one ... </option>
+            <option value="-1"> Choose ... </option>
             <option v-for="dd in occupations" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
           </select>
         </div>
@@ -289,18 +289,18 @@
 
   <!-- Right 5.Address Information -->
   <div class="sm:col-span-2">
-    <ComponentCard title="5.Address Infomation"> 
+    <ComponentSubmitCard title="5.Address Infomation"> 
 
       <!-- cust_address -->
         <div>
           <div class="flex items-center justify-between">
             <label class="label">Address</label><span class="text-red-500 text-sm">{{ errors.cust_address }}</span>
           </div>
-          <textarea v-model="form.cust_address" class="input" rows="9" />
+          <textarea v-model="form.cust_address" class="input" rows="6" />
         </div>
 
       <!-- submit -->  
-      <div class="flex justify-end mt-4">
+      <template #footer>
         <button
           @click="updateForm"
           :disabled="loading"
@@ -308,9 +308,9 @@
         >
           {{ loading ? "Updating..." : "Update Customer" }}
         </button>
-      </div>
+      </template>
 
-    </ComponentCard>
+    </ComponentSubmitCard>
   </div>
   </div>
 
@@ -331,6 +331,7 @@ definePageMeta({
 import { z } from "zod"
 import { useRoute } from "vue-router"
 import ComponentCard from "@/components/common/ComponentCard.vue"
+import ComponentSubmitCard from "@/components/common/ComponentSubmitCard.vue"
 import type { Customer, CustomerFormDataResponse } from "~/types/customer"
 
 const { successMsg, errorMsg } = useMessage()

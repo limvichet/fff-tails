@@ -64,7 +64,11 @@ import { ref, onMounted, onUnmounted } from 'vue'
 
 const { user, logout } = useAuth();
 const route = useRoute();
-const loggingOut = () => logout();
+const loggingOut = async () => {
+  await logout()
+  closeDropdown()
+  await navigateTo('/app/signin') // or '/signin'
+}
 
 const dropdownOpen = ref(false)
 const dropdownRef = ref(null)
