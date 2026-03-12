@@ -7,7 +7,7 @@
   import { schema } from "~/schemas/auth";
 
   definePageMeta({
-    layout: "default-to-auth",
+    layout: "default",
     guestOnly: true,
   })
 

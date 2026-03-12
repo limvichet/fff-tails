@@ -52,8 +52,7 @@ const fetchFormData = async () => {
 onMounted(fetchFormData)
 
 /* FORM STATE */
-
-const form = reactive({
+const form = reactive<any>({
   cust_id:-1,
   currency_id:1,
   loan_lastcash:0,
@@ -118,6 +117,12 @@ function formatDateForInput(date: string | null) {
   return `${y}-${m}-${d}`
 }
 
+watchEffect(() => {
+  const lastCash = Number(String(form.loan_lastcash).replace(/,/g, '') || 0)
+  const newCash  = Number(String(form.loan_newcash).replace(/,/g, '') || 0)
+  form.loan_totalcash = lastCash + newCash
+})
+
 /* POPULATE FORM */
 watch(loanrecord,(l)=>{
   if(!l) return
@@ -155,12 +160,8 @@ watch(loanrecord,(l)=>{
 
 },{immediate:true})
 
-/* WATCH TOTAL CASH */
 
-watchEffect(() => {
-  form.loan_totalcash =
-    Number(form.loan_lastcash ?? 0) + Number(form.loan_newcash ?? 0)
-})
+
 
 watch(
   () => [form.loan_startdate, form.loan_peroid, form.loantype_id],
@@ -227,7 +228,6 @@ const updateForm = async ()=>{
   // ⭐ set principle start date
   form.loan_startdate_principle = form.loan_startdate
 
-
   // clear old errors
   Object.keys(errors).forEach(k => errors[k] = "")
 
@@ -235,7 +235,41 @@ const updateForm = async ()=>{
 
     console.log("FORM BEFORE PARSE:", form)
 
-    const parsed = schema.safeParse(form)
+    // 🔹 Clean numeric fields before validation
+    const cleanedForm = { ...form }
+    const numericFields: (keyof typeof form)[] = [
+      "loan_lastcash",
+      "loan_newcash",
+      "loan_totalcash",
+      "loan_principle",
+      "loan_over_draft",
+      "loan_interest_rate",
+      "cust_comission_interest_rate",
+      "loan_peroid",
+      "currency_id",
+      "loantype_id",
+      "payback_id",
+      "loan_status_id",
+      "cust_id",
+      "cust_comission_id",
+      "cust_loangroup_id",
+      "cust_guarantor_id",
+      "cust_position_loangroup_id",
+      "active"
+    ]
+
+    numericFields.forEach(field => {
+      const value = cleanedForm[field]
+      if (typeof value === "string") {
+        // Remove commas and parse
+        cleanedForm[field] = parseFloat(value.replace(/,/g, '')) || 0
+      } else {
+        cleanedForm[field] = Number(value) || 0
+      }
+    })
+
+    // console.log("FORM CLEANED:", cleanedForm)
+    const parsed = schema.safeParse(cleanedForm)
 
       if (!parsed.success) {
         // Populate errors object
@@ -249,7 +283,6 @@ const updateForm = async ()=>{
         loading.value = false
         return
       }
-
 
       const body = parsed.data
 
@@ -344,6 +377,25 @@ watch(form, () => {
   const selected = customerName1.value.find(c => c.id === form.cust_id)
   if (selected) search.value = selected.label
 })
+
+
+function onInput<K extends keyof typeof form>(event: Event, field: K) {
+  const target = event.target as HTMLInputElement
+  if (!target) return
+
+  // Remove commas
+  const cleanValue = target.value.replace(/,/g, '')
+
+  // Parse number safely
+  const numericValue = parseFloat(cleanValue)
+  form[field] = isNaN(numericValue) ? 0 : numericValue
+
+  // Update the input display with formatted value
+  target.value = form[field].toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
+}
+
+
 
 </script>
 
@@ -448,7 +500,13 @@ watch(form, () => {
             <label class="label">Last Cash<span class="text-red-500 text-sm"> *</span></label>
             <span class="text-red-500 text-sm">{{ errors.loan_lastcash }}</span>
           </div>
-          <input v-model.number="form.loan_lastcash" type="number" class="input"/>
+          <!-- <input v-model.number="form.loan_lastcash" type="number" class="input"/> -->
+          <input
+            type="text"
+            class="input"
+            :value="form.loan_lastcash.toLocaleString()"
+            @input="(e) => onInput(e, 'loan_lastcash')"
+          />
         </div>
 
       <!-- loan_newcash -->
@@ -457,7 +515,13 @@ watch(form, () => {
           <label class="label">New Cash<span class="text-red-500 text-sm"> *</span></label>
           <span class="text-red-500 text-sm">{{ errors.loan_newcash }}</span>
         </div>
-        <input v-model.number="form.loan_newcash" type="number" class="input"/>
+        <!-- <input v-model.number="form.loan_newcash" type="number" class="input"/> -->
+        <input
+          type="text"
+          class="input"
+          :value="form.loan_newcash.toLocaleString()"
+          @input="(e) => onInput(e, 'loan_newcash')"
+        />
       </div>
 
     <!-- loan_totalcash -->
@@ -466,7 +530,13 @@ watch(form, () => {
         <label class="label">Total Cash<span class="text-red-500 text-sm"> *</span></label>
         <span class="text-red-500 text-sm">{{ errors.loan_totalcash }}</span>
       </div>
-      <input v-model.number="form.loan_totalcash" type="number" class="input" readonly/>
+      <!-- <input v-model.number="form.loan_totalcash" type="number" class="input" readonly/> -->
+        <input
+          type="text"
+          class="input bg-gray-100 cursor-not-allowed"
+  :value="form.loan_totalcash.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })"
+          readonly
+        />
     </div>
 
   <!-- loan_principle -->
@@ -475,7 +545,13 @@ watch(form, () => {
         <label class="label">Principle<span class="text-red-500 text-sm"> *</span></label>
         <span class="text-red-500 text-sm">{{ errors.loan_principle }}</span>
       </div>
-      <input v-model.number="form.loan_principle" type="number" class="input"/>
+      <!-- <input v-model.number="form.loan_principle" type="number" class="input"/> -->
+        <input
+          type="text"
+          class="input"
+          :value="form.loan_principle.toLocaleString()"
+          @input="(e) => onInput(e, 'loan_principle')"
+        />
     </div>
 
     <!-- source_money -->
@@ -514,7 +590,13 @@ watch(form, () => {
       <div class="flex items-center justify-between">
         <label class="label">Over Draft</label><span class="text-red-500 text-sm">{{ errors.loan_over_draft }}</span>
       </div>
-      <input v-model.number="form.loan_over_draft" type="number" class="input"/>
+      <!-- <input v-model.number="form.loan_over_draft" type="number" class="input"/> -->
+        <input
+          type="text"
+          class="input"
+          :value="form.loan_over_draft.toLocaleString()"
+          @input="(e) => onInput(e, 'loan_over_draft')"
+        />
     </div>
 
     <!-- payback_id -->

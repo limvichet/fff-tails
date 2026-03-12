@@ -55,12 +55,17 @@ type LoanRecord = {
     currency:          Currency;
     loantype:          Loantype;
 }
-type PaginatedLoanRecords = {
+type LoanrecordResponses = {
   current_page: number
   data: LoanRecord[]
   per_page: number
   total: number
   last_page: number
+}
+
+type ApiResponse = {
+  success: boolean
+  data: LoanrecordResponses
 }
 
 // --------------------
@@ -85,7 +90,7 @@ const fetchLoanrecords = async () => {
   errorMsg.value = null
 
   try {
-    const res = await $fetch<PaginatedLoanRecords>(
+    const { data } = await $fetch<ApiResponse>(
       "/api/admin-secure/loanrecords",
       {
         method: "GET",
@@ -96,9 +101,9 @@ const fetchLoanrecords = async () => {
       }
     )
 
-    loanrecords.value = Array.isArray(res.data) ? res.data : []
-    total.value = res.total ?? 0
-    lastPageValue.value = res.last_page ?? 1
+    loanrecords.value = Array.isArray(data.data) ? data?.data : []
+    total.value = data.total ?? 0
+    lastPageValue.value = data.last_page ?? 1
   } catch (err: any) {
     errorMsg.value = err?.statusMessage || "Failed to fetch loan records"
     loanrecords.value = []
@@ -307,11 +312,13 @@ const deleteLoan = async () => {
                 <!-- contacts -->
                 <td class="px-1 py-1 text-sm text-gray-700">
                   <div class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-6">
-                    <button
+                    <NuxtLink
+                      :to="`/app/dashboard/schedules/prints/${l.id}/print-schedule`"
+                      target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                       Sched
-                    </button>
+                    </NuxtLink>
                     <button
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >

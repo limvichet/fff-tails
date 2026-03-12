@@ -37,7 +37,7 @@ type Loarnrecord = {
     loantype:          Loantype;
 }
 
-type PaginatedLoarnrecords = {
+type LoarnrecordResponses = {
   current_page: number
   data: Loarnrecord[]
   per_page: number
@@ -48,10 +48,10 @@ type PaginatedLoarnrecords = {
 
 type ApiResponse = {
   success: boolean
-  data: PaginatedLoarnrecords
+  data: LoarnrecordResponses
 }
 
-export default defineEventHandler(async (event: H3Event): Promise<PaginatedLoarnrecords> => {
+export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> => {
   const { apiBaseUrl } = useRuntimeConfig(event)
 
   const token = getCookie(event, "token")
@@ -80,7 +80,7 @@ export default defineEventHandler(async (event: H3Event): Promise<PaginatedLoarn
       },
     })
 
-    return res.data
+    return res
   } catch (err: any) {
     const message = err?.data?.message || err?.message || "Failed to fetch customers"
     throw createError({

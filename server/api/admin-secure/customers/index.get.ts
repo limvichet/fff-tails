@@ -9,7 +9,7 @@ type Customer = {
     cust_phone_1: string;
 }
 
-type PaginatedCustomers = {
+type CustomerResponses = {
   current_page: number
   data: Customer[]
   per_page: number
@@ -20,10 +20,10 @@ type PaginatedCustomers = {
 
 type ApiResponse = {
   success: boolean
-  data: PaginatedCustomers
+  data: CustomerResponses
 }
 
-export default defineEventHandler(async (event: H3Event): Promise<PaginatedCustomers> => {
+export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> => {
   const { apiBaseUrl } = useRuntimeConfig(event)
 
   const token = getCookie(event, "token")
@@ -51,7 +51,7 @@ export default defineEventHandler(async (event: H3Event): Promise<PaginatedCusto
       },
     })
 
-    return res.data
+    return res
   } catch (err: any) {
     const message = err?.data?.message || err?.message || "Failed to fetch customers"
     throw createError({

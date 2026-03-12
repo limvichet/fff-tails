@@ -421,9 +421,9 @@ type ApiResponse<T> = {
 }
 
 const headers = useRequestHeaders(["cookie"]);
-const { data } = await useAsyncData<ApiResponse<Customer>>(
+const { data } = await useAsyncData(
   `customer-${id}`,
-  () => $fetch(`/api/admin-secure/customers/${id}`, { headers }),
+  () => $fetch<ApiResponse<Customer>>(`/api/admin-secure/customers/${id}`, { headers }),
 )
 
 const customer = computed(() => data.value?.data ?? null)

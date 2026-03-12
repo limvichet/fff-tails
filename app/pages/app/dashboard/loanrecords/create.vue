@@ -51,7 +51,7 @@
   onMounted(fetchFormData)
 
   /* FORM */
-  const form = reactive({
+  const form = reactive<any>({
     cust_id:-1,
     currency_id:1,
     loan_lastcash:0,
@@ -86,8 +86,9 @@
   })
 
 watchEffect(() => {
-  form.loan_totalcash =
-    Number(form.loan_lastcash ?? 0) + Number(form.loan_newcash ?? 0)
+  const lastCash = Number(String(form.loan_lastcash).replace(/,/g, '') || 0)
+  const newCash  = Number(String(form.loan_newcash).replace(/,/g, '') || 0)
+  form.loan_totalcash = lastCash + newCash
 })
 
 // watch(
@@ -188,7 +189,40 @@ Object.keys(schema.shape).forEach((field) => {
     try{
       // console.log("FORM BEFORE PARSE:", form)
 
-      const parsed = schema.safeParse(form)
+      // 🔹 Clean numeric fields before validation
+      const cleanedForm = { ...form }
+      const numericFields: (keyof typeof form)[] = [
+        "loan_lastcash",
+        "loan_newcash",
+        "loan_totalcash",
+        "loan_principle",
+        "loan_over_draft",
+        "loan_interest_rate",
+        "cust_comission_interest_rate",
+        "loan_peroid",
+        "currency_id",
+        "loantype_id",
+        "payback_id",
+        "loan_status_id",
+        "cust_id",
+        "cust_comission_id",
+        "cust_loangroup_id",
+        "cust_guarantor_id",
+        "cust_position_loangroup_id",
+        "active"
+      ]
+
+      numericFields.forEach(field => {
+        const value = cleanedForm[field]
+        if (typeof value === "string") {
+          // Remove commas and parse
+          cleanedForm[field] = parseFloat(value.replace(/,/g, '')) || 0
+        } else {
+          cleanedForm[field] = Number(value) || 0
+        }
+      })
+
+      const parsed = schema.safeParse(cleanedForm)
 
       if (!parsed.success) {
         // Populate errors object
@@ -251,6 +285,33 @@ Object.keys(schema.shape).forEach((field) => {
   )
 
 
+
+// computed formatted value
+// const formattedLastCash = computed(() => {
+//   return form.loan_lastcash
+//     ? Number(form.loan_lastcash).toLocaleString()
+//     : ''
+// })
+
+// Computed formatted strings
+// const formattedLoanLastCash = computed(() => form.loan_lastcash.toLocaleString())
+// const formattedLoanNewCash = computed(() => form.loan_newcash.toLocaleString())
+// const formattedLoanTotalCash = computed(() => form.loan_totalcash.toLocaleString())
+// const formattedLoanPrinciple = computed(() => form.loan_principle.toLocaleString())
+// const formattedLoanOverDraft = computed(() => form.loan_over_draft.toLocaleString())
+
+
+function onInput<K extends keyof typeof form>(event: Event, field: K) {
+  const target = event.target as HTMLInputElement
+  if (!target) return
+
+  // Remove commas and parse number
+  const numericValue = parseFloat(target.value.replace(/,/g, '')) || 0
+
+  // Update only the target field
+  form[field] = numericValue
+}
+
 </script>
 
 <template>
@@ -301,7 +362,13 @@ Object.keys(schema.shape).forEach((field) => {
         <label class="label">Last Cash<span class="text-red-500 text-sm"> *</span></label>
         <span class="text-red-500 text-sm">{{ errors.loan_lastcash }}</span>
       </div>
-      <input v-model.number="form.loan_lastcash" type="number" class="input"/>
+      <!-- <input v-model.number="form.loan_lastcash" type="text" class="input" /> -->
+       <input
+          type="text"
+          class="input"
+          :value="form.loan_lastcash.toLocaleString()"
+          @input="(e) => onInput(e, 'loan_lastcash')"
+        />
     </div>
 
     <!-- loan_newcash -->
@@ -310,7 +377,13 @@ Object.keys(schema.shape).forEach((field) => {
         <label class="label">New Cash<span class="text-red-500 text-sm"> *</span></label>
         <span class="text-red-500 text-sm">{{ errors.loan_newcash }}</span>
       </div>
-      <input v-model.number="form.loan_newcash" type="number" class="input"/>
+      <!-- <input v-model.number="form.loan_newcash" type="text" class="input" /> -->
+        <input
+          type="text"
+          class="input"
+          :value="form.loan_newcash.toLocaleString()"
+          @input="(e) => onInput(e, 'loan_newcash')"
+        />
     </div>
 
     <!-- loan_totalcash -->
@@ -319,7 +392,13 @@ Object.keys(schema.shape).forEach((field) => {
         <label class="label">Total Cash<span class="text-red-500 text-sm"> *</span></label>
         <span class="text-red-500 text-sm">{{ errors.loan_totalcash }}</span>
       </div>
-      <input v-model.number="form.loan_totalcash" type="number" class="input" readonly/>
+      <!-- <input v-model.number="form.loan_totalcash" type="number" class="input" readonly/> -->
+        <input
+          type="text"
+          class="input bg-gray-100 cursor-not-allowed"
+  :value="form.loan_totalcash.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })"
+          readonly
+        />
     </div>
 
     <!-- loan_principle -->
@@ -328,7 +407,13 @@ Object.keys(schema.shape).forEach((field) => {
         <label class="label">Principle<span class="text-red-500 text-sm"> *</span></label>
         <span class="text-red-500 text-sm">{{ errors.loan_principle }}</span>
       </div>
-      <input v-model.number="form.loan_principle" type="number" class="input"/>
+      <!-- <input v-model.number="form.loan_principle" type="number" class="input"/> -->
+        <input
+          type="text"
+          class="input"
+          :value="form.loan_principle.toLocaleString()"
+          @input="(e) => onInput(e, 'loan_principle')"
+        />
     </div>
 
     <!-- source_money -->
@@ -367,7 +452,13 @@ Object.keys(schema.shape).forEach((field) => {
       <div class="flex items-center justify-between">
         <label class="label">Over Draft</label><span class="text-red-500 text-sm">{{ errors.loan_over_draft }}</span>
       </div>
-      <input v-model.number="form.loan_over_draft" type="number" class="input"/>
+      <!-- <input v-model.number="form.loan_over_draft" type="number" class="input"/> -->
+        <input
+          type="text"
+          class="input"
+          :value="form.loan_over_draft.toLocaleString()"
+          @input="(e) => onInput(e, 'loan_over_draft')"
+        />
     </div>
 
     <!-- payback_id -->

@@ -31,6 +31,7 @@ export default defineEventHandler(async (event) => {
     const { apiBaseUrl } = useRuntimeConfig(event);
     const body = await readBody<LoginRequest>(event);
     // const parsed = schema.safeParse(body);
+    console.log("API URL:", apiBaseUrl)
 
     // Manual validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/

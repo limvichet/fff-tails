@@ -31,12 +31,17 @@ type Customer = {
   cust_phone_1: string
 }
 
-type PaginatedCustomers = {
+type CustomerResponses = {
   current_page: number
   data: Customer[]
   per_page: number
   total: number
   last_page: number
+}
+
+type ApiResponse = {
+  success: boolean
+  data: CustomerResponses
 }
 
 // --------------------
@@ -61,7 +66,7 @@ const fetchCustomers = async () => {
   errorMsg.value = null
 
   try {
-    const res = await $fetch<PaginatedCustomers>(
+    const { data } = await $fetch<ApiResponse>(
       "/api/admin-secure/customers",
       {
         method: "GET",
@@ -72,9 +77,9 @@ const fetchCustomers = async () => {
       }
     )
 
-    customers.value = Array.isArray(res.data) ? res.data : []
-    total.value = res.total ?? 0
-    lastPageValue.value = res.last_page ?? 1
+    customers.value = Array.isArray(data.data) ? data.data : []
+    total.value = data.total ?? 0
+    lastPageValue.value = data.last_page ?? 1
   } catch (err: any) {
     errorMsg.value = err?.statusMessage || "Failed to fetch customers"
     customers.value = []
