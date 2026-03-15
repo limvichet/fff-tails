@@ -9,6 +9,13 @@ export const useAuth = () => {
   const loading = ref<boolean>(false);
 
   const login = async (credentials: LoginREQ) => {
+
+    
+    const config = useRuntimeConfig()
+    console.log("API BASE:", config.public.apiBaseUrl)
+    console.log("LOGIN URL:", config.public.apiBaseUrl + "/api/admin-public/login")
+    console.log("ENV TEST:", config.public.apiBaseUrl)
+
     try {
       loading.value = true;
       await $fetch("/api/auth/login", { method: "POST", body: credentials });

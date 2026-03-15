@@ -9,7 +9,7 @@ export default defineNuxtConfig({
   },
   modules: ['@nuxt/fonts', '@nuxt/icon', '@nuxt/image', "@nuxtjs/color-mode", 'nuxt-og-image'],
   colorMode: {
-    storageKey: 'fff-color-theme',
+    storageKey: 'color-theme',
     fallback: 'light',
     classSuffix: ''
   },
