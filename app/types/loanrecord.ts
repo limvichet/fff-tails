@@ -1,12 +1,25 @@
+// export interface LoanrecordFormDataResponse {
+//     customerName1: Array<{ id: number; label: string }>;
+//     customerName2: Array<{ id: number; label: string }>;
+//     currencies: Array<{ id: number; label: string }>;
+//     loanTypes: Array<{ id: number; label: string }>;
+//     paybacks: Array<{ id: number; label: string }>;
+//     loanGroupPositions: Array<{ id: number; label: string }>;
+//     loanStatuses: Array<{ id: number; label: string }>;
+//     loanCheckStatuses: Array<{  id: number; label: string }>;
+//     sourceMoneys: Array<{ label: string }>;
+// }
+
 export interface LoanrecordFormDataResponse {
-    customerName1: Array<{ id: number; label: string }>;
-    customerName2: Array<{ id: number; label: string }>;
-    currencies: Array<{ id: number; label: string }>;
-    loanTypes: Array<{ id: number; label: string }>;
-    paybacks: Array<{ id: number; label: string }>;
-    loanGroupPositions: Array<{ id: number; label: string }>;
-    loanStatuses: Array<{ id: number; label: string }>;
-    sourceMoneys: Array<{ label: string }>;
+  customerName1: Record<string, string | null>;
+  customerName2: Record<string, string | null>;
+  currencies: Record<string, string>;
+  loanTypes: Record<string, string>;
+  paybacks: Record<string, string>;
+  loanGroupPositions: Record<string, string>;
+  loanStatuses: Record<string, string>;
+  loanCheckStatuses: Record<string, string>;
+  sourceMoneys: string[];
 }
 
 export interface Loanrecord {

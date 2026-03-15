@@ -172,6 +172,9 @@ const pad = (num:number) => String(num).padStart(8,"0")
 <template>
 <div class="p-4">
   <h1>Print Schedule</h1>
+        <span class="mr-3 overflow-hidden rounded-full h-11 w-11">
+        <img src="/imgs/logo.png" alt="User" />
+      </span>
 </div>
 <div>{{ capital?.organization }}</div>
 <div>{{ loanrecord?.customer?.cust_name_1 }}</div>

@@ -23,6 +23,7 @@
   const sourceMoneys = ref<any[]>([])
   const paybacks = ref<any[]>([])
   const loanStatuses = ref<any[]>([])
+  const loanCheckStatuses = ref<any[]>([])
   const loanGroupPositions = ref<any[]>([])
 
   /* FETCH FORM DATA */
@@ -42,6 +43,7 @@
       sourceMoneys.value = data.sourceMoneys
       paybacks.value = map(data.paybacks)
       loanStatuses.value = map(data.loanStatuses)
+loanCheckStatuses.value = data.loanCheckStatuses ? map(data.loanCheckStatuses) : []
       loanGroupPositions.value = map(data.loanGroupPositions)
     } catch (err: any) {
       errorMsg.value = err?.statusMessage || "Failed to load form data"
@@ -80,7 +82,8 @@
     loan_note:"",
 
     active:1,
-    loan_check_approver:-1,
+    loan_check_status:0,
+    loan_check_approver:0,
     loan_check_date:'',
     loan_startdate_principle:'',
   })
@@ -147,6 +150,7 @@ const schema = z.object({
   loan_interest_rate:z.coerce.number().min(0.000001,"Required"),
   invoice_id:z.string().optional(),
   loan_status_id:z.number().min(1,"Please select"),
+  loan_check_status:z.number().optional(),
   cust_comission_id:z.number().min(1,"Please select"),
   cust_comission_interest_rate:z.coerce.number().min(0,"Required"),
   cust_loangroup_id:z.number().min(1,"Please select"),
@@ -204,6 +208,7 @@ Object.keys(schema.shape).forEach((field) => {
         "loantype_id",
         "payback_id",
         "loan_status_id",
+        "loan_check_status",
         "cust_id",
         "cust_comission_id",
         "cust_loangroup_id",
@@ -587,6 +592,18 @@ function onInput<K extends keyof typeof form>(event: Event, field: K) {
       <select v-model.number="form.loan_status_id" class="input">
         <option value="-1">Choose...</option>
         <option v-for="l in loanStatuses" :key="l.id" :value="l.id">
+          {{ l.label }}
+        </option>
+      </select>
+    </div>
+
+    <!-- loan_check_status -->
+    <div>
+      <div class="flex items-center justify-between">
+        <label class="label">Approver</label>
+      </div>
+      <select v-model.number="form.loan_check_status" class="input">
+        <option v-for="l in loanCheckStatuses" :key="l.id" :value="l.id">
           {{ l.label }}
         </option>
       </select>

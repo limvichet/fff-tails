@@ -19,6 +19,9 @@ const errors = reactive<Record<string,string>>({})
 const route = useRoute()
 const id = route.params.id
 
+  errorMsg.value = null
+  successMsg.value = null
+
 /* FORM OPTIONS */
 const customerName1 = ref<any[]>([])
 const currencies = ref<any[]>([])
@@ -26,6 +29,7 @@ const loanTypes = ref<any[]>([])
 const sourceMoneys = ref<any[]>([])
 const paybacks = ref<any[]>([])
 const loanStatuses = ref<any[]>([])
+const loanCheckStatuses = ref<any[]>([])
 const loanGroupPositions = ref<any[]>([])
 
 /* FETCH FORM DATA */
@@ -46,6 +50,7 @@ const fetchFormData = async () => {
   sourceMoneys.value = data.sourceMoneys
   paybacks.value = map(data.paybacks)
   loanStatuses.value = map(data.loanStatuses)
+  loanCheckStatuses.value = map(data.loanCheckStatuses)
   loanGroupPositions.value = map(data.loanGroupPositions)
 }
 
@@ -146,6 +151,7 @@ watch(loanrecord,(l)=>{
     loan_interest_rate:l.loan_interest_rate ?? 0,
     invoice_id:(l.invoice?.invoice_type ?? "") + String(l.invoice_id).padStart(8, '0'),
     loan_status_id:l.loan_status_id ?? 1,
+    loan_check_status:l.loan_check_status ?? 0,
 
     cust_comission_id:l.cust_comission_id ?? -1,
     cust_comission_interest_rate:l.cust_comission_interest_rate ?? 0,
@@ -208,6 +214,7 @@ const schema = z.object({
   loan_interest_rate:z.coerce.number().min(0.000001,"Required"),
   invoice_id:z.string().optional(),
   loan_status_id:z.number().min(1,"Please select"),
+  loan_check_status:z.number().optional(),
   cust_comission_id:z.number().min(1,"Please select"),
   cust_comission_interest_rate:z.coerce.number().min(0,"Required"),
   cust_loangroup_id:z.number().min(1,"Please select"),
@@ -250,6 +257,7 @@ const updateForm = async ()=>{
       "loantype_id",
       "payback_id",
       "loan_status_id",
+      "loan_check_status",
       "cust_id",
       "cust_comission_id",
       "cust_loangroup_id",
@@ -725,6 +733,18 @@ function onInput<K extends keyof typeof form>(event: Event, field: K) {
       <select v-model.number="form.loan_status_id" class="input">
         <option value="-1">Choose...</option>
         <option v-for="l in loanStatuses" :key="l.id" :value="l.id">
+          {{ l.label }}
+        </option>
+      </select>
+    </div>
+
+    <!-- loan_check_status -->
+    <div>
+      <div class="flex items-center justify-between">
+        <label class="label">Approver</label>
+      </div>
+      <select v-model.number="form.loan_check_status" class="input">
+        <option v-for="l in loanCheckStatuses" :key="l.id" :value="l.id">
           {{ l.label }}
         </option>
       </select>
