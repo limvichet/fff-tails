@@ -34,25 +34,73 @@ const isSubmitted = ref(false);
   });
 
 
-  const submitForm = handleSubmit(async (data) => {
-   // Success Callback (Runs if validation passes)
-   
-      isSubmitted.value = true;
-      const redirectTo = useRoute().query.redirectTo?.toString() || "/app/dashboard";
-      err.value = null;
-      try {
-        await login(data);
-        await navigateTo(redirectTo);
-      } catch (error: any) {
-        if (!error.data.data) err.value = [error.data.statusMessage! as string];
-        else err.value = Object.values(error.data.data).flat() as string[];
-      }
-    },
-    // Invalid Callback (Runs if validation fails)
-    () => {
-      isSubmitted.value = true; // This triggers the visibility of error messages
-    }
+// const submitForm = handleSubmit(async (data) => {
+//   // Success Callback (Runs if validation passes)
+
+//   isSubmitted.value = true;
+//   const redirectTo = useRoute().query.redirectTo?.toString() || "/app/dashboard";
+//   err.value = null;
+//   try {
+//     await login(data);
+//     await navigateTo(redirectTo);
+//   } catch (error: any) {
+//     if (!error.data.data) err.value = [error.data.statusMessage! as string];
+//     else err.value = Object.values(error.data.data).flat() as string[];
+//   }
+// },
+//   // Invalid Callback (Runs if validation fails)
+//   () => {
+//     isSubmitted.value = true; // This triggers the visibility of error messages
+//   }
+// );
+
+const submitForm = handleSubmit(
+async (data) => {
+isSubmitted.value = true;
+const route = useRoute();
+const redirectTo = route.query.redirectTo?.toString() || "/app/dashboard";
+
+
+err.value = null;
+
+try {
+  console.log("Submitting login form:", data);
+
+  const res = await login(data);
+
+  console.log("Login response:", res);
+
+  await navigateTo(redirectTo);
+
+} catch (error: any) {
+  console.error("Login error:", error);
+
+  // show full response in console
+  console.log("Error response:", error?.data);
+
+  if (!error?.data) {
+    err.value = ["Server connection failed"];
+    return;
+  }
+
+  if (!error.data.data) {
+    err.value = [error.data.statusMessage || "Login failed"];
+  } else {
+    err.value = Object.values(error.data.data).flat() as string[];
+  }
+}
+
+
+},
+
+() => {
+// Validation failed
+isSubmitted.value = true;
+console.warn("Form validation failed");
+}
 );
+
+
 
 </script>
 
