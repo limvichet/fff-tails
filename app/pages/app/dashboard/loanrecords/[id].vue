@@ -100,9 +100,9 @@ type ApiResponse<T> = {
 
 const headers = useRequestHeaders(["cookie"])
 
-const { data } = await useAsyncData<ApiResponse<any>>(
+const { data } = await useAsyncData(
   `loanrecord-${id}`,
-  () => $fetch(`/api/admin-secure/loanrecords/${id}`,{ headers })
+  () => $fetch<ApiResponse<any>>(`/api/admin-secure/loanrecords/${id}`,{ headers })
 )
 
 const loanrecord = computed(()=>data.value?.data ?? null)
@@ -240,10 +240,11 @@ const updateForm = async ()=>{
 
   try{
 
-    console.log("FORM BEFORE PARSE:", form)
+    // console.log("FORM BEFORE PARSE:", form)
 
-    // 🔹 Clean numeric fields before validation
+    // Clean numeric fields before validation
     const cleanedForm = { ...form }
+
     const numericFields: (keyof typeof form)[] = [
       "loan_lastcash",
       "loan_newcash",
@@ -832,9 +833,8 @@ function onInput<K extends keyof typeof form>(event: Event, field: K) {
   font-size: 14px;
   color: #555;
 }
-/* Dark mode override */
 .dark .label {
-  color: #ccc; /* lighter text for dark mode */
+  color: #ccc;
 }
 
 .input {

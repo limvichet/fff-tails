@@ -405,6 +405,7 @@ const form = reactive({
   cust_facebook: "",
   cust_telegram: "",
   cust_address: "",
+  cust_address_link: "",
 
   img1: null as File | null,
   img1_src: null as string | null,
@@ -413,6 +414,14 @@ const form = reactive({
   img2: null as File | null,
   img2_src: null as string | null,
   img2_check: false,
+
+  photo1: null as File | null,
+  photo1_src: null as string | null,
+  photo1_check: false,
+
+  photo2: null as File | null,
+  photo2_src: null as string | null,
+  photo2_check: false,
 })
 
 type ApiResponse<T> = {
@@ -619,13 +628,22 @@ const updateForm = async () => {
   Object.keys(errors).forEach(k => errors[k] = "")
 
   try {
-    console.log("FORM BEFORE PARSE:", form)
-    const parsed = schema.parse(form)
+    // console.log("FORM BEFORE PARSE:", form)
+    const parsed = schema.safeParse(form)
 
-    console.log("PARSED FORM:", parsed)
+    if (!parsed.success) {
+      parsed.error.errors.forEach((e) => {
+        const field = e.path.join('.')
+        errors[field] = e.message
+      })
+      errorMsg.value = "Please fix the validation errors."
+      return
+    }
+
+    // console.log("PARSED FORM:", parsed)
     const fd = new FormData()
-
-    Object.entries(parsed).forEach(([k, v]) => {
+    const formDataObj = parsed.data
+    Object.entries(formDataObj).forEach(([k, v]) => {
       if (v === -1 || v === "") {
         fd.append(k, "")
       } else {

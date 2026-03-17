@@ -271,7 +271,7 @@ Object.keys(schema.shape).forEach((field) => {
           }
         })
       } else {
-        errorMsg.value = "Error while saving customer"
+        errorMsg.value = "Error while saving loanrecord"
       }
     } finally {
       loading.value = false

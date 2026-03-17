@@ -1,7 +1,9 @@
+/* store */
+
 import {
-  readBody,
   getCookie,
   createError,
+  readMultipartFormData,
   type H3Event,
 } from "h3"
 
@@ -10,7 +12,6 @@ import type { Customer } from "~/types/customer"
 export default defineEventHandler(async (event: H3Event) => {
   const { apiBaseUrl } = useRuntimeConfig(event)
 
-  // 1️⃣ Check token
   const token = getCookie(event, "token")
   if (!token) {
     throw createError({
@@ -20,41 +21,36 @@ export default defineEventHandler(async (event: H3Event) => {
   }
 
   try {
-    /**
-     * If sending JSON → use readBody()
-     * If sending FormData (with image) → DO NOT use readBody()
-     * Instead forward raw request body
-     */
-    const formData = await readMultipartFormData(event)
 
-    if (!formData) {
+    const formFields = await readMultipartFormData(event)
+
+    if (!formFields) {
       throw createError({
         statusCode: 400,
         statusMessage: "Invalid form data",
       })
     }
 
-    // Convert multipart to FormData
-    const data = new FormData()
+    // Convert multipart to browser Data
+    const formData = new FormData()
 
-    for (const field of formData) {
+    for (const field of formFields) {
       if (!field.name) continue
+
       if (field.filename) {
-        // file
-        data.append(
+        formData.append(
           field.name,
           new Blob([new Uint8Array(field.data)]),
           field.filename
         )
       } else {
-        // text
-        data.append(field.name, field.data.toString())
+        formData.append(field.name, field.data.toString("utf-8"))
       }
     }
 
     const res = await $fetch<Customer>(`${apiBaseUrl}/api/admin-secure/customers`, {
       method: "POST",
-      body: data,
+      body: formData,
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/json",

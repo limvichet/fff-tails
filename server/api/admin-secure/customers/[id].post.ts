@@ -12,7 +12,6 @@ import type { Customer } from "~/types/customer"
 export default defineEventHandler(async (event: H3Event) => {
   const { apiBaseUrl } = useRuntimeConfig(event)
 
-  // 1️⃣ Get token
   const token = getCookie(event, "token")
   if (!token) {
     throw createError({
@@ -21,7 +20,6 @@ export default defineEventHandler(async (event: H3Event) => {
     })
   }
 
-  // 2️⃣ Get customer ID from route params
   const id = event.context.params?.id
   if (!id) {
     throw createError({
@@ -31,8 +29,9 @@ export default defineEventHandler(async (event: H3Event) => {
   }
 
   try {
-    // 3️⃣ Read multipart form data (files + text)
+
     const formFields = await readMultipartFormData(event)
+
     if (!formFields) {
       throw createError({
         statusCode: 400,
@@ -40,8 +39,9 @@ export default defineEventHandler(async (event: H3Event) => {
       })
     }
 
-    // 4️⃣ Convert multipart to browser FormData
+    // Convert multipart to browser FormData
     const formData = new FormData()
+
     for (const field of formFields) {
       if (!field.name) continue
       if (field.filename) {
@@ -56,17 +56,17 @@ export default defineEventHandler(async (event: H3Event) => {
       }
     }
 
-    // 5️⃣ Add `_method=PUT` so Laravel treats POST as PUT
+    // Add `_method=PUT` so Laravel treats POST as PUT
     formData.append("_method", "PUT")
 
-    // 5️⃣ Send PUT request to Laravel update endpoint
+    // Send PUT request to Laravel update endpoint
     const res = await $fetch<Customer>(`${apiBaseUrl}/api/admin-secure/customers/${id}`, {
       method: "POST",
       body: formData,
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/json",
-        // ❌ DO NOT set Content-Type manually → browser sets multipart boundary automatically
+        // DO NOT set Content-Type manually → browser sets multipart boundary automatically
       },
     })
 

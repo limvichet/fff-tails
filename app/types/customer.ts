@@ -20,6 +20,7 @@ export interface Customer {
   img1?: string;
   img1_url?: string;
   cust_title_2?: number;
+  photo1?: string;
   cust_name_2?: string;
   cust_dob_2?: string;
   cust_idcardnum_2?: string;
@@ -30,11 +31,13 @@ export interface Customer {
   img2?: string;
   img2_url?: string;
   cust_phone_2?: string;
+  photo2?: string;
   cust_account_num?: string;
   cust_atm_num?: string;
   cust_facebook?: string;
   cust_telegram?: string;
   cust_address?: string;
+  cust_address_link?: string;
   created_by?: number;
   updated_by?: number;
   active?: number;

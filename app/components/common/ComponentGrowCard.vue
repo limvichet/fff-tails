@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[
-      'rounded-2xl dark:bg-white/[0.03] flex flex-col h-full',
+      'rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] flex flex-col h-full',
       className,
     ]"
   >
@@ -16,7 +16,7 @@
     </div>
 
     <!-- Card Body -->
-    <div class="p-2 sm:p-6 flex-1 flex flex-col">
+    <div class="p-2 border-t border-gray-100 dark:border-gray-800 sm:p-6 flex-1 flex flex-col">
       <div class="space-y-5 flex-1">
         <slot></slot>
       </div>
