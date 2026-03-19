@@ -1,12 +1,45 @@
 import { getCookie, getQuery, createError, type H3Event } from "h3"
 
+type Employee = {
+  id: number;
+  surname: string;
+  first_name: string;
+  full_name: string;
+}
+
+type Createdby = {
+  id: number;
+  emp_id: number;
+  employee: Employee;
+}
+
+type Updatedby = {
+  id: number;
+  emp_id: number;
+  employee: Employee;
+}
+
+type Nametitle = {
+  id: number;
+  nametitle_kh: string;
+}
 
 type Customer = {
     id:           number;
-    cust_title_1: number;
+    cust_title_1?: number;
+    nametitle1?: Nametitle;
     cust_name_1:  string;
     cust_dob_1:   null | string;
     cust_phone_1: string;
+    cust_title_2?: number;
+    nametitle2?: Nametitle;
+    cust_name_2:  string;
+    created_by: number;
+    created_at: string;
+    createdby: Createdby;
+    updated_by: string;
+    updated_at: string;
+    updatedby: Updatedby;
 }
 
 type CustomerResponses = {

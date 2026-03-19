@@ -17,18 +17,50 @@ const { errorMsg, successMsg, success } = useMessage()
 const isDeleteModal = ref(false)
 const selectedCustomerId = ref<number | null>(null)
 
-  successMsg.value = null
-  errorMsg.value = null
+successMsg.value = null
+errorMsg.value = null
 
-// --------------------
-// Types
-// --------------------
+// type
+type Employee = {
+  id: number;
+  surname: string;
+  first_name: string;
+  full_name: string;
+}
+
+type Createdby = {
+  id: number;
+  emp_id: number;
+  employee: Employee;
+}
+
+type Updatedby = {
+  id: number;
+  emp_id: number;
+  employee: Employee;
+}
+
+type Nametitle = {
+  id: number;
+  nametitle_kh: string;
+}
+
 type Customer = {
-  id: number
-  cust_title_1: number
-  cust_name_1: string
-  cust_dob_1: string | null
-  cust_phone_1: string
+  id:           number;
+  cust_title_1?: number;
+  nametitle1?: Nametitle;
+  cust_name_1:  string;
+  cust_dob_1:   null | string;
+  cust_phone_1: string;
+  cust_title_2?: number;
+  nametitle2?: Nametitle;
+  cust_name_2:  string;
+  created_by: number;
+  created_at: string;
+  createdby: Createdby;
+  updated_by: string;
+  updated_at: string;
+  updatedby: Updatedby;
 }
 
 type CustomerResponses = {
@@ -37,6 +69,7 @@ type CustomerResponses = {
   per_page: number
   total: number
   last_page: number
+  [key: string]: any // for extra fields like links, from, to, etc.
 }
 
 type ApiResponse = {
@@ -44,9 +77,8 @@ type ApiResponse = {
   data: CustomerResponses
 }
 
-// --------------------
+
 // State
-// --------------------
 const customers = ref<Customer[]>([])
 const loading = ref(false)
 
@@ -58,15 +90,14 @@ const perPage = 10
 const total = ref(0)
 const lastPageValue = ref(1)
 
-// --------------------
+
 // Fetch Customers
-// --------------------
 const fetchCustomers = async () => {
   loading.value = true
   errorMsg.value = null
 
   try {
-    const { data } = await $fetch<ApiResponse>(
+    const res = await $fetch<ApiResponse>(
       "/api/admin-secure/customers",
       {
         method: "GET",
@@ -77,9 +108,9 @@ const fetchCustomers = async () => {
       }
     )
 
-    customers.value = Array.isArray(data.data) ? data.data : []
-    total.value = data.total ?? 0
-    lastPageValue.value = data.last_page ?? 1
+    customers.value = Array.isArray(res.data.data) ? res.data.data : []
+    total.value = res.data.total ?? 0
+    lastPageValue.value = res.data.last_page ?? 1
   } catch (err: any) {
     errorMsg.value = err?.statusMessage || "Failed to fetch customers"
     customers.value = []
@@ -92,14 +123,10 @@ const fetchCustomers = async () => {
 
 onMounted(fetchCustomers)
 
-// --------------------
 // Computed
-// --------------------
 const paginated = computed(() => customers.value)
 
-// --------------------
 // Search (debounce)
-// --------------------
 let debounceTimeout: ReturnType<typeof setTimeout> | null = null
 
 watch(searchInput, (val) => {
@@ -112,9 +139,7 @@ watch(searchInput, (val) => {
   }, 400)
 })
 
-// --------------------
 // Pagination
-// --------------------
 const prevPage = () => {
   if (page.value > 1) {
     page.value--
@@ -166,6 +191,20 @@ const deleteCustomer = async () => {
   }
 }
 
+/* DATE FORMAT HELPER */
+function formatDate(date: string | null) {
+  if (!date) return ""
+
+  // already correct
+  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return date
+  }
+
+  // convert dd-MM-yyyy → yyyy-MM-dd
+  const [d, m, y] = date.split("-")
+
+  return `${d}/${m}/${y}`
+}
 </script>
 
 <template>
@@ -174,8 +213,18 @@ const deleteCustomer = async () => {
     <!-- Search -->
     <div class="space-y-4">
       <ComponentCard title="Customers">
-        <input v-model="searchInput" type="text" placeholder="Search customers..." class="input" />
+        <!-- Search -->
+        <div class="relative">
+          <!-- Icon -->
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z" />
+          </svg>
 
+          <!-- Search Input -->
+          <input v-model="searchInput" type="text" placeholder="Search records..." class="input !pl-9" />
+        </div>
 
         <!-- Messages -->
         <div v-if="errorMsg" class="mb-3 p-2 rounded bg-red-500/20 text-red-300 text-sm">
@@ -198,9 +247,12 @@ const deleteCustomer = async () => {
               <thead>
                 <tr class="border-b border-gray-200 dark:border-gray-700">
                   <th class="px-5 py-3 text-sm font-semibold text-left w-1/12">#</th>
-                  <th class="px-5 py-3 text-sm font-semibold text-left w-3/12">Name</th>
-                  <th class="px-5 py-3 text-sm font-semibold text-left w-2/12">Phone</th>
+                  <th class="px-5 py-3 text-sm font-semibold text-left w-3/12">Name1</th>
+                  <th class="px-5 py-3 text-sm font-semibold text-left w-3/12">Name2</th>
+                  <th class="px-5 py-3 text-sm font-semibold text-left w-2/12">Phone1</th>
                   <th class="px-5 py-3 text-sm font-semibold text-left w-2/12">DOB</th>
+                  <th class="px-5 py-3 text-sm font-semibold text-left w-2/12">Created</th>
+                  <th class="px-5 py-3 text-sm font-semibold text-left w-2/12">Updated</th>
                   <th class="px-10 py-3 text-sm font-semibold text-right w-4/12 ">Actions</th>
                 </tr>
               </thead>
@@ -213,7 +265,13 @@ const deleteCustomer = async () => {
                   </td>
 
                   <td class="px-5 py-3 sm:px-6 text-sm">
-                    {{ c.cust_name_1 }}
+                    <!-- {{ c.nametitle1.nametitle_kh}} -->
+                    {{ c.nametitle1?.nametitle_kh }} {{ c.cust_name_1 }}
+                  </td>
+
+                  <td class="px-5 py-3 sm:px-6 text-sm">
+                    <!-- {{ c.nametitle1.nametitle_kh}} -->
+                    {{ c.nametitle2?.nametitle_kh }} {{ c.cust_name_2 }}
                   </td>
 
                   <td class="px-5 py-3 sm:px-6 text-sm text-gray-400">
@@ -221,7 +279,15 @@ const deleteCustomer = async () => {
                   </td>
 
                   <td class="px-5 py-3 sm:px-6 text-sm text-gray-400">
-                    {{ c.cust_dob_1 || "-" }}
+                    {{ formatDate(c.cust_dob_1) || "-" }}
+                  </td>
+
+                  <td class="px-5 py-3 sm:px-6 text-sm text-gray-400">
+                    <span class="font-semibold">{{ c.createdby.employee.full_name }}</span> - {{ formatDate(c.created_at) }}
+                  </td>
+
+                  <td class="px-5 py-3 sm:px-6 text-sm text-gray-400">
+                    <span class="font-semibold">{{ c.updatedby.employee.full_name }}</span> - {{ formatDate(c.updated_at) }}
                   </td>
 
                   <td class="flex items-center justify-end gap-1 py-3 sm:px-6">

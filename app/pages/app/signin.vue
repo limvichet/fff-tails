@@ -1,9 +1,5 @@
 <script setup lang="ts">
 
-
-
-
-
   import { schema } from "~/schemas/auth";
 
   definePageMeta({

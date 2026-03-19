@@ -225,7 +225,7 @@ const deleteLoan = async () => {
         <input
           v-model="searchInput"
           type="text"
-          placeholder="Search loan records..."
+          placeholder="Search records..."
           class="input !pl-9"
         />
       </div>
