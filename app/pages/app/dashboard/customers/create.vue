@@ -668,7 +668,9 @@
 
         <!-- img2 -->
         <div>
-          <label class="label">ID Card Image 2</label>
+          <div class="flex items-center justify-between">
+            <label class="label">ID Card Image 2</label><span class="text-red-500 text-sm">{{ errors.img2 }}</span>
+          </div>
           <input type="file" @change="onFileChange2" class="input" />
           <div v-if="form.img2_src" class="mt-4">
             <div class="relative group w-full">
@@ -688,7 +690,9 @@
 
         <!-- photo1 -->
         <div>
-          <label class="label">Photo 1</label>
+          <div class="flex items-center justify-between">
+            <label class="label">Photo 1</label><span class="text-red-500 text-sm">{{ errors.photo1 }}</span>
+          </div>
           <input type="file" @change="onFileChange3" class="input" />
           <div v-if="form.photo1_src" class="mt-4">
             <div class="relative group w-1/2">
@@ -708,7 +712,9 @@
 
         <!-- photo2 -->
         <div>
-          <label class="label">Photo 2</label>
+          <div class="flex items-center justify-between">
+            <label class="label">Photo 2</label><span class="text-red-500 text-sm">{{ errors.photo2 }}</span>
+          </div>
           <input type="file" @change="onFileChange4" class="input" />
           <div v-if="form.photo2_src" class="mt-4">
             <div class="relative group w-1/2">
