@@ -319,6 +319,7 @@
 
 
   /* VALIDATION ZOD */
+  const MIN_FILE_SIZE = 1.01 * 1024 * 1024       // 1MB
   const schema = z.object({
     // Primary ID
     id: z.number().nullable().optional(),
@@ -353,6 +354,44 @@
     cust_atm_num: z.string().optional(),
     cust_facebook: z.string().optional(),
     cust_telegram: z.string().optional(),
+
+     // Image Customer 1 (Optional)
+    img1: z
+      .any()
+      .optional()
+      .refine((file) => {
+        if (!file) return true
+        const f = file instanceof File ? file : file?.[0]
+        if (!f) return true
+        return f.size <= MIN_FILE_SIZE
+      }, { message: 'Size must be less than 1MB' }),
+    img2: z
+      .any()
+      .optional()
+      .refine((file) => {
+        if (!file) return true
+        const f = file instanceof File ? file : file?.[0]
+        if (!f) return true
+        return f.size <= MIN_FILE_SIZE
+      }, { message: 'Size must be less than 1MB' }),
+    photo1: z
+      .any()
+      .optional()
+      .refine((file) => {
+        if (!file) return true
+        const f = file instanceof File ? file : file?.[0]
+        if (!f) return true
+        return f.size <= MIN_FILE_SIZE
+      }, { message: 'Size must be less than 1MB' }),
+    photo2: z
+      .any()
+      .optional()
+      .refine((file) => {
+        if (!file) return true
+        const f = file instanceof File ? file : file?.[0]
+        if (!f) return true
+        return f.size <= MIN_FILE_SIZE
+      }, { message: 'Size must be less than 1MB' }),
   })
 
   const validateField = (field: keyof typeof schema.shape) => {
@@ -385,12 +424,26 @@
       // console.log("FORM BEFORE PARSE:", form)
       const parsed = schema.safeParse(form)
 
+      // if (!parsed.success) {
+      //   parsed.error.errors.forEach((e) => {
+      //     const field = e.path.join('.')
+      //     errors[field] = e.message
+      //   })
+      //   errorMsg.value = "Please fix the validation errors."
+      //   return
+      // }
+
       if (!parsed.success) {
+        const errorList: string[] = []
+
         parsed.error.errors.forEach((e) => {
           const field = e.path.join('.')
           errors[field] = e.message
+          errorList.push(`${field}: ${e.message}`)
         })
-        errorMsg.value = "Please fix the validation errors."
+
+        errorMsg.value = errorList.join(' | ')
+        console.log(parsed.error.format())
         return
       }
 
