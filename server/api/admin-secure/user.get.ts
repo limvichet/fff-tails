@@ -8,17 +8,17 @@ export default defineEventHandler(async (event) => {
   try {
 
     const token = getCookie(event, "token")
+    console.log("token:", token)
 
     if (!token)
       throw createError({
-        statusCode: UNAUTHORIZED.code,
-        statusMessage: UNAUTHORIZED.message,
+      statusCode: 401,
+      statusMessage: "Unauthorized - Please login again.",
     });
 
     const res = await $fetch<User>(`${apiBaseUrl}/api/admin-secure/user`, {
       method: "GET",
       headers: {
-        "Content-Type": "application/json",
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
       },

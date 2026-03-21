@@ -3,17 +3,25 @@ import type { User } from "~/types/auth";
 
 const useUser = () => useState<User | null>("user", () => null);
 
-export const useAuth1 = () => {
+export const useAuth = () => {
   const user = useUser();
   const isAuthenticated = computed(() => !!user.value);
   const loading = ref<boolean>(false);
 
   const login = async (credentials: LoginREQ) => {
+
+    
+    const config = useRuntimeConfig()
+    // console.log("API BASE:", config.public.apiBaseUrl)
+    // console.log("LOGIN URL:", config.public.apiBaseUrl + "/api/admin-public/login")
+    // console.log("ENV TEST:", config.public.apiBaseUrl)
+
     try {
       loading.value = true;
       await $fetch("/api/auth/login", { method: "POST", body: credentials });
       await fetchUser();
     } catch (error: any) {
+      throw error;
       throw error;
     } finally {
       loading.value = false;
@@ -37,22 +45,12 @@ const logout = async () => {
   }
 };
 
-  const fetchUser = async (headers: { cookie?: string | undefined; } = {}) => {
+    const fetchUser = async (headers: HeadersInit = {}) => {
     try {
       loading.value = true;
-      const token = useCookie<string>('token').value;
+      // pass the headers from the plugin here.
       const fetchedUser = await $fetch<User>("/api/admin-secure/user", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        onResponseError({ response }) {
-          if (response.status === 401) {
-            // Silently handle guest status
-          }
-        }
+        headers,
       });
 
       user.value = fetchedUser;

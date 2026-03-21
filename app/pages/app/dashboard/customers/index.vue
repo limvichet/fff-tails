@@ -11,6 +11,7 @@ import ComponentCard from "@/components/common/ComponentCard.vue"
 import { ref, computed, onMounted, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useMessage } from "~/composables/useMessage"
+import { PencilIcon, TrashIcon} from "@/icons";
 
 const router = useRouter()
 const { errorMsg, successMsg, success } = useMessage()
@@ -218,7 +219,9 @@ function formatDate(date: string | null) {
           <!-- Icon -->
           <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor"
             stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round"
+            <path 
+              stroke-linecap="round" 
+              stroke-linejoin="round"
               d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z" />
           </svg>
 
@@ -246,58 +249,69 @@ function formatDate(date: string | null) {
             <table class="min-w-full">
               <thead>
                 <tr class="border-b border-gray-200 dark:border-gray-700">
-                  <th class="px-5 py-3 text-sm font-semibold text-left w-1/12">#</th>
-                  <th class="px-5 py-3 text-sm font-semibold text-left w-3/12">Name1</th>
-                  <th class="px-5 py-3 text-sm font-semibold text-left w-3/12">Name2</th>
-                  <th class="px-5 py-3 text-sm font-semibold text-left w-2/12">Phone1</th>
-                  <th class="px-5 py-3 text-sm font-semibold text-left w-2/12">DOB</th>
-                  <th class="px-5 py-3 text-sm font-semibold text-left w-2/12">Created</th>
-                  <th class="px-5 py-3 text-sm font-semibold text-left w-2/12">Updated</th>
-                  <th class="px-10 py-3 text-sm font-semibold text-right w-4/12 ">Actions</th>
+                  <th class="px-4 py-2 text-sm font-semibold text-left w-[5%]">#</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left w-[20%]">Name1</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left w-[20%]">Name2</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left w-[10%]">Phone1</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left w-[10%]">DOB</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left w-[15%]">Created At</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left w-[15%]">Updated At</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-center w-[5%]">Actions</th>
                 </tr>
               </thead>
 
               <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                 <tr v-for="(c, i) in paginated" :key="c.id"
                   class="border-t border-gray-100 dark:border-gray-800 hover:bg-blue-300/20 transition">
-                  <td class="px-5 py-3 text-sm text-gray-400">
+                  <td class="px-4 py-2 text-sm text-gray-400">
                     {{ (page - 1) * perPage + i + 1 }}
                   </td>
 
-                  <td class="px-5 py-3 sm:px-6 text-sm">
+                  <td class="px-1 py-2 text-sm">
                     <!-- {{ c.nametitle1.nametitle_kh}} -->
                     {{ c.nametitle1?.nametitle_kh }} {{ c.cust_name_1 }}
                   </td>
 
-                  <td class="px-5 py-3 sm:px-6 text-sm">
+                  <td class="px-1 py-2 text-sm">
                     <!-- {{ c.nametitle1.nametitle_kh}} -->
                     {{ c.nametitle2?.nametitle_kh }} {{ c.cust_name_2 }}
                   </td>
 
-                  <td class="px-5 py-3 sm:px-6 text-sm text-gray-400">
+                  <td class="px-1 py-2 text-sm text-gray-400">
                     {{ c.cust_phone_1 }}
                   </td>
 
-                  <td class="px-5 py-3 sm:px-6 text-sm text-gray-400">
+                  <td class="px-1 py-2 text-sm text-gray-400">
                     {{ formatDate(c.cust_dob_1) || "-" }}
                   </td>
 
-                  <td class="px-5 py-3 sm:px-6 text-sm text-gray-400">
+                  <td class="px-1 py-2 text-sm text-gray-400">
                     <span class="font-semibold">{{ c.createdby.employee.full_name }}</span> - {{ formatDate(c.created_at) }}
                   </td>
 
-                  <td class="px-5 py-3 sm:px-6 text-sm text-gray-400">
+                  <td class="px-1 py-2 text-sm text-gray-400">
                     <span class="font-semibold">{{ c.updatedby.employee.full_name }}</span> - {{ formatDate(c.updated_at) }}
                   </td>
 
-                  <td class="flex items-center justify-end gap-1 py-3 sm:px-6">
-                    <button @click="editCustomer(c.id)"
-                      class="px-2 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm">
-                      Edit
+                  <td class="flex items-center justify-end gap-1 px-2 py-2">
+                    <button
+                      @click="editCustomer(c.id)"
+                      class="inline-flex items-center gap-1 px-1 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm"
+                    >
+                      <!-- Pencil Icon -->
+                      <component :is="PencilIcon" class="w-4 h-4" />
+
+                      <!-- Text -->
+                      <span>Edit</span>
                     </button>
 
                     <button @click="openDeleteModal(c.id)"
-                      class="px-2 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-sm">
+                      class="inline-flex items-center gap-1 px-1 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-sm">
+                      
+                      <!-- Trash Icon -->
+                      <component :is="TrashIcon" class="w-4 h-4" />
+
+                      <!-- Text -->
                       Delete
                     </button>
                   </td>

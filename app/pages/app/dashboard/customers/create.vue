@@ -109,10 +109,10 @@
     // id: z.number().nullable().optional(),
 
     // ===== Customer 1 (Required) =====
-    cust_title_1: z.number().min(0, "Please select"),
-    iden_id_1: z.number().min(0, "Please select"),
-    idli_id_1: z.number().min(0, "Please select"),
-    occu_id_1: z.number().min(0, "Please select"),
+    cust_title_1: z.number().min(0, "Required"),
+    iden_id_1: z.number().min(0, "Required"),
+    idli_id_1: z.number().min(0, "Required"),
+    occu_id_1: z.number().min(0, "Required"),
 
     cust_name_1: z.string().nonempty("Required"),
     cust_dob_1: z.string().nonempty("Required"),
@@ -196,6 +196,37 @@
     )
   })
 
+  // compressImage
+  const compressImage = (file: File, maxSizeMB = 1): Promise<File> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      img.onload = () => {
+        const scale = Math.sqrt((maxSizeMB * 1024 * 1024) / file.size);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+
+        ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(new File([blob], file.name, { type: file.type }));
+            } else {
+              resolve(file); // fallback
+            }
+          },
+          file.type,
+          0.7 // quality
+        );
+      };
+
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
   const submitForm = async () => {
     loading.value = true
     errorMsg.value = null
@@ -204,16 +235,29 @@
     Object.keys(errors).forEach((k) => (errors[k] = ""))
 
     try {
-      const parsed = schema.safeParse(form)
 
-      // if (!parsed.success) {
-      //   parsed.error.errors.forEach((e) => {
-      //     const field = e.path.join('.')
-      //     errors[field] = e.message
-      //   })
-      //   errorMsg.value = "Please fix the validation errors."
-      //   return
-      // }
+      // ✅ compress images if larger than 1MB
+      const compressIfNeeded = async (file: any) => {
+        if (!file) return file;
+
+        const f = file instanceof FileList ? file[0] : file;
+
+        if (f && f.size > 1024 * 1024) {
+          return await compressImage(f);
+        }
+
+        return f;
+      };
+
+      // clone form to avoid mutating original
+      const newForm = { ...form };
+
+      newForm.img1 = await compressIfNeeded(form.img1);
+      newForm.img2 = await compressIfNeeded(form.img2);
+      newForm.photo1 = await compressIfNeeded(form.photo1);
+      newForm.photo2 = await compressIfNeeded(form.photo2);
+
+      const parsed = schema.safeParse(newForm)
 
       if (!parsed.success) {
         const errorList: string[] = []
@@ -224,8 +268,8 @@
           errorList.push(`${field}: ${e.message}`)
         })
 
-        errorMsg.value = errorList.join(' | ')
-        console.log(parsed.error.format())
+        // errorMsg.value = errorList.join(' | ')
+        errorMsg.value = "Please fix the validation errors."
         return
       }
 
@@ -243,10 +287,10 @@
 
 
       // files
-      if (form.img1 && form.img1_check) fd.append("img1", form.img1)
-      if (form.img2 && form.img2_check) fd.append("img2", form.img2)
-      if (form.photo1 && form.photo1_check) fd.append("photo1", form.photo1)
-      if (form.photo2 && form.photo2_check) fd.append("photo2", form.photo2)
+      if (newForm.img1 && form.img1_check) fd.append("img1", newForm.img1)
+      if (newForm.img2 && form.img2_check) fd.append("img2", newForm.img2)
+      if (newForm.photo1 && form.photo1_check) fd.append("photo1", newForm.photo1)
+      if (newForm.photo2 && form.photo2_check) fd.append("photo2", newForm.photo2)
 
       // flags
       if (form.img1_check) fd.append("img1_check", "1")
@@ -505,7 +549,7 @@
             <label class="label">Date Identification <span class="text-red-500 text-sm"> *</span></label><span
               class="text-red-500 text-sm">{{ errors.cust_idcardnum_date_1 }}</span>
           </div>
-          <input v-model="form.cust_idcardnum_date_1" type="date" class="input" />
+          <input v-model="form.cust_idcardnum_date_1" type="date" class="input" maxlength="9"/>
         </div>
 
         <!-- idli_id_1 -->
@@ -582,7 +626,7 @@
             <label class="label">ID Card Number</label><span class="text-red-500 text-sm">{{ errors.cust_idcardnum_2
               }}</span>
           </div>
-          <input v-model="form.cust_idcardnum_2" type="text" class="input" />
+          <input v-model="form.cust_idcardnum_2" type="text" class="input" maxlength="9"/>
         </div>
 
         <!-- iden_id_2 -->

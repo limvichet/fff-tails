@@ -145,7 +145,7 @@
                       (isExpanded || isHovered || isMobileOpen)
                     "
                   >
-                    <ul class="mt-2 space-y-1 ml-9">
+                    <ul class="mt-2 space-y-0 ml-5">
                       <li v-for="subItem in item.subItems" :key="subItem.name">
                         <router-link
                           :to="subItem.path"
@@ -161,9 +161,15 @@
                             },
                           ]"
                         >
+
+                          <!-- ✅ ICON -->
+                          <span class="flex items-center justify-center w-5 h-5">
+                            <component :is="subItem.icon" />
+                          </span>
                           
+                          <!-- TEXT -->
                           {{ subItem.name }}
-                          <span class="flex items-center gap-1 ml-auto">
+                          <span class="flex items-center ml-auto">
                             <span
                               v-if="subItem.new"
                               :class="[
@@ -230,11 +236,16 @@ import {
   TableIcon,
   ListIcon,
   PlugInIcon,
+  BoxCubeIcon,
+  PlusIcon,
+  UserGroupIcon,
+  SearchIcon,
+  PencilIcon,
 } from "../../icons";
 import SidebarWidget from "./SidebarWidget.vue";
-import BoxCubeIcon from "@/icons/BoxCubeIcon.vue";
 import { useSidebar } from "@/composables/useSidebar";
-import UserGroupIcon from "~/icons/UserGroupIcon.vue";
+// import BoxCubeIcon from "@/icons/BoxCubeIcon.vue";
+// import UserGroupIcon from "@/icons/UserGroupIcon.vue";
 
 const route = useRoute();
 
@@ -248,8 +259,8 @@ const menuGroups = [
         icon: UserGroupIcon,
         name: "Customers",
         subItems: [
-          { name: "Create", path: "/app/dashboard/customers/create", pro: false },
-          { name: "Search", path: "/app/dashboard/customers", pro: false },
+          { name: "Create", path: "/app/dashboard/customers/create", pro: false, icon: PencilIcon },
+          { name: "Search", path: "/app/dashboard/customers", pro: false, icon: SearchIcon },
         ],
       },
       {

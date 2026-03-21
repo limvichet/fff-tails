@@ -1,5 +1,3 @@
-// import { LoginRES } from "~/types/auth";
-// import { LoginREQ, schema } from "~/schemas/auth";
 
 type User = {
   id: number;
@@ -14,8 +12,10 @@ type User = {
   identifier_token: string;
 }
 
-type LoginResponse = {
+type ApiResponse = {
   user: User;
+  roles: string[];
+  permissions: string[];
   token: string;
   message: string;
   code: number;
@@ -56,11 +56,19 @@ export default defineEventHandler(async (event) => {
     //   })
     // }
 
-    const { token, user } = await $fetch<LoginResponse>(`${apiBaseUrl}/api/admin-public/login`, {
-      method: "POST",
-      headers: { Accept: "application/json", "Content-Type": "application/json" },
-      body: body,
-    });
+    const { token, user, roles, permissions } =
+      await $fetch<ApiResponse>(
+        `${apiBaseUrl}/api/admin-public/login`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: body,
+        }
+      );
+
 
     // Set secure HTTP-only cookie
     setCookie(event, "token", token, {
@@ -68,9 +76,10 @@ export default defineEventHandler(async (event) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       maxAge: 60 * 60 * 24, // 1 days
+      path: "/", 
     });
 
-    return { user, token };
+    return { user, roles, permissions, token };
 
   } catch (error: any) {
     throw customCreateError(error, "Can't login!");

@@ -1,6 +1,8 @@
 export interface User {
     id:               number;
-    email:            string;
+    name?:            string;
+    photo_url?:       string;
+    email?:           string;
     active:           number;
     emp_id:           number;
     lastdate_login:   null;
@@ -13,6 +15,8 @@ export interface User {
 
 export type LoginRES = {
   user: User;
+  roles: string[];
+  permissions: string[];
   token: string;
   message: string;
   code: number;
