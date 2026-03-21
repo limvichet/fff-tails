@@ -21,6 +21,7 @@ export interface Customer {
   img1_url?: string;
   cust_title_2?: number;
   photo1?: string;
+  photo1_url?: string;
   cust_name_2?: string;
   cust_dob_2?: string;
   cust_idcardnum_2?: string;
@@ -32,6 +33,7 @@ export interface Customer {
   img2_url?: string;
   cust_phone_2?: string;
   photo2?: string;
+  photo2_url?: string;
   cust_account_num?: string;
   cust_atm_num?: string;
   cust_facebook?: string;

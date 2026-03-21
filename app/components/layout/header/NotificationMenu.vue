@@ -184,7 +184,7 @@ const editLoan = (id: number) => {
     class="mt-3 p-2 rounded-lg w-full border 
            border-gray-200 dark:border-gray-700
            text-gray-700 dark:text-gray-200
-           hover:bg-gray-100 dark:hover:bg-gray-800
+           hover:bg-gray-10¸0 dark:hover:bg-gray-800
            transition"
     @click="handleViewAllClick"
   >

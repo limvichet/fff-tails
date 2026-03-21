@@ -3,7 +3,7 @@ import type { User } from "~/types/auth";
 
 const useUser = () => useState<User | null>("user", () => null);
 
-export const useAuth = () => {
+export const useAuth1 = () => {
   const user = useUser();
   const isAuthenticated = computed(() => !!user.value);
   const loading = ref<boolean>(false);

@@ -135,9 +135,11 @@
     form[imageKey] = file
     form[checkKey] = true
 
-    const reader = new FileReader()
-    reader.onload = () => (form[previewKey] = reader.result as string)
-    reader.readAsDataURL(file)
+    // const reader = new FileReader()
+    // reader.onload = () => (form[previewKey] = reader.result as string)
+    // reader.readAsDataURL(file)
+    form[previewKey] = URL.createObjectURL(file)
+
   }
 
   const onFileChange1 = (e: Event) =>
@@ -311,6 +313,12 @@
       img2_src: c.img2_url ?? null,
       img1_check: !!c.img1_url,
       img2_check: !!c.img2_url,
+
+      // 🔥 ADD THIS (MISSING)
+      photo1_src: c.photo1_url ?? null,
+      photo2_src: c.photo2_url ?? null,
+      photo1_check: !!c.photo1_url,
+      photo2_check: !!c.photo2_url,
     })
 
     formReady.value = true
@@ -812,7 +820,7 @@
             <div class="relative group w-1/2">
               <a :href="form.photo1_src" target="_blank" rel="noopener noreferrer" class="block">
                 <img :src="form.photo1_src" @click="openPhoto1"
-                  class="w-full h-50 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
+                  class="w-full h-52 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
               </a>
               <div
                 class="absolute top-1 right-1 bg-white/50 backdrop-blur px-2 py-1 rounded-full shadow flex items-center gap-2 pointer-events-none">
@@ -834,7 +842,7 @@
             <div class="relative group w-1/2">
               <a :href="form.photo2_src" target="_blank" rel="noopener noreferrer" class="block">
                 <img :src="form.photo2_src" @click="openPhoto2"
-                  class="w-full h-50 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
+                  class="w-full h-52 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
               </a>
               <div
                 class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full shadow flex items-center gap-2 pointer-events-none">
