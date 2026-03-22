@@ -8,7 +8,8 @@
   })
 
   useFFFSeo({
-    title: `${defaultSeo.title} - Sign In`,
+    // title: `${defaultSeo.title} - Sign In`,
+    title: `Chhoukroit - Sign In`,
     description:
       "This is your dashboard where you can manage many things about your account!",
   });
