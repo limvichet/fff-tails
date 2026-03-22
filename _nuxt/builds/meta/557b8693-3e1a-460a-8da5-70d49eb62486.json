@@ -1,1 +1,0 @@
-{"id":"557b8693-3e1a-460a-8da5-70d49eb62486","timestamp":1774149875794,"matcher":{"static":{"/signin":{"redirect":"/app/signin"},"/signup":{"redirect":"/app/signup"},"/dashboard":{"redirect":"/app/dashboard"}},"wildcard":{},"dynamic":{}},"prerendered":[]}
