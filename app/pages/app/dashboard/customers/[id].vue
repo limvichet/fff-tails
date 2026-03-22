@@ -9,6 +9,7 @@
   import { z } from "zod"
   import { useRoute } from "vue-router"
   import ComponentCard from "@/components/common/ComponentCard.vue"
+  import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
   import ComponentSubmitCard from "@/components/common/ComponentSubmitCard.vue"
   import type { Customer, CustomerFormDataResponse } from "~/types/customer"
 
@@ -345,6 +346,7 @@
     cust_idcardnum_date_1: z.string().nonempty("Required"),
     cust_phone_1: z.string().nonempty("Required"),
     cust_address: z.string().nonempty("Required"),
+    cust_address_link: z.string().optional(),
 
     // ===== Customer 2 (Optional Section) =====
     cust_title_2: z.number().optional(),
@@ -529,7 +531,7 @@
         return
       }
 
-      // console.log("PARSED FORM:", parsed)
+      console.log("PARSED FORM:", parsed)
       const fd = new FormData()
       const formDataObj = parsed.data
       Object.entries(formDataObj).forEach(([k, v]) => {
@@ -959,11 +961,14 @@
         <!-- cust_address_link -->
         <div>
           <div class="flex items-center justify-between">
-            <label :class="[
-              'label',
-              isAddressValid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
-            ]" @click="isAddressValid && openLink(form.cust_address_link)">
-              Map link <span v-if="isAddressValid"> 📌</span>
+            <label 
+              :class="[
+                'label',
+                isAddressValid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
+              ]" 
+              @click="isAddressValid && openLink(form.cust_address_link)">
+              Map link 
+              <span v-if="isAddressValid"> 📌</span>
             </label>
           </div>
           <input v-model="form.cust_address_link" class="input" />

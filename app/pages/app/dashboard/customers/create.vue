@@ -852,10 +852,12 @@
         <!-- cust_address_link -->
         <div>
           <div class="flex items-center justify-between">
-            <label :class="[
-              'label',
-              isAddressValid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
-            ]" @click="isAddressValid && openLink(form.cust_address_link)">
+            <label 
+              :class="[
+                'label',
+                isAddressValid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
+              ]" 
+              @click="isAddressValid && openLink(form.cust_address_link)">
               Map link <span v-if="isAddressValid"> 📌</span>
             </label>
           </div>
