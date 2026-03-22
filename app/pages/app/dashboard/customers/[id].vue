@@ -307,6 +307,7 @@
       cust_facebook: c.cust_facebook ?? "",
       cust_telegram: c.cust_telegram ?? "",
       cust_address: c.cust_address ?? "",
+      cust_address_link: c.cust_address_link ?? "",
 
       // Image preview from backend
       img1_src: c.img1_url ?? null,
@@ -450,6 +451,27 @@
     });
   };
 
+  type ImageKey = 'img1' | 'img2' | 'photo1' | 'photo2';
+
+  type ImageItem  = {
+  file: File | null;
+  src: string | null;
+  check: boolean;
+}
+
+  const images: Record<ImageKey, ImageItem> = {
+    img1: { file: null, src: null, check: false },
+    img2: { file: null, src: null, check: false },
+    photo1: { file: null, src: null, check: false },
+    photo2: { file: null, src: null, check: false },
+  };
+
+  const updateFromBackend = (key: ImageKey, url: string | null) => {
+    images[key].file = null;
+    images[key].src = url ? '/storage/' + url + '?v=' + Date.now() : null;
+    images[key].check = !!url;
+  };
+
   /* UPDATE */
   const updateForm = async () => {
     loading.value = true
@@ -539,6 +561,13 @@
       })
 
       successMsg.value = "Customer updated successfully!"
+
+      // ✅ REFRESH IMAGE FROM BACKEND
+      const refreshed = await $fetch<{succes:number, data:any}>(`/api/admin-secure/customers/${id}`)
+      updateFromBackend("img1", refreshed.data.img1_url)
+      updateFromBackend("img2", refreshed.data.img2_url)
+      updateFromBackend("photo1", refreshed.data.photo1_url)
+      updateFromBackend("photo2", refreshed.data.photo2_url)
 
     } catch (err: any) {
       if (err.errors) {
