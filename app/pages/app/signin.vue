@@ -109,7 +109,12 @@ console.warn("Form validation failed");
       >
         <div class="flex flex-col flex-1 w-full lg:w-1/2">
           <div class="w-full max-w-md pt-10 mx-auto">
-              Welcome Back to FFF Admin
+            <img class="dark:hidden" src="/imgs/logo.svg" alt="Logo" />
+            <img class="hidden dark:block " src="/imgs/logo-dark.svg" alt="Logo" />
+            <p class="text-left text-gray-400 dark:text-white/60 py-3">
+                Welcome Back to Admin Dashboard
+            </p>
+
           </div>
           <div class="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
             <div>
@@ -242,7 +247,7 @@ console.warn("Form validation failed");
             <CommonGridShape />
             <div class="flex flex-col items-center max-w-xs">
               <router-link to="/" class="block mb-4">
-                <img width="{231}" height="{48}" src="/images/logo/auth-logo2.svg" alt="Logo" />
+                <img width="{231}" height="{48}" src="/imgs/logo-dark.svg" alt="Logo" />
               </router-link>
               <p class="text-center text-gray-400 dark:text-white/60">
                 Admin Dashboard

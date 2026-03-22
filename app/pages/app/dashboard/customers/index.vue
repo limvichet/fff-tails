@@ -247,16 +247,28 @@ function formatDate(date: string | null) {
           class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
           <div class="max-w-full overflow-x-auto custom-scrollbar"> 
             <table class="min-w-full">
+              <!-- <thead>
+                <tr class="border-b border-gray-200 dark:border-gray-700">
+                  <th class="px-4 py-2 text-sm font-semibold text-left w-[5%]">#</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[15%] w-[30%]">Name1</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[15%] w-[30%]">Name2</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[15%]">Phone1</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[0%] hidden sm:table-cell">DOB</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[0%] hidden sm:table-cell">Created At</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[0%] hidden sm:table-cell">Updated At</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-center sm:w-[25%] w-[20%]">Actions</th>
+                </tr>
+              </thead> -->
               <thead>
                 <tr class="border-b border-gray-200 dark:border-gray-700">
                   <th class="px-4 py-2 text-sm font-semibold text-left w-[5%]">#</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left w-[20%]">Name1</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left w-[20%]">Name2</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left w-[10%]">Phone1</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left w-[10%]">DOB</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left w-[15%]">Created At</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left w-[15%]">Updated At</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-center w-[5%]">Actions</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[15%] w-[30%]">Name1</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[15%] w-[30%]">Name2</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[20%]">Phone1</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[20%] hidden sm:table-cell">DOB</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[20%] hidden sm:table-cell">Created At</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[20%] hidden sm:table-cell">Updated At</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-center sm:w-[15%] w-[15%]">Actions</th>
                 </tr>
               </thead>
 
@@ -281,39 +293,39 @@ function formatDate(date: string | null) {
                     {{ c.cust_phone_1 }}
                   </td>
 
-                  <td class="px-1 py-2 text-sm text-gray-400">
+                  <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
                     {{ formatDate(c.cust_dob_1) || "-" }}
                   </td>
 
-                  <td class="px-1 py-2 text-sm text-gray-400">
+                  <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
                     <span class="font-semibold">{{ c.createdby.employee.full_name }}</span> - {{ formatDate(c.created_at) }}
                   </td>
 
-                  <td class="px-1 py-2 text-sm text-gray-400">
+                  <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
                     <span class="font-semibold">{{ c.updatedby.employee.full_name }}</span> - {{ formatDate(c.updated_at) }}
                   </td>
 
-                  <td class="flex items-center justify-end gap-1 px-2 py-2">
-                    <button
-                      @click="editCustomer(c.id)"
-                      class="inline-flex items-center gap-1 px-1 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm"
-                    >
-                      <!-- Pencil Icon -->
-                      <component :is="PencilIcon" class="w-4 h-4" />
+                  <td class="flex items-center justify-end gap-1 px-1 py-2">
+                    <div class="flex flex-wrap items-center justify-left gap-1 py-1">
+                      <button @click="editCustomer(c.id)"
+                        class="inline-flex items-center gap-1 px-1 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm">
+                        <!-- Pencil Icon -->
+                        <component :is="PencilIcon" class="w-4 h-4" />
 
-                      <!-- Text -->
-                      <span>Edit</span>
-                    </button>
+                        <!-- Text -->
+                        <span>Edit</span>
+                      </button>
 
-                    <button @click="openDeleteModal(c.id)"
-                      class="inline-flex items-center gap-1 px-1 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-sm">
-                      
-                      <!-- Trash Icon -->
-                      <component :is="TrashIcon" class="w-4 h-4" />
+                      <button @click="openDeleteModal(c.id)"
+                        class="inline-flex items-center gap-0.5 px-1 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-sm">
 
-                      <!-- Text -->
-                      Delete
-                    </button>
+                        <!-- Trash Icon -->
+                        <component :is="TrashIcon" class="w-4 h-4" />
+
+                        <!-- Text -->
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
 
