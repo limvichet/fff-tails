@@ -488,397 +488,405 @@
   </div>
 
   <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-    <!-- LEFT 1 Basic -->
-    <div class="space-y-4">
-      <ComponentCard title="1. Basic">
 
-        <!-- cust_title_1 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Title <span class="text-red-500 text-sm"> *</span></label><span
-              class="text-red-500 text-sm">{{ errors.cust_title_1 }}</span>
-          </div>
-          <select v-model.number="form.cust_title_1" class="input">
-            <option value="-1" disabled> Choose one ... </option>
-            <option v-for="dd in nameTitles" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
-          </select>
-        </div>
+    <!-- col-span-2 -->
+    <div class="lg:col-span-2 grid grid-cols-1 gap-2 sm:grid-cols-1 lg:grid-cols-2">
 
-        <!-- cust_name_1 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Name <span class="text-red-500 text-sm"> *</span></label><span
-              class="text-red-500 text-sm">{{ errors.cust_name_1 }}</span>
-          </div>
-          <input v-model="form.cust_name_1" type="text" class="input" />
-        </div>
+      <!-- LEFT 1 Basic -->
+      <div class="space-y-4">
+        <ComponentCard title="1. Basic">
 
-        <!-- cust_dob_1 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Date of Birth <span class="text-red-500 text-sm"> *</span></label><span
-              class="text-red-500 text-sm">{{ errors.cust_dob_1 }}</span>
-          </div>
-          <input v-model="form.cust_dob_1" type="date" class="input" />
-        </div>
-
-        <!-- cust_idcardnum_1 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">ID Card Number <span class="text-red-500 text-sm"> *</span></label><span
-              class="text-red-500 text-sm">{{ errors.cust_idcardnum_1 }}</span>
-          </div>
-          <input v-model="form.cust_idcardnum_1" type="text" class="input" />
-        </div>
-
-        <!-- iden_id_1 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Identity Type <span class="text-red-500 text-sm"> *</span></label><span
-              class="text-red-500 text-sm">{{ errors.iden_id_1 }}</span>
-          </div>
-          <select v-model="form.iden_id_1" class="input">
-            <option value="-1" disabled> Choose one ... </option>
-            <option v-for="dd in identifications" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
-          </select>
-        </div>
-
-        <!-- cust_idcardnum_date_1 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Date Identification <span class="text-red-500 text-sm"> *</span></label><span
-              class="text-red-500 text-sm">{{ errors.cust_idcardnum_date_1 }}</span>
-          </div>
-          <input v-model="form.cust_idcardnum_date_1" type="date" class="input" maxlength="9"/>
-        </div>
-
-        <!-- idli_id_1 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Identification Licenses <span class="text-red-500 text-sm"> *</span></label><span
-              class="text-red-500 text-sm">{{ errors.idli_id_1 }}</span>
-          </div>
-          <select v-model="form.idli_id_1" class="input">
-            <option value="-1" disabled> Choose one ... </option>
-            <option v-for="dd in idLicenses" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
-          </select>
-        </div>
-
-        <!-- occu_id_1 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Occupation <span class="text-red-500 text-sm"> *</span></label><span
-              class="text-red-500 text-sm">{{ errors.occu_id_1 }}</span>
-          </div>
-          <select v-model="form.occu_id_1" class="input">
-            <option value="-1" disabled> Choose one ... </option>
-            <option v-for="dd in occupations" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
-          </select>
-        </div>
-
-        <!-- cust_phone_1 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Phone <span class="text-red-500 text-sm"> *</span></label><span
-              class="text-red-500 text-sm">{{ errors.cust_phone_1 }}</span>
-          </div>
-          <input v-model="form.cust_phone_1" type="text" maxlength="10"
-            @input="form.cust_phone_1 = form.cust_phone_1.replace(/[^0-9]/g, '').slice(0, 10)" class="input" />
-        </div>
-
-      </ComponentCard>
-    </div>
-
-    <!-- Miiddle 2 Basic -->
-    <div class="space-y-4">
-      <ComponentCard title="2. Basic">
-
-        <!-- cust_title_2 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Title</label><span class="text-red-500 text-sm">{{ errors.cust_title_2 }}</span>
-          </div>
-          <select v-model.number="form.cust_title_2" class="input">
-            <option value="-1"> Choose one ... </option>
-            <option v-for="dd in nameTitles" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
-          </select>
-        </div>
-
-        <!-- cust_name_2 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Name</label><span class="text-red-500 text-sm">{{ errors.cust_name_2 }}</span>
-          </div>
-          <input v-model="form.cust_name_2" type="text" class="input" />
-        </div>
-
-        <!-- cust_dob_2 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Date of Birth</label><span class="text-red-500 text-sm">{{ errors.cust_dob_2 }}</span>
-          </div>
-          <input v-model="form.cust_dob_2" type="date" class="input" />
-        </div>
-
-        <!-- cust_idcardnum_2 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">ID Card Number</label><span class="text-red-500 text-sm">{{ errors.cust_idcardnum_2
-              }}</span>
-          </div>
-          <input v-model="form.cust_idcardnum_2" type="text" class="input" maxlength="9"/>
-        </div>
-
-        <!-- iden_id_2 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Identity Type</label><span class="text-red-500 text-sm">{{ errors.iden_id_2 }}</span>
-          </div>
-          <select v-model="form.iden_id_2" class="input">
-            <option value="-1"> Choose one ... </option>
-            <option v-for="dd in identifications" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
-          </select>
-        </div>
-
-        <!-- cust_idcardnum_date_2 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Date Identification</label><span class="text-red-500 text-sm">{{
-              errors.cust_idcardnum_date_2 }}</span>
-          </div>
-          <input v-model="form.cust_idcardnum_date_2" type="date" class="input" />
-        </div>
-
-        <!-- idli_id_2 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Identification Licenses</label><span class="text-red-500 text-sm">{{ errors.idli_id_2
-              }}</span>
-          </div>
-          <select v-model="form.idli_id_2" class="input">
-            <option value="-1"> Choose one ... </option>
-            <option v-for="dd in idLicenses" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
-          </select>
-        </div>
-
-        <!-- occu_id_2 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Occupation</label><span class="text-red-500 text-sm">{{ errors.occu_id_2 }}</span>
-          </div>
-          <select v-model="form.occu_id_2" class="input">
-            <option value="-1"> Choose one ... </option>
-            <option v-for="dd in occupations" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
-          </select>
-        </div>
-
-        <!-- cust_phone_2 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Phone</label><span class="text-red-500 text-sm">{{ errors.cust_phone_2 }}</span>
-          </div>
-          <input v-model="form.cust_phone_2" type="text" maxlength="10"
-            @input="form.cust_phone_1 = form.cust_phone_1.replace(/[^0-9]/g, '').slice(0, 10)" class="input" />
-        </div>
-
-      </ComponentCard>
-    </div>
-
-    <!-- RIGHT 3 Indentification photo-->
-    <div class="space-y-4">
-      <ComponentCard title="3. Identification Photo">
-
-        <!-- img1 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">ID Card Image 1</label><span class="text-red-500 text-sm">{{ errors.img1 }}</span>
-          </div>
-          <input type="file" @change="onFileChange1" class="input" />
-          <div v-if="form.img1_src" class="mt-4">
-            <div class="relative group w-full">
-              <a :href="form.img1_src" target="_blank" rel="noopener noreferrer" class="block">
-                <img :src="form.img1_src" @click="openImg1"
-                  class="w-full h-50 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
-              </a>
-              <div
-                class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full shadow flex items-center gap-2 pointer-events-none">
-                <input type="checkbox" v-model="form.img1_check"
-                  class="w-4 h-4 text-blue-600 rounded pointer-events-auto" />
-                <span class="text-sm text-gray-700">Check</span>
-              </div>
+          <!-- cust_title_1 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Title <span class="text-red-500 text-sm"> *</span></label><span
+                class="text-red-500 text-sm">{{ errors.cust_title_1 }}</span>
             </div>
+            <select v-model.number="form.cust_title_1" class="input">
+              <option value="-1" disabled> Choose one ... </option>
+              <option v-for="dd in nameTitles" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
+            </select>
           </div>
-        </div>
 
-        <!-- img2 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">ID Card Image 2</label><span class="text-red-500 text-sm">{{ errors.img2 }}</span>
-          </div>
-          <input type="file" @change="onFileChange2" class="input" />
-          <div v-if="form.img2_src" class="mt-4">
-            <div class="relative group w-full">
-              <a :href="form.img2_src" target="_blank" rel="noopener noreferrer" class="block">
-                <img :src="form.img2_src" @click="openImg2"
-                  class="w-full h-50 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
-              </a>
-              <div
-                class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full shadow flex items-center gap-2 pointer-events-none">
-                <input type="checkbox" v-model="form.img2_check"
-                  class="w-4 h-4 text-blue-600 rounded pointer-events-auto" />
-                <span class="text-sm text-gray-700">Check</span>
-              </div>
+          <!-- cust_name_1 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Name <span class="text-red-500 text-sm"> *</span></label><span
+                class="text-red-500 text-sm">{{ errors.cust_name_1 }}</span>
             </div>
+            <input v-model="form.cust_name_1" type="text" class="input" />
           </div>
-        </div>
 
-        <!-- photo1 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Photo 1</label><span class="text-red-500 text-sm">{{ errors.photo1 }}</span>
-          </div>
-          <input type="file" @change="onFileChange3" class="input" />
-          <div v-if="form.photo1_src" class="mt-4">
-            <div class="relative group w-1/2">
-              <a :href="form.photo1_src" target="_blank" rel="noopener noreferrer" class="block">
-                <img :src="form.photo1_src" @click="openPhoto1"
-                  class="w-full h-50 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
-              </a>
-              <div
-                class="absolute top-1 right-1 bg-white/50 backdrop-blur px-2 py-1 rounded-full shadow flex items-center gap-2 pointer-events-none">
-                <input type="checkbox" v-model="form.photo1_check"
-                  class="w-4 h-4 text-blue-600 rounded pointer-events-auto" />
-                <span class="text-sm text-gray-700">Check</span>
-              </div>
+          <!-- cust_dob_1 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Date of Birth <span class="text-red-500 text-sm"> *</span></label><span
+                class="text-red-500 text-sm">{{ errors.cust_dob_1 }}</span>
             </div>
+            <input v-model="form.cust_dob_1" type="date" class="input" />
           </div>
-        </div>
 
-        <!-- photo2 -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Photo 2</label><span class="text-red-500 text-sm">{{ errors.photo2 }}</span>
-          </div>
-          <input type="file" @change="onFileChange4" class="input" />
-          <div v-if="form.photo2_src" class="mt-4">
-            <div class="relative group w-1/2">
-              <a :href="form.photo2_src" target="_blank" rel="noopener noreferrer" class="block">
-                <img :src="form.photo2_src" @click="openPhoto2"
-                  class="w-full h-50 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
-              </a>
-              <div
-                class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full shadow flex items-center gap-2 pointer-events-none">
-                <input type="checkbox" v-model="form.photo2_check"
-                  class="w-4 h-4 text-blue-600 rounded pointer-events-auto" />
-                <span class="text-sm text-gray-700">Check</span>
-              </div>
+          <!-- cust_idcardnum_1 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">ID Card Number <span class="text-red-500 text-sm"> *</span></label><span
+                class="text-red-500 text-sm">{{ errors.cust_idcardnum_1 }}</span>
             </div>
+            <input v-model="form.cust_idcardnum_1" type="text" class="input" />
           </div>
-        </div>
-      </ComponentCard>
-    </div>
 
-
-    <!-- Left 4.Bank Information -->
-    <div>
-      <ComponentCard title="4.Bank Infomation">
-
-        <!-- cust_account_num -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Account Number</label><span class="text-red-500 text-sm">{{ errors.cust_account_num
-              }}</span>
+          <!-- iden_id_1 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Identity Type <span class="text-red-500 text-sm"> *</span></label><span
+                class="text-red-500 text-sm">{{ errors.iden_id_1 }}</span>
+            </div>
+            <select v-model="form.iden_id_1" class="input">
+              <option value="-1" disabled> Choose one ... </option>
+              <option v-for="dd in identifications" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
+            </select>
           </div>
-          <input v-model="form.cust_account_num" type="text"
-            @input="form.cust_account_num = form.cust_account_num.replace(/[^0-9]/g, '').slice(0, 14)" class="input" />
-        </div>
 
-        <!-- cust_atm_num -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">ATM Number</label><span class="text-red-500 text-sm">{{ errors.cust_atm_num }}</span>
+          <!-- cust_idcardnum_date_1 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Date Identification <span class="text-red-500 text-sm"> *</span></label><span
+                class="text-red-500 text-sm">{{ errors.cust_idcardnum_date_1 }}</span>
+            </div>
+            <input v-model="form.cust_idcardnum_date_1" type="date" class="input" maxlength="9" />
           </div>
-          <input v-model="form.cust_atm_num" type="text"
-            @input="form.cust_atm_num = form.cust_atm_num.replace(/[^0-9]/g, '').slice(0, 20)" class="input" />
-        </div>
 
-        <!-- cust_facebook -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label :class="[
-              'label',
-              isFacebookValid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
-            ]" @click="isFacebookValid && openLink(form.cust_facebook)">
-              Facebook <span v-if="isFacebookValid"> 🔗</span>
-            </label>
+          <!-- idli_id_1 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Identification Licenses <span class="text-red-500 text-sm"> *</span></label><span
+                class="text-red-500 text-sm">{{ errors.idli_id_1 }}</span>
+            </div>
+            <select v-model="form.idli_id_1" class="input">
+              <option value="-1" disabled> Choose one ... </option>
+              <option v-for="dd in idLicenses" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
+            </select>
           </div>
-          <input v-model="form.cust_facebook" type="text" class="input" />
-        </div>
 
-        <!-- cust_telegram -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label style="margin-bottom: 4px; font-size: 14px; color: #555;" :class="[
-              'inline-flex items-center gap-1 hover:text-blue-700',
-              isTelegramValid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
-            ]" @click="isTelegramValid && openTelegram(form.cust_telegram)">
-              Telegram
-              <svg v-if="isTelegramValid" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
-                fill="currentColor">
-                <path
-                  d="M9.5 13.01l-.39 4.44c.56 0 .8-.24 1.1-.52l2.64-2.53 5.48 4.01c1 .53 1.72.25 1.98-.93L23 2.98c.26-1.18-.43-1.65-1.3-1.38L1.74 9.66c-1.17.46-1.15 1.11-.2 1.38l5.5 1.7 12.77-8c.6-.38 1.15-.17.7.25l-10.6 10z" />
-              </svg>
-            </label>
+          <!-- occu_id_1 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Occupation <span class="text-red-500 text-sm"> *</span></label><span
+                class="text-red-500 text-sm">{{ errors.occu_id_1 }}</span>
+            </div>
+            <select v-model="form.occu_id_1" class="input">
+              <option value="-1" disabled> Choose one ... </option>
+              <option v-for="dd in occupations" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
+            </select>
           </div>
-          <input v-model="form.cust_telegram" type="text" class="input" />
-        </div>
 
-      </ComponentCard>
-    </div>
-
-    <!-- Right 5.Address Information -->
-    <div class="space-y-4">
-      <ComponentGrowCard title="5.Address Infomation">
-
-        <!-- cust_address -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Address <span class="text-red-500 text-sm"> *</span></label><span
-              class="text-red-500 text-sm">{{ errors.cust_address }}</span>
+          <!-- cust_phone_1 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Phone <span class="text-red-500 text-sm"> *</span></label><span
+                class="text-red-500 text-sm">{{ errors.cust_phone_1 }}</span>
+            </div>
+            <input v-model="form.cust_phone_1" type="text" maxlength="10"
+              @input="form.cust_phone_1 = form.cust_phone_1.replace(/[^0-9]/g, '').slice(0, 10)" class="input" />
           </div>
-          <textarea v-model="form.cust_address" class="input" rows="4" />
-        </div>
 
-        <!-- cust_address_link -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label 
-              :class="[
+        </ComponentCard>
+      </div>
+
+      <!-- Miiddle 2 Basic -->
+      <div class="space-y-4">
+        <ComponentCard title="2. Basic">
+
+          <!-- cust_title_2 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Title</label><span class="text-red-500 text-sm">{{ errors.cust_title_2 }}</span>
+            </div>
+            <select v-model.number="form.cust_title_2" class="input">
+              <option value="-1"> Choose one ... </option>
+              <option v-for="dd in nameTitles" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
+            </select>
+          </div>
+
+          <!-- cust_name_2 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Name</label><span class="text-red-500 text-sm">{{ errors.cust_name_2 }}</span>
+            </div>
+            <input v-model="form.cust_name_2" type="text" class="input" />
+          </div>
+
+          <!-- cust_dob_2 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Date of Birth</label><span class="text-red-500 text-sm">{{ errors.cust_dob_2
+                }}</span>
+            </div>
+            <input v-model="form.cust_dob_2" type="date" class="input" />
+          </div>
+
+          <!-- cust_idcardnum_2 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">ID Card Number</label><span class="text-red-500 text-sm">{{ errors.cust_idcardnum_2
+                }}</span>
+            </div>
+            <input v-model="form.cust_idcardnum_2" type="text" class="input" maxlength="9" />
+          </div>
+
+          <!-- iden_id_2 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Identity Type</label><span class="text-red-500 text-sm">{{ errors.iden_id_2 }}</span>
+            </div>
+            <select v-model="form.iden_id_2" class="input">
+              <option value="-1"> Choose one ... </option>
+              <option v-for="dd in identifications" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
+            </select>
+          </div>
+
+          <!-- cust_idcardnum_date_2 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Date Identification</label><span class="text-red-500 text-sm">{{
+                errors.cust_idcardnum_date_2 }}</span>
+            </div>
+            <input v-model="form.cust_idcardnum_date_2" type="date" class="input" />
+          </div>
+
+          <!-- idli_id_2 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Identification Licenses</label><span class="text-red-500 text-sm">{{ errors.idli_id_2
+                }}</span>
+            </div>
+            <select v-model="form.idli_id_2" class="input">
+              <option value="-1"> Choose one ... </option>
+              <option v-for="dd in idLicenses" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
+            </select>
+          </div>
+
+          <!-- occu_id_2 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Occupation</label><span class="text-red-500 text-sm">{{ errors.occu_id_2 }}</span>
+            </div>
+            <select v-model="form.occu_id_2" class="input">
+              <option value="-1"> Choose one ... </option>
+              <option v-for="dd in occupations" :key="dd.id" :value="dd.id">{{ dd.label }}</option>
+            </select>
+          </div>
+
+          <!-- cust_phone_2 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Phone</label><span class="text-red-500 text-sm">{{ errors.cust_phone_2 }}</span>
+            </div>
+            <input v-model="form.cust_phone_2" type="text" maxlength="10"
+              @input="form.cust_phone_1 = form.cust_phone_1.replace(/[^0-9]/g, '').slice(0, 10)" class="input" />
+          </div>
+
+        </ComponentCard>
+     
+      </div>
+
+
+      <!-- Left 4.Bank Information -->
+      <div>
+        <ComponentGrowCard title="4.Bank Infomation">
+
+          <!-- cust_account_num -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Account Number</label><span class="text-red-500 text-sm">{{ errors.cust_account_num
+                }}</span>
+            </div>
+            <input v-model="form.cust_account_num" type="text"
+              @input="form.cust_account_num = form.cust_account_num.replace(/[^0-9]/g, '').slice(0, 14)"
+              class="input" />
+          </div>
+
+          <!-- cust_atm_num -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">ATM Number</label><span class="text-red-500 text-sm">{{ errors.cust_atm_num }}</span>
+            </div>
+            <input v-model="form.cust_atm_num" type="text"
+              @input="form.cust_atm_num = form.cust_atm_num.replace(/[^0-9]/g, '').slice(0, 20)" class="input" />
+          </div>
+
+          <!-- cust_facebook -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label :class="[
+                'label',
+                isFacebookValid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
+              ]" @click="isFacebookValid && openLink(form.cust_facebook)">
+                Facebook <span v-if="isFacebookValid"> 🔗</span>
+              </label>
+            </div>
+            <input v-model="form.cust_facebook" type="text" class="input" />
+          </div>
+
+          <!-- cust_telegram -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label style="margin-bottom: 4px; font-size: 14px; color: #555;" :class="[
+                'inline-flex items-center gap-1 hover:text-blue-700',
+                isTelegramValid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
+              ]" @click="isTelegramValid && openTelegram(form.cust_telegram)">
+                Telegram
+                <svg v-if="isTelegramValid" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24"
+                  fill="currentColor">
+                  <path
+                    d="M9.5 13.01l-.39 4.44c.56 0 .8-.24 1.1-.52l2.64-2.53 5.48 4.01c1 .53 1.72.25 1.98-.93L23 2.98c.26-1.18-.43-1.65-1.3-1.38L1.74 9.66c-1.17.46-1.15 1.11-.2 1.38l5.5 1.7 12.77-8c.6-.38 1.15-.17.7.25l-10.6 10z" />
+                </svg>
+              </label>
+            </div>
+            <input v-model="form.cust_telegram" type="text" class="input" />
+          </div>
+
+        </ComponentGrowCard>
+      </div>
+
+      <!-- Right 5.Address Information -->
+      <div class="space-y-4">
+        <ComponentGrowCard title="5.Address Infomation">
+
+          <!-- cust_address -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Address <span class="text-red-500 text-sm"> *</span></label><span
+                class="text-red-500 text-sm">{{ errors.cust_address }}</span>
+            </div>
+            <textarea v-model="form.cust_address" class="input" rows="4" />
+          </div>
+
+          <!-- cust_address_link -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label :class="[
                 'label',
                 isAddressValid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
-              ]" 
-              @click="isAddressValid && openLink(form.cust_address_link)">
-              Map link <span v-if="isAddressValid"> 📌</span>
-            </label>
+              ]" @click="isAddressValid && openLink(form.cust_address_link)">
+                Map link <span v-if="isAddressValid"> 📌</span>
+              </label>
+            </div>
+            <input v-model="form.cust_address_link" class="input" />
           </div>
-          <input v-model="form.cust_address_link" class="input" />
-        </div>
 
+        </ComponentGrowCard>
+      </div>
 
-      </ComponentGrowCard>
     </div>
 
-    <div class="space-y-4">
-      <ComponentSubmitCard title="">
-        <!-- submit -->
-        <template #footer>
-          <button @click="submitForm" :disabled="loading"
-            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition">
-            <Icon v-if="loading" name="svg-spinners:180-ring-with-bg" class="text-lg" />
-            {{ loading ? "Saving..." : "Save Customer" }}
-          </button>
-        </template>
-      </ComponentSubmitCard>
+    <!-- col-span-1 -->
+    <div class="lg:col-span-1 grid grid-cols-1">
+
+      <!-- RIGHT 3 Indentification photo-->
+      <div class="space-y-4">
+        <ComponentGrowCard title="3. Identification Photo">
+
+          <!-- img1 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">ID Card Image 1</label><span class="text-red-500 text-sm">{{ errors.img1 }}</span>
+            </div>
+            <input type="file" @change="onFileChange1" class="input" />
+            <div v-if="form.img1_src" class="mt-4">
+              <div class="relative group w-full">
+                <a :href="form.img1_src" target="_blank" rel="noopener noreferrer" class="block">
+                  <img :src="form.img1_src" @click="openImg1"
+                    class="w-full h-50 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
+                </a>
+                <div
+                  class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full shadow flex items-center gap-2 pointer-events-none">
+                  <input type="checkbox" v-model="form.img1_check"
+                    class="w-4 h-4 text-blue-600 rounded pointer-events-auto" />
+                  <span class="text-sm text-gray-700">Check</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- img2 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">ID Card Image 2</label><span class="text-red-500 text-sm">{{ errors.img2 }}</span>
+            </div>
+            <input type="file" @change="onFileChange2" class="input" />
+            <div v-if="form.img2_src" class="mt-4">
+              <div class="relative group w-full">
+                <a :href="form.img2_src" target="_blank" rel="noopener noreferrer" class="block">
+                  <img :src="form.img2_src" @click="openImg2"
+                    class="w-full h-50 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
+                </a>
+                <div
+                  class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full shadow flex items-center gap-2 pointer-events-none">
+                  <input type="checkbox" v-model="form.img2_check"
+                    class="w-4 h-4 text-blue-600 rounded pointer-events-auto" />
+                  <span class="text-sm text-gray-700">Check</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- photo1 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Photo 1</label><span class="text-red-500 text-sm">{{ errors.photo1 }}</span>
+            </div>
+            <input type="file" @change="onFileChange3" class="input" />
+            <div v-if="form.photo1_src" class="mt-4">
+              <div class="relative group w-1/2">
+                <a :href="form.photo1_src" target="_blank" rel="noopener noreferrer" class="block">
+                  <img :src="form.photo1_src" @click="openPhoto1"
+                    class="w-full h-50 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
+                </a>
+                <div
+                  class="absolute top-1 right-1 bg-white/50 backdrop-blur px-2 py-1 rounded-full shadow flex items-center gap-2 pointer-events-none">
+                  <input type="checkbox" v-model="form.photo1_check"
+                    class="w-4 h-4 text-blue-600 rounded pointer-events-auto" />
+                  <span class="text-sm text-gray-700">Check</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- photo2 -->
+          <div>
+            <div class="flex items-center justify-between">
+              <label class="label">Photo 2</label><span class="text-red-500 text-sm">{{ errors.photo2 }}</span>
+            </div>
+            <input type="file" @change="onFileChange4" class="input" />
+            <div v-if="form.photo2_src" class="mt-4">
+              <div class="relative group w-1/2">
+                <a :href="form.photo2_src" target="_blank" rel="noopener noreferrer" class="block">
+                  <img :src="form.photo2_src" @click="openPhoto2"
+                    class="w-full h-50 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
+                </a>
+                <div
+                  class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-full shadow flex items-center gap-2 pointer-events-none">
+                  <input type="checkbox" v-model="form.photo2_check"
+                    class="w-4 h-4 text-blue-600 rounded pointer-events-auto" />
+                  <span class="text-sm text-gray-700">Check</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- submit -->
+          <template #footer>
+            <button @click="submitForm" :disabled="loading"
+              class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition">
+              <Icon v-if="loading" name="svg-spinners:180-ring-with-bg" class="text-lg" />
+              {{ loading ? "Saving..." : "Save Customer" }}
+            </button>
+          </template>
+
+        </ComponentGrowCard>
+      </div>
+
     </div>
 
   </div>

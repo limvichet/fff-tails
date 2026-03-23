@@ -21,7 +21,7 @@
         <slot></slot>
       </div>
       <!-- Button/Footer at bottom -->
-      <div class="mt-auto flex justify-end space-x-2">
+      <div class="mt-auto flex justify-end space-x-2 pt-5">
         <slot name="footer"></slot>
       </div>
     </div>

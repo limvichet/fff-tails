@@ -10,6 +10,7 @@
   import { ref, reactive, onMounted } from "vue"
   import ComponentCard from "@/components/common/ComponentCard.vue"
   import ComponentSubmitCard from "@/components/common/ComponentSubmitCard.vue"
+  import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
   import type { LoanrecordFormDataResponse } from "~/types/loanrecord"
 
   const { successMsg, errorMsg, success } = useMessage()
@@ -52,7 +53,7 @@ loanCheckStatuses.value = data.loanCheckStatuses ? map(data.loanCheckStatuses) :
 
   onMounted(fetchFormData)
 
-  /* FORM */
+  /* FORM STATE*/
   const form = reactive<any>({
     cust_id:-1,
     currency_id:1,
@@ -78,7 +79,15 @@ loanCheckStatuses.value = data.loanCheckStatuses ? map(data.loanCheckStatuses) :
     cust_position_loangroup_id:-1,
 
     loan_collateral_1:"",
+    loan_collateral_map_link_1:"",
+    loan_collateral_doc_1:"",
+    loan_collateral_doc_1_src: null as string | null,
+    loan_collateral_doc_1_check: false,
     loan_collateral_2:"",
+    loan_collateral_map_link_2:"",
+    loan_collateral_doc_2:"",
+    loan_collateral_doc_2_src: null as string | null,
+    loan_collateral_doc_2_check: false,
     loan_note:"",
 
     active:1,
@@ -133,6 +142,7 @@ watch(
 )
 
 /* VALIDATION */
+const MIN_FILE_SIZE = 1.01 * 1024 * 1024       // 1MB
 const schema = z.object({
   cust_id:z.number().min(1,"Please select"),
   currency_id:z.number().min(1,"Please select"),
@@ -158,7 +168,27 @@ const schema = z.object({
   cust_guarantor_id:z.number().optional(),
   cust_position_loangroup_id:z.number().min(1,"Please select"),
   loan_collateral_1:z.string().optional(),
+  loan_collateral_map_link_1:z.string().optional(),
+  loan_collateral_doc_1:z
+      .any()
+      .optional()
+      .refine((file) => {
+        if (!file) return true
+        const f = file instanceof File ? file : file?.[0]
+        if (!f) return true
+        return f.size <= MIN_FILE_SIZE
+      }, { message: 'Size must be less than 1MB' }),
   loan_collateral_2:z.string().optional(),
+  loan_collateral_map_link_2:z.string().optional(),
+  loan_collateral_doc_2:z
+      .any()
+      .optional()
+      .refine((file) => {
+        if (!file) return true
+        const f = file instanceof File ? file : file?.[0]
+        if (!f) return true
+        return f.size <= MIN_FILE_SIZE
+      }, { message: 'Size must be less than 1MB' }),
   loan_note:z.string().optional()
 })
 
@@ -306,16 +336,71 @@ Object.keys(schema.shape).forEach((field) => {
 // const formattedLoanOverDraft = computed(() => form.loan_over_draft.toLocaleString())
 
 
-function onInput<K extends keyof typeof form>(event: Event, field: K) {
-  const target = event.target as HTMLInputElement
-  if (!target) return
+  function onInput<K extends keyof typeof form>(event: Event, field: K) {
+    const target = event.target as HTMLInputElement
+    if (!target) return
 
-  // Remove commas and parse number
-  const numericValue = parseFloat(target.value.replace(/,/g, '')) || 0
+    // Remove commas and parse number
+    const numericValue = parseFloat(target.value.replace(/,/g, '')) || 0
 
-  // Update only the target field
-  form[field] = numericValue
-}
+    // Update only the target field
+    form[field] = numericValue
+  }
+
+
+  const isloan_collateral_map_link_1_Valid = computed(() => {
+    return form.loan_collateral_map_link_1
+  })
+  const isloan_collateral_map_link_2_Valid = computed(() => {
+    return form.loan_collateral_map_link_2
+  })
+  const openLink = (url: string) => {
+    if (!url) return
+    window.open(url, '_blank')
+  }
+
+
+  const onFileDocChange1 = (e: Event) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf") {
+      errors.loan_collateral_doc_1 = "Only PDF allowed";
+      return;
+    }
+
+    errors.loan_collateral_doc_1 = "";
+
+    form.loan_collateral_doc_1 = file;
+    form.loan_collateral_doc_1_src = URL.createObjectURL(file);
+  };
+
+
+  const onFileDocChange2 = (e: Event) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf") {
+      errors.loan_collateral_doc_2 = "Only PDF allowed";
+      return;
+    }
+
+    errors.loan_collateral_doc_2 = "";
+
+    form.loan_collateral_doc_2 = file;
+    form.loan_collateral_doc_2_src = URL.createObjectURL(file);
+  };
+
+
+  const formatFileSize = (size?: number) => {
+    if (!size) return "";
+
+    const kb = size / 1024;
+    if (kb < 1024) return kb.toFixed(1) + " KB";
+
+    const mb = kb / 1024;
+    return mb.toFixed(1) + " MB";
+  };
 
 </script>
 
@@ -613,7 +698,7 @@ function onInput<K extends keyof typeof form>(event: Event, field: K) {
 
 
   <!-- RIGHT -->
-<ComponentSubmitCard title="3. Collateral/Note" class="h-full">
+<ComponentGrowCard title="3. Collateral/Note" class="h-full">
   <!-- Collateral 1 -->
   <div>
     <div class="flex items-center justify-between">
@@ -623,6 +708,63 @@ function onInput<K extends keyof typeof form>(event: Event, field: K) {
     <textarea v-model="form.loan_collateral_1" class="input" rows="6"></textarea>
   </div>
 
+  <!-- loan_collateral_map_link_1 -->
+  <div>
+    <div class="flex items-center justify-between">
+      <label 
+        :class="[
+          'label',
+          isloan_collateral_map_link_1_Valid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
+        ]" 
+        @click="isloan_collateral_map_link_1_Valid && openLink(form.loan_collateral_map_link_1)">
+        Collateral 1 Map link <span v-if="isloan_collateral_map_link_1_Valid"> 📌</span>
+      </label>
+    </div>
+    <input v-model="form.loan_collateral_map_link_1" class="input" />
+  </div>
+
+  <!-- loan_collateral_doc_1 -->
+  <div>
+    <div class="flex items-center justify-between">
+      <label class="label">Collateral 1 Document <span class="!text-red-300">PDF</span></label>
+      <span class="text-red-500 text-sm">{{ errors.loan_collateral_doc_1 }}</span>
+    </div>
+
+    <input type="file" accept="application/pdf" @change="onFileDocChange1" class="input" />
+
+    <!-- Show only link -->
+    <div v-if="form.loan_collateral_doc_1_src" class="mt-3">
+      <a :href="form.loan_collateral_doc_1_src" target="_blank"
+        class="flex items-center justify-between hover:bg-gray-50 transition">
+        <!-- Left -->
+        <div class="flex items-center gap-3">
+          <!-- PDF Icon -->
+          <div class="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-lg">
+            PDF
+          </div>
+
+          <!-- File Info -->
+          <div class="flex flex-col">
+            <span class="text-sm font-medium text-gray-800">
+              {{ form.loan_collateral_doc_1?.name || 'document.pdf' }}
+            </span>
+            <span class="text-xs text-gray-500">
+              {{ formatFileSize(form.loan_collateral_doc_1?.size) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Right -->
+        <div class="text-gray-400 text-sm pr-3">
+          ➜
+        </div>
+
+      </a>
+    </div>
+  </div>
+
+  <div class="border-b border-gray-100 dark:border-gray-800 !pt-3"></div>
+  
   <!-- Collateral 2 -->
   <div>
     <div class="flex items-center justify-between">
@@ -631,6 +773,63 @@ function onInput<K extends keyof typeof form>(event: Event, field: K) {
     </div>
     <textarea v-model="form.loan_collateral_2" class="input" rows="6"></textarea>
   </div>
+
+  <!-- loan_collateral_map_link_2 -->
+  <div>
+    <div class="flex items-center justify-between">
+      <label 
+        :class="[
+          'label',
+          isloan_collateral_map_link_2_Valid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
+        ]" 
+        @click="isloan_collateral_map_link_2_Valid && openLink(form.loan_collateral_map_link_2)">
+        Collateral 2 Map link <span v-if="isloan_collateral_map_link_2_Valid"> 📌</span>
+      </label>
+    </div>
+    <input v-model="form.loan_collateral_map_link_2" class="input" />
+  </div>
+
+  <!-- loan_collateral_doc_2 -->
+  <div>
+    <div class="flex items-center justify-between">
+      <label class="label">Collateral 2 Document <span class="!text-red-300">PDF</span></label>
+      <span class="text-red-500 text-sm">{{ errors.loan_collateral_doc_2 }}</span>
+    </div>
+
+    <input type="file" accept="application/pdf" @change="onFileDocChange2" class="input" />
+
+    <!-- Show only link -->
+    <div v-if="form.loan_collateral_doc_2_src" class="mt-3">
+      <a :href="form.loan_collateral_doc_2_src" target="_blank"
+        class="flex items-center justify-between hover:bg-gray-50 transition">
+        <!-- Left -->
+        <div class="flex items-center gap-3">
+          <!-- PDF Icon -->
+          <div class="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-lg">
+            PDF
+          </div>
+
+          <!-- File Info -->
+          <div class="flex flex-col">
+            <span class="text-sm font-medium text-gray-800">
+              {{ form.loan_collateral_doc_2?.name || 'document.pdf' }}
+            </span>
+            <span class="text-xs text-gray-500">
+              {{ formatFileSize(form.loan_collateral_doc_2?.size) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Right -->
+        <div class="text-gray-400 text-sm pr-3">
+          ➜
+        </div>
+
+      </a>
+    </div>
+  </div>
+
+  <div class="border-b border-gray-100 dark:border-gray-800 pt-3"></div>
 
   <!-- Note -->
   <div>
@@ -651,7 +850,7 @@ function onInput<K extends keyof typeof form>(event: Event, field: K) {
       {{ loading ? "Saving..." : "Create Loan" }}
     </button>
   </template>
-</ComponentSubmitCard>
+</ComponentGrowCard>
 
 </div>
 

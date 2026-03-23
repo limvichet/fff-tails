@@ -82,7 +82,11 @@ const form = reactive<any>({
   cust_position_loangroup_id:-1,
 
   loan_collateral_1:"",
+  loan_collateral_map_link_1:"",
+  loan_collateral_doc_1:"",
   loan_collateral_2:"",
+  loan_collateral_map_link_2:"",
+  loan_collateral_doc_2:"",
   loan_note:"",
 
   active:1,
@@ -160,7 +164,15 @@ watch(loanrecord,(l)=>{
     cust_position_loangroup_id:l.cust_position_loangroup_id ?? -1,
 
     loan_collateral_1:l.loan_collateral_1 ?? "",
+    loan_collateral_map_link_1:l.loan_collateral_map_link_1 ?? "",
+    loan_collateral_doc_1:l.loan_collateral_doc_1 ?? "",
+    loan_collateral_doc_1_src: l.loan_collateral_doc_1_url ?? null,
+    loan_collateral_doc_1_check: !!l.loan_collateral_doc_1_url,
     loan_collateral_2:l.loan_collateral_2 ?? "",
+    loan_collateral_map_link_2:l.loan_collateral_map_link_2 ?? "",
+    loan_collateral_doc_2:l.loan_collateral_doc_2 ?? "",
+    loan_collateral_doc_2_src: l.loan_collateral_doc_2_url ?? null,
+    loan_collateral_doc_2_check: !!l.loan_collateral_doc_2_url,
     loan_note:l.loan_note ?? "",
   })
 
@@ -197,6 +209,7 @@ watch(
 )
 
 /* VALIDATION */
+const MIN_FILE_SIZE = 1.01 * 1024 * 1024       // 1MB
 const schema = z.object({
   cust_id:z.number().min(1,"Please select"),
   currency_id:z.number().min(1,"Please select"),
@@ -222,7 +235,27 @@ const schema = z.object({
   cust_guarantor_id:z.number().optional(),
   cust_position_loangroup_id:z.number().min(1,"Please select"),
   loan_collateral_1:z.string().optional(),
+  loan_collateral_map_link_1:z.string().optional(),
+  loan_collateral_doc_1:z
+      .any()
+      .optional()
+      .refine((file) => {
+        if (!file) return true
+        const f = file instanceof File ? file : file?.[0]
+        if (!f) return true
+        return f.size <= MIN_FILE_SIZE
+      }, { message: 'Size must be less than 1MB' }),
   loan_collateral_2:z.string().optional(),
+  loan_collateral_map_link_2:z.string().optional(),
+  loan_collateral_doc_2:z
+      .any()
+      .optional()
+      .refine((file) => {
+        if (!file) return true
+        const f = file instanceof File ? file : file?.[0]
+        if (!f) return true
+        return f.size <= MIN_FILE_SIZE
+      }, { message: 'Size must be less than 1MB' }),
   loan_note:z.string().optional()
 })
 
@@ -405,6 +438,16 @@ function onInput<K extends keyof typeof form>(event: Event, field: K) {
 }
 
 
+  const isloan_collateral_map_link_1_Valid = computed(() => {
+    return form.loan_collateral_map_link_1
+  })
+  const isloan_collateral_map_link_2_Valid = computed(() => {
+    return form.loan_collateral_map_link_2
+  })
+  const openLink = (url: string) => {
+    if (!url) return
+    window.open(url, '_blank')
+  }
 
 </script>
 
@@ -764,6 +807,21 @@ function onInput<K extends keyof typeof form>(event: Event, field: K) {
     <textarea v-model="form.loan_collateral_1" class="input" rows="6"></textarea>
   </div>
 
+  <!-- loan_collateral_map_link_1 -->
+  <div>
+    <div class="flex items-center justify-between">
+      <label 
+        :class="[
+          'label',
+          isloan_collateral_map_link_1_Valid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
+        ]" 
+        @click="isloan_collateral_map_link_1_Valid && openLink(form.loan_collateral_map_link_1)">
+        Collateral 1 Map link <span v-if="isloan_collateral_map_link_1_Valid"> 📌</span>
+      </label>
+    </div>
+    <input v-model="form.loan_collateral_map_link_1" class="input" />
+  </div>
+
   <!-- Collateral 2 -->
   <div>
     <div class="flex items-center justify-between">
@@ -771,6 +829,21 @@ function onInput<K extends keyof typeof form>(event: Event, field: K) {
       <span class="text-red-500 text-sm">{{ errors.loan_collateral_2 }}</span>
     </div>
     <textarea v-model="form.loan_collateral_2" class="input" rows="6"></textarea>
+  </div>
+
+  <!-- loan_collateral_map_link_2 -->
+  <div>
+    <div class="flex items-center justify-between">
+      <label 
+        :class="[
+          'label',
+          isloan_collateral_map_link_2_Valid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
+        ]" 
+        @click="isloan_collateral_map_link_2_Valid && openLink(form.loan_collateral_map_link_2)">
+        Collateral 2 Map link <span v-if="isloan_collateral_map_link_2_Valid"> 📌</span>
+      </label>
+    </div>
+    <input v-model="form.loan_collateral_map_link_2" class="input" />
   </div>
 
   <!-- Note -->

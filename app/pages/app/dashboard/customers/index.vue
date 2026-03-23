@@ -262,9 +262,9 @@ function formatDate(date: string | null) {
               <thead>
                 <tr class="border-b border-gray-200 dark:border-gray-700">
                   <th class="px-4 py-2 text-sm font-semibold text-left w-[5%]">#</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[15%] w-[30%]">Name1</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[15%] w-[30%]">Name2</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[20%]">Phone1</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[15%] w-[40%]">Name1</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[15%] w-[40%]">Name2</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[20%] hidden sm:table-cell">Phone1</th>
                   <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[20%] hidden sm:table-cell">DOB</th>
                   <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[20%] hidden sm:table-cell">Created At</th>
                   <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[20%] hidden sm:table-cell">Updated At</th>
@@ -289,7 +289,7 @@ function formatDate(date: string | null) {
                     {{ c.nametitle2?.nametitle_kh }} {{ c.cust_name_2 }}
                   </td>
 
-                  <td class="px-1 py-2 text-sm text-gray-400">
+                  <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
                     {{ c.cust_phone_1 }}
                   </td>
 
