@@ -9,10 +9,11 @@
   import { z } from "zod"
   import { ref, reactive, onMounted } from "vue"
   import ComponentCard from "@/components/common/ComponentCard.vue"
-  import ComponentSubmitCard from "@/components/common/ComponentSubmitCard.vue"
+  import CommonCustomerSelect2 from "@/components/common/CommonCustomerSelect2.vue"
   import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
   import type { LoanrecordFormDataResponse } from "~/types/loanrecord"
 
+  const { hasRole } = useAuth()
   const { successMsg, errorMsg, success } = useMessage()
   const loading = ref(false)
   const errors = reactive<Record<string,string>>({})
@@ -26,6 +27,9 @@
   const loanStatuses = ref<any[]>([])
   const loanCheckStatuses = ref<any[]>([])
   const loanGroupPositions = ref<any[]>([])
+
+  errorMsg.value = null
+  successMsg.value = null
 
   /* FETCH FORM DATA */
   const fetchFormData = async () => {
@@ -142,31 +146,31 @@ watch(
 )
 
 /* VALIDATION */
-const MIN_FILE_SIZE = 1.01 * 1024 * 1024       // 1MB
+const MIN_FILE_SIZE = 2.01 * 1024 * 1024       // 2MB
 const schema = z.object({
-  cust_id:z.number().min(1,"Please select"),
-  currency_id:z.number().min(1,"Please select"),
+  cust_id:z.number().min(1,"Required"),
+  currency_id:z.number().min(1,"Required"),
   loan_lastcash:z.coerce.number().min(0,"Required"),
   loan_newcash:z.coerce.number().min(0,"Required"),
   loan_totalcash:z.coerce.number().min(0,"Required"),
   loan_principle:z.coerce.number().min(0,"Required"),
   source_money:z.string().nonempty("Required"),
-  loantype_id:z.number().min(1,"Please select"),
+  loantype_id:z.number().min(1,"Required"),
   loan_over_draft: z.coerce.number().optional(),
-  payback_id:z.number().min(1,"Please select"),
+  payback_id:z.number().min(1,"Required"),
   loan_peroid:z.coerce.number().min(1,"Required"),
   loan_startdate:z.string().nonempty("Required"),
   loan_enddate:z.string().nonempty("Required"),
   loan_interest_rate:z.coerce.number().min(0.000001,"Required"),
   invoice_id:z.string().optional(),
-  loan_status_id:z.number().min(1,"Please select"),
+  loan_status_id:z.number().min(1,"Required"),
   loan_check_status:z.number().optional(),
-  cust_comission_id:z.number().min(1,"Please select"),
+  cust_comission_id:z.number().min(1,"Required"),
   cust_comission_interest_rate:z.coerce.number().min(0,"Required"),
-  cust_loangroup_id:z.number().min(1,"Please select"),
+  cust_loangroup_id:z.number().min(1,"Required"),
   active:z.number().min(1,"required"),
   cust_guarantor_id:z.number().optional(),
-  cust_position_loangroup_id:z.number().min(1,"Please select"),
+  cust_position_loangroup_id:z.number().min(1,"Required"),
   loan_collateral_1:z.string().optional(),
   loan_collateral_map_link_1:z.string().optional(),
   loan_collateral_doc_1:z
@@ -177,7 +181,7 @@ const schema = z.object({
         const f = file instanceof File ? file : file?.[0]
         if (!f) return true
         return f.size <= MIN_FILE_SIZE
-      }, { message: 'Size must be less than 1MB' }),
+      }, { message: 'Size must be less than 2MB' }),
   loan_collateral_2:z.string().optional(),
   loan_collateral_map_link_2:z.string().optional(),
   loan_collateral_doc_2:z
@@ -188,7 +192,7 @@ const schema = z.object({
         const f = file instanceof File ? file : file?.[0]
         if (!f) return true
         return f.size <= MIN_FILE_SIZE
-      }, { message: 'Size must be less than 1MB' }),
+      }, { message: 'Size must be less than 2MB' }),
   loan_note:z.string().optional()
 })
 
@@ -208,7 +212,7 @@ Object.keys(schema.shape).forEach((field) => {
   )
 })
 
-/* SUBMIT */
+  /* SUBMIT */
   const submitForm = async () => {
     loading.value = true
     errorMsg.value = null
@@ -221,10 +225,10 @@ Object.keys(schema.shape).forEach((field) => {
     Object.keys(errors).forEach((k) => (errors[k] = ""))
 
     try{
-      // console.log("FORM BEFORE PARSE:", form)
+      console.log("FORM BEFORE PARSE:", form)
 
       // 🔹 Clean numeric fields before validation
-      const cleanedForm = { ...form }
+      const newForm = { ...form }
       const numericFields: (keyof typeof form)[] = [
         "loan_lastcash",
         "loan_newcash",
@@ -248,51 +252,66 @@ Object.keys(schema.shape).forEach((field) => {
       ]
 
       numericFields.forEach(field => {
-        const value = cleanedForm[field]
+        const value = newForm[field]
         if (typeof value === "string") {
           // Remove commas and parse
-          cleanedForm[field] = parseFloat(value.replace(/,/g, '')) || 0
+          newForm[field] = parseFloat(value.replace(/,/g, '')) || 0
         } else {
-          cleanedForm[field] = Number(value) || 0
+          newForm[field] = Number(value) || 0
         }
       })
 
-      const parsed = schema.safeParse(cleanedForm)
+      const parsed = schema.safeParse(newForm)
 
       if (!parsed.success) {
-        // Populate errors object
+        const errorList: string[] = []
+
         parsed.error.errors.forEach((e) => {
-          const path = e.path[0]
-          if (typeof path === 'string' || typeof path === 'number') {
-            errors[path] = e.message
-          }
+          const field = e.path.join('.')
+          errors[field] = e.message
+          errorList.push(`${field}: ${e.message}`)
         })
-        errorMsg.value = "Please fix the validation errors before submitting."
-        loading.value = false
+
+         errorMsg.value = errorList.join(' | ')
+       // errorMsg.value = "Please fix the validation errors."
         return
       }
 
-      const body = parsed.data
+      const fd = new FormData()
 
-      const safeBody = Object.fromEntries(
-        Object.entries(body).map(([k, v]) => {
-          if (v === "" || v === -1) return [k, null]
-          return [k, v]
-        })
-      )
+      const formDataObj = parsed.data
+
+      Object.entries(formDataObj).forEach(([k, v]) => {
+        if (v === -1 || v === "") {
+          fd.append(k, "")
+        } else {
+          fd.append(k, String(v))
+        }
+      })
+
+      // files
+      if (newForm.loan_collateral_doc_1 && form.loan_collateral_doc_1_check) fd.append("loan_collateral_doc_1", newForm.loan_collateral_doc_1)
+      if (newForm.loan_collateral_doc_2 && form.loan_collateral_doc_2_check) fd.append("loan_collateral_doc_2", newForm.loan_collateral_doc_2)
+
+      // flags
+      if (form.loan_collateral_doc_1_check) fd.append("loan_collateral_doc_1_check", "1")
+      if (form.loan_collateral_doc_2_check) fd.append("loan_collateral_doc_2_check", "1")
 
       const res = await $fetch<{ success: boolean; message: string; id: number }>("/api/admin-secure/loanrecords",{
         method:"POST",
-        body: safeBody
+        body: fd
       })
 
-      success("Customer created successfully!")
+      successMsg.value = "Loanrecord created successfully!"
 
       if (res && res.id) {
         await navigateTo(`/app/dashboard/loanrecords/${res.id}`)
       }
 
     } catch (err: any) {
+        console.log('FULL ERROR:', err)
+        console.log('DATA:', err?.data)
+        console.log('MESSAGE:', err?.data?.message)
       if (err.errors) {
         err.errors.forEach((e: any) => {
           const path = e.path[0]
@@ -311,29 +330,13 @@ Object.keys(schema.shape).forEach((field) => {
 
 
   // Filtered options
-  const searchInput = ref("")
-  const filteredCustomers = computed(() =>
-    customerName1.value.filter(c =>
-      c.label.toLowerCase().includes(searchInput.value.toLowerCase()) ||
-      String(c.id).includes(searchInput.value)
-    )
-  )
-
-
-
-// computed formatted value
-// const formattedLastCash = computed(() => {
-//   return form.loan_lastcash
-//     ? Number(form.loan_lastcash).toLocaleString()
-//     : ''
-// })
-
-// Computed formatted strings
-// const formattedLoanLastCash = computed(() => form.loan_lastcash.toLocaleString())
-// const formattedLoanNewCash = computed(() => form.loan_newcash.toLocaleString())
-// const formattedLoanTotalCash = computed(() => form.loan_totalcash.toLocaleString())
-// const formattedLoanPrinciple = computed(() => form.loan_principle.toLocaleString())
-// const formattedLoanOverDraft = computed(() => form.loan_over_draft.toLocaleString())
+  // const searchInput = ref("")
+  // const filteredCustomers = computed(() =>
+  //   customerName1.value.filter(c =>
+  //     c.label.toLowerCase().includes(searchInput.value.toLowerCase()) ||
+  //     String(c.id).includes(searchInput.value)
+  //   )
+  // )
 
 
   function onInput<K extends keyof typeof form>(event: Event, field: K) {
@@ -360,36 +363,61 @@ Object.keys(schema.shape).forEach((field) => {
   }
 
 
-  const onFileDocChange1 = (e: Event) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (!file) return;
+const onFileDocChange1 = (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0];
+  if (!file) return;
 
-    if (file.type !== "application/pdf") {
-      errors.loan_collateral_doc_1 = "Only PDF allowed";
-      return;
-    }
+  // ✅ validate pdf
+  if (!file.type.includes("pdf")) {
+    errors.loan_collateral_doc_1 = "Only PDF allowed";
+    return;
+  }
 
-    errors.loan_collateral_doc_1 = "";
+  errors.loan_collateral_doc_1 = "";
 
-    form.loan_collateral_doc_1 = file;
-    form.loan_collateral_doc_1_src = URL.createObjectURL(file);
-  };
+  // ✅ revoke old preview
+  if (form.loan_collateral_doc_1_src) {
+    URL.revokeObjectURL(form.loan_collateral_doc_1_src);
+  }
+
+  // ✅ store file (correct)
+  form.loan_collateral_doc_1 = file;
+
+  // ✅ must be number for Laravel
+  form.loan_collateral_doc_1_check = 1;
+
+  // ✅ preview
+  form.loan_collateral_doc_1_src = URL.createObjectURL(file);
+};
 
 
-  const onFileDocChange2 = (e: Event) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (!file) return;
 
-    if (file.type !== "application/pdf") {
-      errors.loan_collateral_doc_2 = "Only PDF allowed";
-      return;
-    }
+const onFileDocChange2 = (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0];
+  if (!file) return;
 
-    errors.loan_collateral_doc_2 = "";
+  // ✅ validate pdf
+  if (!file.type.includes("pdf")) {
+    errors.loan_collateral_doc_2 = "Only PDF allowed";
+    return;
+  }
 
-    form.loan_collateral_doc_2 = file;
-    form.loan_collateral_doc_2_src = URL.createObjectURL(file);
-  };
+  errors.loan_collateral_doc_2 = "";
+
+  // ✅ revoke old preview
+  if (form.loan_collateral_doc_2_src) {
+    URL.revokeObjectURL(form.loan_collateral_doc_2_src);
+  }
+
+  // ✅ store file (correct)
+  form.loan_collateral_doc_2 = file;
+
+  // ✅ must be number for Laravel
+  form.loan_collateral_doc_2_check = 1;
+
+  // ✅ preview
+  form.loan_collateral_doc_2_src = URL.createObjectURL(file);
+};
 
 
   const formatFileSize = (size?: number) => {
@@ -401,6 +429,90 @@ Object.keys(schema.shape).forEach((field) => {
     const mb = kb / 1024;
     return mb.toFixed(1) + " MB";
   };
+
+  const getFileUrl = (src: string) => {
+    if (!src) return '#'
+
+    // already blob
+    if (src.startsWith('blob:')) return src
+
+    // already full URL (IMPORTANT FIX)
+    if (src.startsWith('http://') || src.startsWith('https://')) {
+      return src
+    }
+
+    // backend file
+    return '/storage/' + src
+  }
+
+
+
+
+
+/* Native select2 */
+// Search input
+const search = ref("")
+const isOpen = ref(false)
+const highlightedIndex = ref(0)
+
+// 0.1 - filteredCustomers
+const filteredCustomers = computed(() => {
+  if (!search.value) return customerName1.value
+  const term = search.value.toLowerCase()
+  return customerName1.value.filter(c =>
+    String(c.id).includes(term) || c.label.toLowerCase().includes(term)
+  )
+})
+
+// 0.2 - selectCustomer
+function selectCustomer(c: { id: number; label: string }) {
+  form.cust_id = c.id
+  search.value = c.label
+  isOpen.value = false
+  highlightedIndex.value = 0
+}
+
+// 0.3 - filteredCustomers
+function onKeydown(e: KeyboardEvent) {
+  if (!isOpen.value) return
+  if (e.key === "ArrowDown") {
+    highlightedIndex.value =
+      (highlightedIndex.value + 1) % filteredCustomers.value.length
+    e.preventDefault()
+  } else if (e.key === "ArrowUp") {
+    highlightedIndex.value =
+      (highlightedIndex.value - 1 + filteredCustomers.value.length) %
+      filteredCustomers.value.length
+    e.preventDefault()
+  } else if (e.key === "Enter") {
+    selectCustomer(filteredCustomers.value[highlightedIndex.value])
+    e.preventDefault()
+  } else if (e.key === "Escape") {
+    isOpen.value = false
+  }
+}
+
+
+
+// Click outside to close dropdown
+function clickOutside(event: MouseEvent) {
+  const target = event.target as HTMLElement
+  if (!target.closest(".select-container")) {
+    isOpen.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener("click", clickOutside)
+})
+
+// Keep <select> in sync with custom input
+watch(form, () => {
+  const selected = customerName1.value.find(c => c.id === form.cust_id)
+  if (selected) search.value = selected.label
+})
+
+/*  end Native select2 */
 
 </script>
 
@@ -414,24 +526,19 @@ Object.keys(schema.shape).forEach((field) => {
     {{ successMsg }}
   </div>
   
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+<div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
 
   <!-- LEFT -->
   <ComponentCard title="1. General Information">
 
     <!-- cust_id -->
-    <div>
-      <div class="flex items-center justify-between">
-        <label class="label">Customer<span class="text-red-500 text-sm"> *</span></label>
-        <span class="text-red-500 text-sm">{{ errors.cust_id }}</span>
-      </div>
-      <select v-model.number="form.cust_id" class="input" :class="{ 'input-invalid': errors.cust_id }">
-        <option value="-1">Choose ...</option>
-        <option v-for="c in customerName1" :key="c.id" :value="c.id">
-          {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
-        </option>
-      </select>
-    </div>
+    <CommonCustomerSelect2
+      label="Customer"
+      v-model="form.cust_id"
+      :required=true
+      :error="errors.cust_id"
+      :options="customerName1"
+    />
 
     <!-- currency_id -->
     <div>
@@ -606,8 +713,16 @@ Object.keys(schema.shape).forEach((field) => {
 
   <!-- MIDDLE -->
   <ComponentCard title="2. Guarantor/Comission">
-      <!-- cust_comission_id -->
-      <div>
+
+    <!-- cust_comission_id -->
+    <CommonCustomerSelect2
+      label="Comission Customer"
+      v-model="form.cust_comission_id"
+      :required=true
+      :error="errors.cust_comission_id"
+      :options="customerName1"
+    />
+      <!-- <div>
         <label class="label">Comission Customer<span class="text-red-500 text-sm"> *</span></label>
         <span class="text-red-500 text-sm">{{ errors.cust_comission_id }}</span>
         <select v-model.number="form.cust_comission_id" class="input">
@@ -616,7 +731,7 @@ Object.keys(schema.shape).forEach((field) => {
             {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
           </option>
         </select>
-      </div>
+      </div> -->
   
       <!-- cust_comission_interest_rate -->
       <div>
@@ -626,7 +741,14 @@ Object.keys(schema.shape).forEach((field) => {
       </div>
 
        <!-- cust_loangroup_id -->
-       <div>
+      <CommonCustomerSelect2
+        label="Loan Group"
+        v-model="form.cust_loangroup_id"
+        :required=true
+        :error="errors.cust_loangroup_id"
+        :options="customerName1"
+      />
+       <!-- <div>
         <label class="label">Loan Group<span class="text-red-500 text-sm"> *</span></label>
         <span class="text-red-500 text-sm">{{ errors.cust_loangroup_id }}</span>
         <select v-model.number="form.cust_loangroup_id" class="input">
@@ -635,10 +757,17 @@ Object.keys(schema.shape).forEach((field) => {
             {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
           </option>
         </select>
-      </div>
+      </div> -->
 
       <!-- cust_guarantor_id -->
-      <div>
+      <CommonCustomerSelect2
+        label="Guarantor Customer"
+        v-model="form.cust_guarantor_id"
+        :required=false
+        :error="errors.cust_guarantor_id"
+        :options="customerName1"
+      />
+      <!-- <div>
         <label class="label">Guarantor Customer</label>
         <select v-model.number="form.cust_guarantor_id" class="input">
           <option value="-1">Choose ...</option>
@@ -646,7 +775,7 @@ Object.keys(schema.shape).forEach((field) => {
             {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
           </option>
         </select>
-      </div>
+      </div> -->
 
       <!-- cust_position_loangroup_id -->
       <div>
@@ -683,7 +812,7 @@ Object.keys(schema.shape).forEach((field) => {
     </div>
 
     <!-- loan_check_status -->
-    <div>
+    <div :class="{ hidden: !(hasRole('admin') || hasRole('ceo')) }">
       <div class="flex items-center justify-between">
         <label class="label">Approver</label>
       </div>
@@ -702,7 +831,7 @@ Object.keys(schema.shape).forEach((field) => {
   <!-- Collateral 1 -->
   <div>
     <div class="flex items-center justify-between">
-      <label class="label">Collateral 1</label>
+      <label class="label !text-blue-900 text-bold -ml-1">Collateral 1 - Description</label>
       <span class="text-red-500 text-sm">{{ errors.loan_collateral_1 }}</span>
     </div>
     <textarea v-model="form.loan_collateral_1" class="input" rows="6"></textarea>
@@ -717,7 +846,7 @@ Object.keys(schema.shape).forEach((field) => {
           isloan_collateral_map_link_1_Valid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
         ]" 
         @click="isloan_collateral_map_link_1_Valid && openLink(form.loan_collateral_map_link_1)">
-        Collateral 1 Map link <span v-if="isloan_collateral_map_link_1_Valid"> 📌</span>
+        Collateral 1 - Map link <span v-if="isloan_collateral_map_link_1_Valid"> 📌</span>
       </label>
     </div>
     <input v-model="form.loan_collateral_map_link_1" class="input" />
@@ -726,7 +855,7 @@ Object.keys(schema.shape).forEach((field) => {
   <!-- loan_collateral_doc_1 -->
   <div>
     <div class="flex items-center justify-between">
-      <label class="label">Collateral 1 Document <span class="!text-red-300">PDF</span></label>
+      <label class="label">Collateral 1 - Document <span class="!text-red-300">PDF</span></label>
       <span class="text-red-500 text-sm">{{ errors.loan_collateral_doc_1 }}</span>
     </div>
 
@@ -734,41 +863,51 @@ Object.keys(schema.shape).forEach((field) => {
 
     <!-- Show only link -->
     <div v-if="form.loan_collateral_doc_1_src" class="mt-3">
-      <a :href="form.loan_collateral_doc_1_src" target="_blank"
-        class="flex items-center justify-between hover:bg-gray-50 transition">
-        <!-- Left -->
-        <div class="flex items-center gap-3">
-          <!-- PDF Icon -->
-          <div class="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-lg">
-            PDF
+      <div class="relative group w-full">
+
+        <!-- CLICKABLE LINK -->
+        <a :href="getFileUrl(form.loan_collateral_doc_1_src)" target="_blank"
+          class="flex items-center justify-between p-3 hover:bg-gray-50 transition">
+          <!-- Left -->
+          <div class="flex items-center gap-3">
+            <!-- PDF Icon -->
+            <div class="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-lg">
+              PDF
+            </div>
+
+            <!-- File Info -->
+            <div class="flex flex-col">
+              <span class="text-sm font-medium text-gray-800">
+                {{ form.loan_collateral_doc_1?.name || 'document.pdf' }}
+              </span>
+              <span class="text-xs text-gray-500">
+                {{ formatFileSize(form.loan_collateral_doc_1?.size) }}
+              </span>
+            </div>
           </div>
 
-          <!-- File Info -->
-          <div class="flex flex-col">
-            <span class="text-sm font-medium text-gray-800">
-              {{ form.loan_collateral_doc_1?.name || 'document.pdf' }}
-            </span>
-            <span class="text-xs text-gray-500">
-              {{ formatFileSize(form.loan_collateral_doc_1?.size) }}
-            </span>
-          </div>
+        </a>
+
+        <!-- ✅ CHECK OVERLAY -->
+        <div
+          class="absolute bottom-1 right-2 bg-white/90 backdrop-blur px-3 py-1 rounded-full shadow flex items-center gap-2">
+          <input type="checkbox" :true-value="1" :false-value="0" v-model="form.loan_collateral_doc_1_check"
+            class="w-4 h-4 text-blue-600 rounded" />
+          <span class="text-sm text-gray-700">Check</span>
         </div>
 
-        <!-- Right -->
-        <div class="text-gray-400 text-sm pr-3">
-          ➜
-        </div>
-
-      </a>
+      </div>
     </div>
+    
   </div>
+  
 
   <div class="border-b border-gray-100 dark:border-gray-800 !pt-3"></div>
   
   <!-- Collateral 2 -->
   <div>
     <div class="flex items-center justify-between">
-      <label class="label">Collateral 2</label>
+      <label class="label !text-blue-900 text-bold -ml-1">Collateral 2 - Description</label>
       <span class="text-red-500 text-sm">{{ errors.loan_collateral_2 }}</span>
     </div>
     <textarea v-model="form.loan_collateral_2" class="input" rows="6"></textarea>
@@ -783,7 +922,7 @@ Object.keys(schema.shape).forEach((field) => {
           isloan_collateral_map_link_2_Valid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
         ]" 
         @click="isloan_collateral_map_link_2_Valid && openLink(form.loan_collateral_map_link_2)">
-        Collateral 2 Map link <span v-if="isloan_collateral_map_link_2_Valid"> 📌</span>
+        Collateral 2 - Map link <span v-if="isloan_collateral_map_link_2_Valid"> 📌</span>
       </label>
     </div>
     <input v-model="form.loan_collateral_map_link_2" class="input" />
@@ -792,7 +931,7 @@ Object.keys(schema.shape).forEach((field) => {
   <!-- loan_collateral_doc_2 -->
   <div>
     <div class="flex items-center justify-between">
-      <label class="label">Collateral 2 Document <span class="!text-red-300">PDF</span></label>
+      <label class="label">Collateral 2 - Document <span class="!text-red-300">PDF</span></label>
       <span class="text-red-500 text-sm">{{ errors.loan_collateral_doc_2 }}</span>
     </div>
 
@@ -800,33 +939,42 @@ Object.keys(schema.shape).forEach((field) => {
 
     <!-- Show only link -->
     <div v-if="form.loan_collateral_doc_2_src" class="mt-3">
-      <a :href="form.loan_collateral_doc_2_src" target="_blank"
-        class="flex items-center justify-between hover:bg-gray-50 transition">
-        <!-- Left -->
-        <div class="flex items-center gap-3">
-          <!-- PDF Icon -->
-          <div class="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-lg">
-            PDF
+      <div class="relative group w-full">
+
+        <!-- CLICKABLE LINK -->
+        <a :href="getFileUrl(form.loan_collateral_doc_2_src)" target="_blank"
+          class="flex items-center justify-between p-3 hover:bg-gray-50 transition">
+          <!-- Left -->
+          <div class="flex items-center gap-3">
+            <!-- PDF Icon -->
+            <div class="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-lg">
+              PDF
+            </div>
+
+            <!-- File Info -->
+            <div class="flex flex-col">
+              <span class="text-sm font-medium text-gray-800">
+                {{ form.loan_collateral_doc_2?.name || 'document.pdf' }}
+              </span>
+              <span class="text-xs text-gray-500">
+                {{ formatFileSize(form.loan_collateral_doc_2?.size) }}
+              </span>
+            </div>
           </div>
 
-          <!-- File Info -->
-          <div class="flex flex-col">
-            <span class="text-sm font-medium text-gray-800">
-              {{ form.loan_collateral_doc_2?.name || 'document.pdf' }}
-            </span>
-            <span class="text-xs text-gray-500">
-              {{ formatFileSize(form.loan_collateral_doc_2?.size) }}
-            </span>
-          </div>
+        </a>
+
+        <!-- ✅ CHECK OVERLAY -->
+        <div
+          class="absolute bottom-1 right-2 bg-white/90 backdrop-blur px-3 py-1 rounded-full shadow flex items-center gap-2">
+          <input type="checkbox" :true-value="1" :false-value="0" v-model="form.loan_collateral_doc_2_check"
+            class="w-4 h-4 text-blue-600 rounded" />
+          <span class="text-sm text-gray-700">Check</span>
         </div>
 
-        <!-- Right -->
-        <div class="text-gray-400 text-sm pr-3">
-          ➜
-        </div>
-
-      </a>
+      </div>
     </div>
+
   </div>
 
   <div class="border-b border-gray-100 dark:border-gray-800 pt-3"></div>

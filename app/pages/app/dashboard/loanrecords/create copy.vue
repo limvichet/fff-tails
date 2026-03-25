@@ -1,67 +1,65 @@
 <script setup lang="ts">
 
-definePageMeta({
-  layout: "auth",
-  requiresAuth: true,
-  breadcrumb: { title: "Loanrecords", subTitle: "Detail" }
-})
+  definePageMeta({
+    layout: "auth",
+    requiresAuth: true,
+    breadcrumb: { title: "Loanrecords", subTitle: "Create" }
+  })
 
-import { z } from "zod"
-import { useRoute } from "vue-router"
-import ComponentCard from "@/components/common/ComponentCard.vue"
-import ComponentSubmitCard from "@/components/common/ComponentSubmitCard.vue"
-import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
-import type { LoanrecordFormDataResponse } from "~/types/loanrecord"
+  import { z } from "zod"
+  import { ref, reactive, onMounted } from "vue"
+  import ComponentCard from "@/components/common/ComponentCard.vue"
+  import ComponentSubmitCard from "@/components/common/ComponentSubmitCard.vue"
+  import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
+  import type { LoanrecordFormDataResponse } from "~/types/loanrecord"
 
-const { hasRole } = useAuth()
+  const { hasRole } = useAuth()
+  const { successMsg, errorMsg, success } = useMessage()
+  const loading = ref(false)
+  const errors = reactive<Record<string,string>>({})
 
+  /* FORM OPTIONS */
+  const customerName1 = ref<any[]>([])
+  const currencies = ref<any[]>([])
+  const loanTypes = ref<any[]>([])
+  const sourceMoneys = ref<any[]>([])
+  const paybacks = ref<any[]>([])
+  const loanStatuses = ref<any[]>([])
+  const loanCheckStatuses = ref<any[]>([])
+  const loanGroupPositions = ref<any[]>([])
 
-const { successMsg, errorMsg } = useMessage()
-const loading = ref(false)
-const errors = reactive<Record<string,string>>({})
+  errorMsg.value = null
+  successMsg.value = null
 
-const route = useRoute()
-const id = route.params.id
+  /* FETCH FORM DATA */
+  const fetchFormData = async () => {
+    try {
+      const data = await $fetch<LoanrecordFormDataResponse>(
+        "/api/admin-secure/loanrecords-form-data"
+      )
+      const map = (obj:any)=>
+        Object.entries(obj).map(([id,label])=>({
+          id:Number(id),
+          label:String(label)
+        }))
+      customerName1.value = map(data.customerName1)
+      currencies.value = map(data.currencies)
+      loanTypes.value = map(data.loanTypes)
+      sourceMoneys.value = data.sourceMoneys
+      paybacks.value = map(data.paybacks)
+      loanStatuses.value = map(data.loanStatuses)
+loanCheckStatuses.value = data.loanCheckStatuses ? map(data.loanCheckStatuses) : []
+      loanGroupPositions.value = map(data.loanGroupPositions)
+    } catch (err: any) {
+      errorMsg.value = err?.statusMessage || "Failed to load form data"
+    }
+  }
 
-errorMsg.value = null
+  onMounted(fetchFormData)
 
-/* FORM OPTIONS */
-const customerName1 = ref<any[]>([])
-const currencies = ref<any[]>([])
-const loanTypes = ref<any[]>([])
-const sourceMoneys = ref<any[]>([])
-const paybacks = ref<any[]>([])
-const loanStatuses = ref<any[]>([])
-const loanCheckStatuses = ref<any[]>([])
-const loanGroupPositions = ref<any[]>([])
-
-/* FETCH FORM DATA */
-const fetchFormData = async () => {
-  const data = await $fetch<LoanrecordFormDataResponse>(
-    "/api/admin-secure/loanrecords-form-data"
-  )
-
-  const map = (obj:any)=>
-    Object.entries(obj).map(([id,label])=>({
-      id:Number(id),
-      label:String(label)
-    }))
-
-  customerName1.value = map(data.customerName1)
-  currencies.value = map(data.currencies)
-  loanTypes.value = map(data.loanTypes)
-  sourceMoneys.value = data.sourceMoneys
-  paybacks.value = map(data.paybacks)
-  loanStatuses.value = map(data.loanStatuses)
-  loanCheckStatuses.value = map(data.loanCheckStatuses)
-  loanGroupPositions.value = map(data.loanGroupPositions)
-}
-
-onMounted(fetchFormData)
-
-/* FORM STATE */
-const form = reactive<any>({
-  cust_id:-1,
+  /* FORM STATE*/
+  const form = reactive<any>({
+    cust_id:-1,
     currency_id:1,
     loan_lastcash:0,
     loan_newcash:0,
@@ -86,12 +84,12 @@ const form = reactive<any>({
 
     loan_collateral_1:"",
     loan_collateral_map_link_1:"",
-    loan_collateral_doc_1: null,
+    loan_collateral_doc_1:"",
     loan_collateral_doc_1_src: null as string | null,
     loan_collateral_doc_1_check: false,
     loan_collateral_2:"",
     loan_collateral_map_link_2:"",
-    loan_collateral_doc_2:null,
+    loan_collateral_doc_2:"",
     loan_collateral_doc_2_src: null as string | null,
     loan_collateral_doc_2_check: false,
     loan_note:"",
@@ -101,38 +99,7 @@ const form = reactive<any>({
     loan_check_approver:0,
     loan_check_date:'',
     loan_startdate_principle:'',
-})
-
-/* FETCH LOAN RECORD */
-
-type ApiResponse<T> = {
-  success:boolean
-  data:T
-}
-
-const headers = useRequestHeaders(["cookie"])
-
-const { data } = await useAsyncData(
-  `loanrecord-${id}`,
-  () => $fetch<ApiResponse<any>>(`/api/admin-secure/loanrecords/${id}`,{ headers })
-)
-
-const loanrecord = computed(()=>data.value?.data ?? null)
-
-/* DATE FORMAT HELPER */
-function formatDateForInput(date: string | null) {
-  if (!date) return ""
-
-  // already correct
-  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-    return date
-  }
-
-  // convert dd-MM-yyyy → yyyy-MM-dd
-  const [d, m, y] = date.split("-")
-
-  return `${y}-${m}-${d}`
-}
+  })
 
 watchEffect(() => {
   const lastCash = Number(String(form.loan_lastcash).replace(/,/g, '') || 0)
@@ -140,56 +107,16 @@ watchEffect(() => {
   form.loan_totalcash = lastCash + newCash
 })
 
-/* POPULATE FORM */
-watch(loanrecord,(l)=>{
-  if(!l) return
+// watch(
+//   () => [form.loan_startdate, form.loan_peroid],
+//   ([start, period]) => {
+//     if (!start || !period) return
 
-  Object.assign(form,{
-    id:l.id,
-
-    cust_id:l.cust_id ?? -1,
-    currency_id:l.currency_id ?? 1,
-    loan_lastcash:l.loan_lastcash ?? 0,
-    loan_newcash:l.loan_newcash ?? 0,
-    loan_totalcash:l.loan_totalcash ?? 0,
-    loan_principle:l.loan_principle ?? 0,
-    source_money:l.source_money ?? "",
-    loantype_id:l.loantype_id ?? -1,
-    loan_over_draft:l.loan_over_draft ?? 0,
-    payback_id:l.payback_id ?? 1,
-    loan_peroid:l.loan_peroid ?? 1,
-    loan_startdate:formatDateForInput(l.loan_startdate ?? ""),
-    loan_enddate:formatDateForInput(l.loan_enddate ?? ""),
-    loan_interest_rate:l.loan_interest_rate ?? 0,
-    invoice_id:(l.invoice?.invoice_type ?? "") + String(l.invoice_id).padStart(8, '0'),
-    loan_status_id:l.loan_status_id ?? 1,
-    loan_check_status:l.loan_check_status ?? 0,
-
-    cust_comission_id:l.cust_comission_id ?? -1,
-    cust_comission_interest_rate:l.cust_comission_interest_rate ?? 0,
-    cust_loangroup_id:l.cust_loangroup_id ?? -1,
-    cust_guarantor_id:l.cust_guarantor_id ?? -1,
-    cust_position_loangroup_id:l.cust_position_loangroup_id ?? -1,
-
-    loan_collateral_1:l.loan_collateral_1 ?? "",
-    loan_collateral_map_link_1:l.loan_collateral_map_link_1 ?? "",
-    loan_collateral_doc_1:l.loan_collateral_doc_1 ?? null,
-    loan_collateral_doc_1_src: l.loan_collateral_doc_1_url ?? null,
-    // loan_collateral_doc_1_check: !!l.loan_collateral_doc_1_url,
-    loan_collateral_doc_1_check: l.loan_collateral_doc_1_url ? 1 : 0,
-    loan_collateral_2:l.loan_collateral_2 ?? "",
-    loan_collateral_map_link_2:l.loan_collateral_map_link_2 ?? "",
-    loan_collateral_doc_2:l.loan_collateral_doc_2 ?? null,
-    loan_collateral_doc_2_src: l.loan_collateral_doc_2_url ?? null,
-    // loan_collateral_doc_2_check: !!l.loan_collateral_doc_2_url,
-    loan_collateral_doc_2_check: l.loan_collateral_doc_2_url ? 1 : 0,
-    loan_note:l.loan_note ?? "",
-  })
-
-},{immediate:true})
-
-
-
+//     const d = new Date(start)
+//     d.setMonth(d.getMonth() + Number(period))
+//     form.loan_enddate = d.toISOString().split("T")[0] ?? ""
+//   }
+// )
 
 watch(
   () => [form.loan_startdate, form.loan_peroid, form.loantype_id],
@@ -221,35 +148,34 @@ watch(
 /* VALIDATION */
 const MIN_FILE_SIZE = 2.01 * 1024 * 1024       // 2MB
 const schema = z.object({
-  cust_id:z.number().min(1,"Please select"),
-  currency_id:z.number().min(1,"Please select"),
+  cust_id:z.number().min(1,"Required"),
+  currency_id:z.number().min(1,"Required"),
   loan_lastcash:z.coerce.number().min(0,"Required"),
   loan_newcash:z.coerce.number().min(0,"Required"),
   loan_totalcash:z.coerce.number().min(0,"Required"),
   loan_principle:z.coerce.number().min(0,"Required"),
   source_money:z.string().nonempty("Required"),
-  loantype_id:z.number().min(1,"Please select"),
+  loantype_id:z.number().min(1,"Required"),
   loan_over_draft: z.coerce.number().optional(),
-  payback_id:z.number().min(1,"Please select"),
+  payback_id:z.number().min(1,"Required"),
   loan_peroid:z.coerce.number().min(1,"Required"),
   loan_startdate:z.string().nonempty("Required"),
   loan_enddate:z.string().nonempty("Required"),
   loan_interest_rate:z.coerce.number().min(0.000001,"Required"),
   invoice_id:z.string().optional(),
-  loan_status_id:z.number().min(1,"Please select"),
+  loan_status_id:z.number().min(1,"Required"),
   loan_check_status:z.number().optional(),
-  cust_comission_id:z.number().min(1,"Please select"),
+  cust_comission_id:z.number().min(1,"Required"),
   cust_comission_interest_rate:z.coerce.number().min(0,"Required"),
-  cust_loangroup_id:z.number().min(1,"Please select"),
+  cust_loangroup_id:z.number().min(1,"Required"),
   active:z.number().min(1,"required"),
   cust_guarantor_id:z.number().optional(),
-  cust_position_loangroup_id:z.number().min(1,"Please select"),
+  cust_position_loangroup_id:z.number().min(1,"Required"),
   loan_collateral_1:z.string().optional(),
   loan_collateral_map_link_1:z.string().optional(),
   loan_collateral_doc_1:z
       .any()
       .optional()
-      .nullable()
       .refine((file) => {
         if (!file) return true
         const f = file instanceof File ? file : file?.[0]
@@ -261,7 +187,6 @@ const schema = z.object({
   loan_collateral_doc_2:z
       .any()
       .optional()
-      .nullable()
       .refine((file) => {
         if (!file) return true
         const f = file instanceof File ? file : file?.[0]
@@ -271,233 +196,159 @@ const schema = z.object({
   loan_note:z.string().optional()
 })
 
-  type FileKey = 'loan_collateral_doc_1' | 'loan_collateral_doc_2';
-
-  type FileItem  = {
-  file: File | null;
-  src: string | null;
-  check: boolean;
-}
-
-  const images: Record<FileKey, FileItem> = {
-    loan_collateral_doc_1: { file: null, src: null, check: false },
-    loan_collateral_doc_2: { file: null, src: null, check: false },
-  };
-
-  const updateFromBackend = (key: FileKey, url: string | null) => {
-    images[key].file = null;
-    images[key].src = url ? '/storage/' + url + '?v=' + Date.now() : null;
-    images[key].check = !!url;
-  };
-
-/* UPDATE */
-const updateForm = async () => {
-  loading.value = true
-  errorMsg.value = ""
-  successMsg.value = ""
-
-  // ⭐ set principle start date
-  form.loan_startdate_principle = form.loan_startdate
-
-  // clear old errors
-  Object.keys(errors).forEach(k => errors[k] = "")
-
-  // console.log("FORM BEFORE PARSE:", form)
-
-  // Clean numeric fields before validation
-  const newForm = { ...form }
-
-  // compress
-  // newForm.loan_collateral_doc_1 = form.loan_collateral_doc_1
-  // newForm.loan_collateral_doc_2 = form.loan_collateral_doc_2
-
-  const numericFields: (keyof typeof form)[] = [
-    "loan_lastcash",
-    "loan_newcash",
-    "loan_totalcash",
-    "loan_principle",
-    "loan_over_draft",
-    "loan_interest_rate",
-    "cust_comission_interest_rate",
-    "loan_peroid",
-    "currency_id",
-    "loantype_id",
-    "payback_id",
-    "loan_status_id",
-    "loan_check_status",
-    "cust_id",
-    "cust_comission_id",
-    "cust_loangroup_id",
-    "cust_guarantor_id",
-    "cust_position_loangroup_id",
-    "active"
-  ]
-
-  if (!(newForm.loan_collateral_doc_1 instanceof File)) {
-    newForm.loan_collateral_doc_1 = undefined
-  }
-
-  if (!(newForm.loan_collateral_doc_2 instanceof File)) {
-    newForm.loan_collateral_doc_2 = undefined
-  }
-
-  numericFields.forEach(field => {
-    const value = newForm[field]
-    if (typeof value === "string") {
-      // Remove commas and parse
-      newForm[field] = parseFloat(value.replace(/,/g, '')) || 0
-    } else {
-      newForm[field] = Number(value) || 0
-    }
-  })
-
+const validateField = (field: keyof typeof schema.shape) => {
   try {
-    // console.log("FORM CLEANED:", newForm)
-    const parsed = schema.safeParse(newForm)
-
-    if (!parsed.success) {
-      const errorList: string[] = []
-      parsed.error.errors.forEach((e) => {
-        const field = e.path.join('.')
-        errors[field] = e.message
-        errorList.push(`${field}: ${e.message}`)
-      })
-      errorMsg.value = "Please fix the validation errors before submitting."
-      loading.value = false
-      return
-    }
-
-    // console.log("PARSED FORM:", parsed)
-    const fd = new FormData()
-    const formDataObj = parsed.data
-    Object.entries(formDataObj).forEach(([k, v]) => {
-      if (v === -1 || v === "") {
-        fd.append(k, "")
-      } else {
-        fd.append(k, String(v))
-      }
-    })
-
-    // files
-    if (newForm.loan_collateral_doc_1 && form.loan_collateral_doc_1_check) fd.append("loan_collateral_doc_1", newForm.loan_collateral_doc_1)
-    if (newForm.loan_collateral_doc_2 && form.loan_collateral_doc_2_check) fd.append("loan_collateral_doc_2", newForm.loan_collateral_doc_2)
-
-    // flags
-    if (form.loan_collateral_doc_1_check) fd.append("loan_collateral_doc_1_check", "1")
-    if (form.loan_collateral_doc_2_check) fd.append("loan_collateral_doc_2_check", "1")
-
-    fd.append("_method", "PUT")
-
-    /* ✅ REQUEST */
-    await $fetch(`/api/admin-secure/loanrecords/${id}`, {
-      method: "POST",
-      body: fd
-    })
-
-    successMsg.value = "Loan updated successfully!"
-
-    // ✅ REFRESH IMAGE FROM BACKEND
-    const refreshed = await $fetch<{ succes: number, data: any }>(`/api/admin-secure/loanrecords/${id}`)
-    updateFromBackend("loan_collateral_doc_1", refreshed.data.loan_collateral_doc_1_url)
-    updateFromBackend("loan_collateral_doc_2", refreshed.data.loan_collateral_doc_2_url)
-
+    schema.shape[field].parse(form[field])
+    errors[field] = ""
   } catch (err: any) {
-
-    if (err.errors) {
-      err.errors.forEach((e: any) => {
-        errors[e.path[0]] = e.message
-      })
-    } else {
-      errorMsg.value = "Error while saving"
-    }
-
-  } finally {
-    loading.value = false
+    errors[field] = err.errors?.[0]?.message || ""
   }
-
 }
 
-
-/* Native select2 */
-// Search input
-const search = ref("")
-const isOpen = ref(false)
-const highlightedIndex = ref(0)
-
-// Filtered customers
-const filteredCustomers = computed(() => {
-  if (!search.value) return customerName1.value
-  const term = search.value.toLowerCase()
-  return customerName1.value.filter(c =>
-    String(c.id).includes(term) || c.label.toLowerCase().includes(term)
+Object.keys(schema.shape).forEach((field) => {
+  watch(
+    () => form[field as keyof typeof form],
+    () => validateField(field as keyof typeof schema.shape)
   )
 })
 
-// Select an item
-function selectCustomer(c: { id: number; label: string }) {
-  form.cust_id = c.id
-  search.value = c.label
-  isOpen.value = false
-  highlightedIndex.value = 0
-}
+  /* SUBMIT */
+  const submitForm = async () => {
+    loading.value = true
+    errorMsg.value = null
+    successMsg.value = null
 
-// Keyboard navigation
-function onKeydown(e: KeyboardEvent) {
-  if (!isOpen.value) return
-  if (e.key === "ArrowDown") {
-    highlightedIndex.value =
-      (highlightedIndex.value + 1) % filteredCustomers.value.length
-    e.preventDefault()
-  } else if (e.key === "ArrowUp") {
-    highlightedIndex.value =
-      (highlightedIndex.value - 1 + filteredCustomers.value.length) %
-      filteredCustomers.value.length
-    e.preventDefault()
-  } else if (e.key === "Enter") {
-    selectCustomer(filteredCustomers.value[highlightedIndex.value])
-    e.preventDefault()
-  } else if (e.key === "Escape") {
-    isOpen.value = false
+    // ⭐ set principle start date
+    form.loan_startdate_principle = form.loan_startdate
+
+
+    Object.keys(errors).forEach((k) => (errors[k] = ""))
+
+    try{
+      console.log("FORM BEFORE PARSE:", form)
+
+      // 🔹 Clean numeric fields before validation
+      const newForm = { ...form }
+      const numericFields: (keyof typeof form)[] = [
+        "loan_lastcash",
+        "loan_newcash",
+        "loan_totalcash",
+        "loan_principle",
+        "loan_over_draft",
+        "loan_interest_rate",
+        "cust_comission_interest_rate",
+        "loan_peroid",
+        "currency_id",
+        "loantype_id",
+        "payback_id",
+        "loan_status_id",
+        "loan_check_status",
+        "cust_id",
+        "cust_comission_id",
+        "cust_loangroup_id",
+        "cust_guarantor_id",
+        "cust_position_loangroup_id",
+        "active"
+      ]
+
+      numericFields.forEach(field => {
+        const value = newForm[field]
+        if (typeof value === "string") {
+          // Remove commas and parse
+          newForm[field] = parseFloat(value.replace(/,/g, '')) || 0
+        } else {
+          newForm[field] = Number(value) || 0
+        }
+      })
+
+      const parsed = schema.safeParse(newForm)
+
+      if (!parsed.success) {
+        const errorList: string[] = []
+
+        parsed.error.errors.forEach((e) => {
+          const field = e.path.join('.')
+          errors[field] = e.message
+          errorList.push(`${field}: ${e.message}`)
+        })
+
+         errorMsg.value = errorList.join(' | ')
+       // errorMsg.value = "Please fix the validation errors."
+        return
+      }
+
+      const fd = new FormData()
+
+      const formDataObj = parsed.data
+
+      Object.entries(formDataObj).forEach(([k, v]) => {
+        if (v === -1 || v === "") {
+          fd.append(k, "")
+        } else {
+          fd.append(k, String(v))
+        }
+      })
+
+      // files
+      if (newForm.loan_collateral_doc_1 && form.loan_collateral_doc_1_check) fd.append("loan_collateral_doc_1", newForm.loan_collateral_doc_1)
+      if (newForm.loan_collateral_doc_2 && form.loan_collateral_doc_2_check) fd.append("loan_collateral_doc_2", newForm.loan_collateral_doc_2)
+
+      // flags
+      if (form.loan_collateral_doc_1_check) fd.append("loan_collateral_doc_1_check", "1")
+      if (form.loan_collateral_doc_2_check) fd.append("loan_collateral_doc_2_check", "1")
+
+      const res = await $fetch<{ success: boolean; message: string; id: number }>("/api/admin-secure/loanrecords",{
+        method:"POST",
+        body: fd
+      })
+
+      successMsg.value = "Loanrecord created successfully!"
+
+      if (res && res.id) {
+        await navigateTo(`/app/dashboard/loanrecords/${res.id}`)
+      }
+
+    } catch (err: any) {
+        console.log('FULL ERROR:', err)
+        console.log('DATA:', err?.data)
+        console.log('MESSAGE:', err?.data?.message)
+      if (err.errors) {
+        err.errors.forEach((e: any) => {
+          const path = e.path[0]
+          if (typeof path === 'string' || typeof path === 'number') {
+            errors[path] = e.message
+          }
+        })
+      } else {
+        errorMsg.value = "Error while saving loanrecord"
+      }
+    } finally {
+      loading.value = false
+    }
+
   }
-}
 
-// Click outside to close dropdown
-function clickOutside(event: MouseEvent) {
-  const target = event.target as HTMLElement
-  if (!target.closest(".select-container")) {
-    isOpen.value = false
+
+  // Filtered options
+  // const searchInput = ref("")
+  // const filteredCustomers = computed(() =>
+  //   customerName1.value.filter(c =>
+  //     c.label.toLowerCase().includes(searchInput.value.toLowerCase()) ||
+  //     String(c.id).includes(searchInput.value)
+  //   )
+  // )
+
+
+  function onInput<K extends keyof typeof form>(event: Event, field: K) {
+    const target = event.target as HTMLInputElement
+    if (!target) return
+
+    // Remove commas and parse number
+    const numericValue = parseFloat(target.value.replace(/,/g, '')) || 0
+
+    // Update only the target field
+    form[field] = numericValue
   }
-}
-
-onMounted(() => {
-  document.addEventListener("click", clickOutside)
-})
-
-// Keep <select> in sync with custom input
-watch(form, () => {
-  const selected = customerName1.value.find(c => c.id === form.cust_id)
-  if (selected) search.value = selected.label
-})
-
-/*  end Native select2 */
-
-function onInput<K extends keyof typeof form>(event: Event, field: K) {
-  const target = event.target as HTMLInputElement
-  if (!target) return
-
-  // Remove commas
-  const cleanValue = target.value.replace(/,/g, '')
-
-  // Parse number safely
-  const numericValue = parseFloat(cleanValue)
-  form[field] = isNaN(numericValue) ? 0 : numericValue
-
-  // Update the input display with formatted value
-  target.value = form[field].toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-
-}
-
-
 
 
   const isloan_collateral_map_link_1_Valid = computed(() => {
@@ -510,6 +361,7 @@ function onInput<K extends keyof typeof form>(event: Event, field: K) {
     if (!url) return
     window.open(url, '_blank')
   }
+
 
 const onFileDocChange1 = (e: Event) => {
   const file = (e.target as HTMLInputElement).files?.[0];
@@ -588,14 +440,81 @@ const onFileDocChange2 = (e: Event) => {
     if (src.startsWith('http://') || src.startsWith('https://')) {
       return src
     }
-    
 
     // backend file
     return '/storage/' + src
   }
 
-</script>
 
+
+
+
+/* Native select2 */
+// Search input
+const search = ref("")
+const isOpen = ref(false)
+const highlightedIndex = ref(0)
+
+// 0.1 - filteredCustomers
+const filteredCustomers = computed(() => {
+  if (!search.value) return customerName1.value
+  const term = search.value.toLowerCase()
+  return customerName1.value.filter(c =>
+    String(c.id).includes(term) || c.label.toLowerCase().includes(term)
+  )
+})
+
+// 0.2 - selectCustomer
+function selectCustomer(c: { id: number; label: string }) {
+  form.cust_id = c.id
+  search.value = c.label
+  isOpen.value = false
+  highlightedIndex.value = 0
+}
+
+// 0.3 - filteredCustomers
+function onKeydown(e: KeyboardEvent) {
+  if (!isOpen.value) return
+  if (e.key === "ArrowDown") {
+    highlightedIndex.value =
+      (highlightedIndex.value + 1) % filteredCustomers.value.length
+    e.preventDefault()
+  } else if (e.key === "ArrowUp") {
+    highlightedIndex.value =
+      (highlightedIndex.value - 1 + filteredCustomers.value.length) %
+      filteredCustomers.value.length
+    e.preventDefault()
+  } else if (e.key === "Enter") {
+    selectCustomer(filteredCustomers.value[highlightedIndex.value])
+    e.preventDefault()
+  } else if (e.key === "Escape") {
+    isOpen.value = false
+  }
+}
+
+
+
+// Click outside to close dropdown
+function clickOutside(event: MouseEvent) {
+  const target = event.target as HTMLElement
+  if (!target.closest(".select-container")) {
+    isOpen.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener("click", clickOutside)
+})
+
+// Keep <select> in sync with custom input
+watch(form, () => {
+  const selected = customerName1.value.find(c => c.id === form.cust_id)
+  if (selected) search.value = selected.label
+})
+
+/*  end Native select2 */
+
+</script>
 
 <template>
 
@@ -606,62 +525,146 @@ const onFileDocChange2 = (e: Event) => {
   <div v-if="successMsg" class="mb-3 p-2 rounded bg-emerald-500/20 text-emerald-300 text-sm">
     {{ successMsg }}
   </div>
+  
+<div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
 
-  <div v-if="loanrecord" class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+  <!-- LEFT -->
+  <ComponentCard title="1. General Information">
 
-    <ComponentCard title="1. General Information">
+    <!-- cust_id -->
+    <!-- <div>
+      <div class="flex items-center justify-between">
+        <label class="label">Customer<span class="text-red-500 text-sm"> *</span></label>
+        <span class="text-red-500 text-sm">{{ errors.cust_id }}</span>
+      </div>
+      <select v-model.number="form.cust_id" class="input" :class="{ 'input-invalid': errors.cust_id }">
+        <option value="-1">Choose ...</option>
+        <option v-for="c in customerName1" :key="c.id" :value="c.id">
+          {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
+        </option>
+      </select>
+    </div> -->
 
-      <!-- cust_id -->
-      <CommonCustomerSelect2
-        label="Customer"
-        v-model="form.cust_id"
-        :required=true
-        :error="errors.cust_id"
-        :options="customerName1"
-      />
-
-      <!-- currency_id -->
-      <div>
+      <!-- Native select2 cust_id-->
+      <div class="relative select-container">
         <div class="flex items-center justify-between">
-          <label class="label">Currency<span class="text-red-500 text-sm"> *</span></label>
-          <span class="text-red-500 text-sm">{{ errors.currency_id }}</span>
+          <label class="label">Customer<span class="text-red-500 text-sm"> *</span></label>
+          <span class="text-red-500 text-sm">{{ errors.cust_id }}</span>
         </div>
-        <select v-model.number="form.currency_id" class="input">
-          <option v-for="c in currencies" :key="c.id" :value="c.id">
+
+        <!-- Native select (hidden, just for v-model sync) -->
+        <select v-model.number="form.cust_id" class="input w-full" @click.prevent="isOpen = true">
+          <option disabled value="-1" class="hidden">Choose ...</option>
+          <option v-for="c in customerName1" :key="c.id" :value="c.id" class="hidden">
             {{ c.label }}
           </option>
         </select>
+
+        <!-- Search input -->
+        <div v-if="isOpen" class="absolute z-10 w-full mt-1">
+          <input type="text" v-model="search" @keydown="onKeydown" placeholder="Search ..."
+            class="input w-full border rounded px-3 py-2 bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
+            autocomplete="off" />
+
+          <!-- Dropdown -->
+          <ul v-if="filteredCustomers.length"
+            class="absolute z-10 w-full mt-1 max-h-40 overflow-auto border rounded bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700">
+            <li v-for="(c, index) in filteredCustomers" :key="c.id" @mousedown.prevent="selectCustomer(c)"
+              @mouseenter="highlightedIndex = index" :class="[
+                'px-3 py-1 cursor-pointer transition-colors',
+                index === highlightedIndex
+                  ? 'bg-blue-500 text-white dark:bg-blue-600'
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+              ]">
+              {{ c.id }} - {{ c.label }}
+            </li>
+          </ul>
+        </div>
       </div>
 
-        <!-- loan_lastcash -->
-        <div>
-          <div class="flex items-center justify-between">
-            <label class="label">Last Cash<span class="text-red-500 text-sm"> *</span></label>
-            <span class="text-red-500 text-sm">{{ errors.loan_lastcash }}</span>
-          </div>
-          <!-- <input v-model.number="form.loan_lastcash" type="number" class="input"/> -->
-          <input
-            type="text"
-            class="input"
-            :value="form.loan_lastcash.toLocaleString()"
-            @input="(e) => onInput(e, 'loan_lastcash')"
-          />
+
+
+      <!-- Native select2 cust_comission_id-->
+      <div class="relative select-container">
+        <div class="flex items-center justify-between">
+          <label class="label">Customer<span class="text-red-500 text-sm"> *</span></label>
+          <span class="text-red-500 text-sm">{{ errors.cust_comission_id }}</span>
         </div>
 
-      <!-- loan_newcash -->
-      <div>
-        <div class="flex items-center justify-between">
-          <label class="label">New Cash<span class="text-red-500 text-sm"> *</span></label>
-          <span class="text-red-500 text-sm">{{ errors.loan_newcash }}</span>
+        <!-- Native select (hidden, just for v-model sync) -->
+        <select v-model.number="form.cust_comission_id" class="input w-full" @click.prevent="isOpen = true">
+          <option disabled value="-1" class="hidden">Choose ...</option>
+          <option v-for="c in customerName1" :key="c.id" :value="c.id" class="hidden">
+            {{ c.label }}
+          </option>
+        </select>
+
+        <!-- Search input -->
+        <div v-if="isOpen" class="absolute z-10 w-full mt-1">
+          <input type="text" v-model="search" @keydown="onKeydown" placeholder="Search ..."
+            class="input w-full border rounded px-3 py-2 bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
+            autocomplete="off" />
+
+          <!-- Dropdown -->
+          <ul v-if="filteredCustomers.length"
+            class="absolute z-10 w-full mt-1 max-h-40 overflow-auto border rounded bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700">
+            <li v-for="(c, index) in filteredCustomers" :key="c.id" @mousedown.prevent="selectCustomer(c)"
+              @mouseenter="highlightedIndex = index" :class="[
+                'px-3 py-1 cursor-pointer transition-colors',
+                index === highlightedIndex
+                  ? 'bg-blue-500 text-white dark:bg-blue-600'
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+              ]">
+              {{ c.id }} - {{ c.label }}
+            </li>
+          </ul>
         </div>
-        <!-- <input v-model.number="form.loan_newcash" type="number" class="input"/> -->
+      </div>
+
+
+
+    <!-- currency_id -->
+    <div>
+      <div class="flex items-center justify-between">
+        <label class="label">Currency<span class="text-red-500 text-sm"> *</span></label>
+        <span class="text-red-500 text-sm">{{ errors.currency_id }}</span>
+      </div>
+      <select v-model.number="form.currency_id" class="input">
+        <option v-for="c in currencies" :key="c.id" :value="c.id">
+          {{ c.label }}
+        </option>
+      </select>
+    </div>
+
+    <!-- loan_lastcash -->
+    <div>
+      <div class="flex items-center justify-between">
+        <label class="label">Last Cash<span class="text-red-500 text-sm"> *</span></label>
+        <span class="text-red-500 text-sm">{{ errors.loan_lastcash }}</span>
+      </div>
+      <!-- <input v-model.number="form.loan_lastcash" type="text" class="input" /> -->
+       <input
+          type="text"
+          class="input"
+          :value="form.loan_lastcash.toLocaleString()"
+          @input="(e) => onInput(e, 'loan_lastcash')"
+        />
+    </div>
+
+    <!-- loan_newcash -->
+    <div>
+      <div class="flex items-center justify-between">
+        <label class="label">New Cash<span class="text-red-500 text-sm"> *</span></label>
+        <span class="text-red-500 text-sm">{{ errors.loan_newcash }}</span>
+      </div>
+      <!-- <input v-model.number="form.loan_newcash" type="text" class="input" /> -->
         <input
           type="text"
           class="input"
           :value="form.loan_newcash.toLocaleString()"
           @input="(e) => onInput(e, 'loan_newcash')"
         />
-      </div>
+    </div>
 
     <!-- loan_totalcash -->
      <div>
@@ -678,7 +681,7 @@ const onFileDocChange2 = (e: Event) => {
         />
     </div>
 
-  <!-- loan_principle -->
+    <!-- loan_principle -->
     <div>
       <div class="flex items-center justify-between">
         <label class="label">Principle<span class="text-red-500 text-sm"> *</span></label>
@@ -788,21 +791,13 @@ const onFileDocChange2 = (e: Event) => {
       <input v-model.number="form.loan_interest_rate" type="number" step="0.01" class="input"/>
     </div>
 
-    </ComponentCard>
+  </ComponentCard>
 
 
   <!-- MIDDLE -->
   <ComponentCard title="2. Guarantor/Comission">
-
       <!-- cust_comission_id -->
-      <CommonCustomerSelect2
-        label="Comission Customer"
-        v-model="form.cust_comission_id"
-        :required=true
-        :error="errors.cust_comission_id"
-        :options="customerName1"
-      />
-      <!-- <div>
+      <div>
         <label class="label">Comission Customer<span class="text-red-500 text-sm"> *</span></label>
         <span class="text-red-500 text-sm">{{ errors.cust_comission_id }}</span>
         <select v-model.number="form.cust_comission_id" class="input">
@@ -811,7 +806,7 @@ const onFileDocChange2 = (e: Event) => {
             {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
           </option>
         </select>
-      </div> -->
+      </div>
   
       <!-- cust_comission_interest_rate -->
       <div>
@@ -821,14 +816,7 @@ const onFileDocChange2 = (e: Event) => {
       </div>
 
        <!-- cust_loangroup_id -->
-      <CommonCustomerSelect2
-        label="Loan Group"
-        v-model="form.cust_loangroup_id"
-        :required=true
-        :error="errors.cust_loangroup_id"
-        :options="customerName1"
-      />
-       <!-- <div>
+       <div>
         <label class="label">Loan Group<span class="text-red-500 text-sm"> *</span></label>
         <span class="text-red-500 text-sm">{{ errors.cust_loangroup_id }}</span>
         <select v-model.number="form.cust_loangroup_id" class="input">
@@ -837,17 +825,10 @@ const onFileDocChange2 = (e: Event) => {
             {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
           </option>
         </select>
-      </div> -->
+      </div>
 
       <!-- cust_guarantor_id -->
-      <CommonCustomerSelect2
-        label="Guarantor Customer"
-        v-model="form.cust_guarantor_id"
-        :required=false
-        :error="errors.cust_guarantor_id"
-        :options="customerName1"
-      />
-      <!-- <div>
+      <div>
         <label class="label">Guarantor Customer</label>
         <select v-model.number="form.cust_guarantor_id" class="input">
           <option value="-1">Choose ...</option>
@@ -855,7 +836,7 @@ const onFileDocChange2 = (e: Event) => {
             {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
           </option>
         </select>
-      </div> -->
+      </div>
 
       <!-- cust_position_loangroup_id -->
       <div>
@@ -874,7 +855,7 @@ const onFileDocChange2 = (e: Event) => {
       <div class="flex items-center justify-between">
         <label class="label">Invoice ID</label>
       </div>
-      <input v-model.number="form.invoice_id" type="text" class="input" readonly/>
+      <input v-model.number="form.invoice_id" type="number" class="input" readonly/>
     </div>
 
     <!-- loan_status_id -->
@@ -908,7 +889,6 @@ const onFileDocChange2 = (e: Event) => {
 
   <!-- RIGHT -->
 <ComponentGrowCard title="3. Collateral/Note" class="h-full">
-
   <!-- Collateral 1 -->
   <div>
     <div class="flex items-center justify-between">
@@ -927,7 +907,7 @@ const onFileDocChange2 = (e: Event) => {
           isloan_collateral_map_link_1_Valid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
         ]" 
         @click="isloan_collateral_map_link_1_Valid && openLink(form.loan_collateral_map_link_1)">
-        Collateral 1 Map link <span v-if="isloan_collateral_map_link_1_Valid"> 📌</span>
+        Collateral 1 - Map link <span v-if="isloan_collateral_map_link_1_Valid"> 📌</span>
       </label>
     </div>
     <input v-model="form.loan_collateral_map_link_1" class="input" />
@@ -972,7 +952,7 @@ const onFileDocChange2 = (e: Event) => {
         <!-- ✅ CHECK OVERLAY -->
         <div
           class="absolute bottom-1 right-2 bg-white/90 backdrop-blur px-3 py-1 rounded-full shadow flex items-center gap-2">
-          <input type="checkbox" v-model="form.loan_collateral_doc_1_check" :true-value="1" :false-value="0"
+          <input type="checkbox" :true-value="1" :false-value="0" v-model="form.loan_collateral_doc_1_check"
             class="w-4 h-4 text-blue-600 rounded" />
           <span class="text-sm text-gray-700">Check</span>
         </div>
@@ -981,15 +961,14 @@ const onFileDocChange2 = (e: Event) => {
     </div>
     
   </div>
+  
 
-
-   <div class="border-b border-gray-100 dark:border-gray-800 !pt-3"></div>
-
-
+  <div class="border-b border-gray-100 dark:border-gray-800 !pt-3"></div>
+  
   <!-- Collateral 2 -->
   <div>
     <div class="flex items-center justify-between">
-      <label class="label">Collateral 2</label>
+      <label class="label !text-blue-900 text-bold -ml-1">Collateral 2 - Description</label>
       <span class="text-red-500 text-sm">{{ errors.loan_collateral_2 }}</span>
     </div>
     <textarea v-model="form.loan_collateral_2" class="input" rows="6"></textarea>
@@ -1004,7 +983,7 @@ const onFileDocChange2 = (e: Event) => {
           isloan_collateral_map_link_2_Valid ? 'cursor-pointer !text-blue-900' : 'text-gray-400'
         ]" 
         @click="isloan_collateral_map_link_2_Valid && openLink(form.loan_collateral_map_link_2)">
-        Collateral 2 Map link <span v-if="isloan_collateral_map_link_2_Valid"> 📌</span>
+        Collateral 2 - Map link <span v-if="isloan_collateral_map_link_2_Valid"> 📌</span>
       </label>
     </div>
     <input v-model="form.loan_collateral_map_link_2" class="input" />
@@ -1072,72 +1051,36 @@ const onFileDocChange2 = (e: Event) => {
 
   <!-- BUTTON -->
   <template #footer>
-<!-- Update Loan Button -->
-<div>
-  <button
-    @click="updateForm"
-    type="button"
-    :disabled="loading"
-    class="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2 text-sm font-medium text-white transition shadow hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-400"
-  >
-    <!-- Spinner Icon -->
-    <svg
-      v-if="loading"
-      class="w-5 h-5 animate-spin text-white"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
+    <button
+      @click="submitForm"
+      :disabled="loading"
+      class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
     >
-      <circle
-        class="opacity-25"
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        stroke-width="4"
-      ></circle>
-      <path
-        class="opacity-75"
-        fill="currentColor"
-        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-      ></path>
-    </svg>
-
-    <span>{{ loading ? "Saving..." : "Update Loan" }}</span>
-  </button>
-</div>
+      {{ loading ? "Saving..." : "Create Loan" }}
+    </button>
   </template>
 </ComponentGrowCard>
 
-  </div>
+</div>
+
+
 
 </template>
 
-
 <style scoped>
-.label {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 14px;
-  color: #555;
-}
-.dark .label {
-  color: #ccc;
+
+.label{
+display:block;
+margin-bottom:4px;
+font-size:14px;
+color:#555;
 }
 
-.input {
-  width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 8px 12px;
-}
-
-.text-red-500 {
-  color: #f56565;
-}
-
-.text-sm {
-  font-size: 12px;
+.input{
+width:100%;
+border:1px solid #ddd;
+border-radius:8px;
+padding:8px 12px;
 }
 
 

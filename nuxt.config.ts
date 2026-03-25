@@ -3,7 +3,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   compatibilityDate: '2025-07-15',
   future: { compatibilityVersion: 4},
-  css: ['~/assets/css/main.css'],
+  css: ['~/assets/css/main.css','~/assets/css/fonts.css'],
   vite: {
     plugins: [tailwindcss()],
   },

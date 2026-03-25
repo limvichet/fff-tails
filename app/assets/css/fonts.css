@@ -1,0 +1,11 @@
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/Roboto.ttf') format('truetype');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Siemreap';
+  src: url('/fonts/Siemreap.ttf') format('truetype');
+  font-weight: 700;
+}

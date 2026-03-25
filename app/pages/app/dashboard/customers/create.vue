@@ -261,7 +261,6 @@
 
       if (!parsed.success) {
         const errorList: string[] = []
-
         parsed.error.errors.forEach((e) => {
           const field = e.path.join('.')
           errors[field] = e.message

@@ -10,11 +10,7 @@ import { z } from "zod"
 import { useRoute } from "vue-router"
 import ComponentCard from "@/components/common/ComponentCard.vue"
 import ComponentSubmitCard from "@/components/common/ComponentSubmitCard.vue"
-import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
 import type { LoanrecordFormDataResponse } from "~/types/loanrecord"
-
-const { hasRole } = useAuth()
-
 
 const { successMsg, errorMsg } = useMessage()
 const loading = ref(false)
@@ -23,7 +19,8 @@ const errors = reactive<Record<string,string>>({})
 const route = useRoute()
 const id = route.params.id
 
-errorMsg.value = null
+  errorMsg.value = null
+  successMsg.value = null
 
 /* FORM OPTIONS */
 const customerName1 = ref<any[]>([])
@@ -86,12 +83,12 @@ const form = reactive<any>({
 
     loan_collateral_1:"",
     loan_collateral_map_link_1:"",
-    loan_collateral_doc_1: null,
+    loan_collateral_doc_1: null as File | null,
     loan_collateral_doc_1_src: null as string | null,
     loan_collateral_doc_1_check: false,
     loan_collateral_2:"",
     loan_collateral_map_link_2:"",
-    loan_collateral_doc_2:null,
+    loan_collateral_doc_2:null as File | null,
     loan_collateral_doc_2_src: null as string | null,
     loan_collateral_doc_2_check: false,
     loan_note:"",
@@ -173,16 +170,14 @@ watch(loanrecord,(l)=>{
 
     loan_collateral_1:l.loan_collateral_1 ?? "",
     loan_collateral_map_link_1:l.loan_collateral_map_link_1 ?? "",
-    loan_collateral_doc_1:l.loan_collateral_doc_1 ?? null,
+    loan_collateral_doc_1:l.loan_collateral_doc_1 ?? "",
     loan_collateral_doc_1_src: l.loan_collateral_doc_1_url ?? null,
-    // loan_collateral_doc_1_check: !!l.loan_collateral_doc_1_url,
-    loan_collateral_doc_1_check: l.loan_collateral_doc_1_url ? 1 : 0,
+    loan_collateral_doc_1_check: !!l.loan_collateral_doc_1_url,
     loan_collateral_2:l.loan_collateral_2 ?? "",
     loan_collateral_map_link_2:l.loan_collateral_map_link_2 ?? "",
-    loan_collateral_doc_2:l.loan_collateral_doc_2 ?? null,
+    loan_collateral_doc_2:l.loan_collateral_doc_2 ?? "",
     loan_collateral_doc_2_src: l.loan_collateral_doc_2_url ?? null,
-    // loan_collateral_doc_2_check: !!l.loan_collateral_doc_2_url,
-    loan_collateral_doc_2_check: l.loan_collateral_doc_2_url ? 1 : 0,
+    loan_collateral_doc_2_check: !!l.loan_collateral_doc_2_url,
     loan_note:l.loan_note ?? "",
   })
 
@@ -219,7 +214,7 @@ watch(
 )
 
 /* VALIDATION */
-const MIN_FILE_SIZE = 2.01 * 1024 * 1024       // 2MB
+const MIN_FILE_SIZE = 1.01 * 1024 * 1024       // 1MB
 const schema = z.object({
   cust_id:z.number().min(1,"Please select"),
   currency_id:z.number().min(1,"Please select"),
@@ -249,49 +244,28 @@ const schema = z.object({
   loan_collateral_doc_1:z
       .any()
       .optional()
-      .nullable()
       .refine((file) => {
         if (!file) return true
         const f = file instanceof File ? file : file?.[0]
         if (!f) return true
         return f.size <= MIN_FILE_SIZE
-      }, { message: 'Size must be less than 2MB' }),
+      }, { message: 'Size must be less than 1MB' }),
   loan_collateral_2:z.string().optional(),
   loan_collateral_map_link_2:z.string().optional(),
   loan_collateral_doc_2:z
       .any()
       .optional()
-      .nullable()
       .refine((file) => {
         if (!file) return true
         const f = file instanceof File ? file : file?.[0]
         if (!f) return true
         return f.size <= MIN_FILE_SIZE
-      }, { message: 'Size must be less than 2MB' }),
+      }, { message: 'Size must be less than 1MB' }),
   loan_note:z.string().optional()
 })
 
-  type FileKey = 'loan_collateral_doc_1' | 'loan_collateral_doc_2';
-
-  type FileItem  = {
-  file: File | null;
-  src: string | null;
-  check: boolean;
-}
-
-  const images: Record<FileKey, FileItem> = {
-    loan_collateral_doc_1: { file: null, src: null, check: false },
-    loan_collateral_doc_2: { file: null, src: null, check: false },
-  };
-
-  const updateFromBackend = (key: FileKey, url: string | null) => {
-    images[key].file = null;
-    images[key].src = url ? '/storage/' + url + '?v=' + Date.now() : null;
-    images[key].check = !!url;
-  };
-
 /* UPDATE */
-const updateForm = async () => {
+const updateForm = async ()=>{
   loading.value = true
   errorMsg.value = ""
   successMsg.value = ""
@@ -302,123 +276,100 @@ const updateForm = async () => {
   // clear old errors
   Object.keys(errors).forEach(k => errors[k] = "")
 
-  // console.log("FORM BEFORE PARSE:", form)
+  try{
 
-  // Clean numeric fields before validation
-  const newForm = { ...form }
+    // console.log("FORM BEFORE PARSE:", form)
 
-  // compress
-  // newForm.loan_collateral_doc_1 = form.loan_collateral_doc_1
-  // newForm.loan_collateral_doc_2 = form.loan_collateral_doc_2
+    // Clean numeric fields before validation
+    const newForm = { ...form }
 
-  const numericFields: (keyof typeof form)[] = [
-    "loan_lastcash",
-    "loan_newcash",
-    "loan_totalcash",
-    "loan_principle",
-    "loan_over_draft",
-    "loan_interest_rate",
-    "cust_comission_interest_rate",
-    "loan_peroid",
-    "currency_id",
-    "loantype_id",
-    "payback_id",
-    "loan_status_id",
-    "loan_check_status",
-    "cust_id",
-    "cust_comission_id",
-    "cust_loangroup_id",
-    "cust_guarantor_id",
-    "cust_position_loangroup_id",
-    "active"
-  ]
+    newForm.loan_collateral_doc_1 = form.loan_collateral_doc_1
+    newForm.loan_collateral_doc_2 = form.loan_collateral_doc_2
 
-  if (!(newForm.loan_collateral_doc_1 instanceof File)) {
-    newForm.loan_collateral_doc_1 = undefined
-  }
+    const numericFields: (keyof typeof form)[] = [
+      "loan_lastcash",
+      "loan_newcash",
+      "loan_totalcash",
+      "loan_principle",
+      "loan_over_draft",
+      "loan_interest_rate",
+      "cust_comission_interest_rate",
+      "loan_peroid",
+      "currency_id",
+      "loantype_id",
+      "payback_id",
+      "loan_status_id",
+      "loan_check_status",
+      "cust_id",
+      "cust_comission_id",
+      "cust_loangroup_id",
+      "cust_guarantor_id",
+      "cust_position_loangroup_id",
+      "active"
+    ]
 
-  if (!(newForm.loan_collateral_doc_2 instanceof File)) {
-    newForm.loan_collateral_doc_2 = undefined
-  }
-
-  numericFields.forEach(field => {
-    const value = newForm[field]
-    if (typeof value === "string") {
-      // Remove commas and parse
-      newForm[field] = parseFloat(value.replace(/,/g, '')) || 0
-    } else {
-      newForm[field] = Number(value) || 0
-    }
-  })
-
-  try {
-    // console.log("FORM CLEANED:", newForm)
-    const parsed = schema.safeParse(newForm)
-
-    if (!parsed.success) {
-      const errorList: string[] = []
-      parsed.error.errors.forEach((e) => {
-        const field = e.path.join('.')
-        errors[field] = e.message
-        errorList.push(`${field}: ${e.message}`)
-      })
-      errorMsg.value = "Please fix the validation errors before submitting."
-      loading.value = false
-      return
-    }
-
-    // console.log("PARSED FORM:", parsed)
-    const fd = new FormData()
-    const formDataObj = parsed.data
-    Object.entries(formDataObj).forEach(([k, v]) => {
-      if (v === -1 || v === "") {
-        fd.append(k, "")
+    numericFields.forEach(field => {
+      const value = newForm[field]
+      if (typeof value === "string") {
+        // Remove commas and parse
+        newForm[field] = parseFloat(value.replace(/,/g, '')) || 0
       } else {
-        fd.append(k, String(v))
+        newForm[field] = Number(value) || 0
       }
     })
 
-    // files
-    if (newForm.loan_collateral_doc_1 && form.loan_collateral_doc_1_check) fd.append("loan_collateral_doc_1", newForm.loan_collateral_doc_1)
-    if (newForm.loan_collateral_doc_2 && form.loan_collateral_doc_2_check) fd.append("loan_collateral_doc_2", newForm.loan_collateral_doc_2)
+    
 
-    // flags
-    if (form.loan_collateral_doc_1_check) fd.append("loan_collateral_doc_1_check", "1")
-    if (form.loan_collateral_doc_2_check) fd.append("loan_collateral_doc_2_check", "1")
+    // console.log("FORM CLEANED:", newForm)
+    const parsed = schema.safeParse(newForm)
 
-    fd.append("_method", "PUT")
+      if (!parsed.success) {
+        // Populate errors object
+        parsed.error.errors.forEach((e) => {
+          const path = e.path[0]
+          if (typeof path === 'string' || typeof path === 'number') {
+            errors[path] = e.message
+          }
+        })
+        errorMsg.value = "Please fix the validation errors before submitting."
+        loading.value = false
+        return
+      }
 
-    /* ✅ REQUEST */
-    await $fetch(`/api/admin-secure/loanrecords/${id}`, {
-      method: "POST",
-      body: fd
+      const body = parsed.data
+
+      const safeBody = Object.fromEntries(
+        Object.entries(body).map(([k, v]) => {
+          if (v === "" || v === -1) return [k, null]
+          return [k, v]
+        })
+      )
+
+    await $fetch(`/api/admin-secure/loanrecords/${id}`,{
+      method:"PUT",
+      body: safeBody
     })
 
     successMsg.value = "Loan updated successfully!"
 
-    // ✅ REFRESH IMAGE FROM BACKEND
-    const refreshed = await $fetch<{ succes: number, data: any }>(`/api/admin-secure/loanrecords/${id}`)
-    updateFromBackend("loan_collateral_doc_1", refreshed.data.loan_collateral_doc_1_url)
-    updateFromBackend("loan_collateral_doc_2", refreshed.data.loan_collateral_doc_2_url)
+  }catch(err:any){
 
-  } catch (err: any) {
-
-    if (err.errors) {
-      err.errors.forEach((e: any) => {
+    if(err.errors){
+      err.errors.forEach((e:any)=>{
         errors[e.path[0]] = e.message
       })
-    } else {
+    }else{
       errorMsg.value = "Error while saving"
     }
 
-  } finally {
-    loading.value = false
+  }finally{
+    loading.value=false
   }
 
 }
 
 
-/* Native select2 */
+
 // Search input
 const search = ref("")
 const isOpen = ref(false)
@@ -479,7 +430,6 @@ watch(form, () => {
   if (selected) search.value = selected.label
 })
 
-/*  end Native select2 */
 
 function onInput<K extends keyof typeof form>(event: Event, field: K) {
   const target = event.target as HTMLInputElement
@@ -498,8 +448,6 @@ function onInput<K extends keyof typeof form>(event: Event, field: K) {
 }
 
 
-
-
   const isloan_collateral_map_link_1_Valid = computed(() => {
     return form.loan_collateral_map_link_1
   })
@@ -509,89 +457,6 @@ function onInput<K extends keyof typeof form>(event: Event, field: K) {
   const openLink = (url: string) => {
     if (!url) return
     window.open(url, '_blank')
-  }
-
-const onFileDocChange1 = (e: Event) => {
-  const file = (e.target as HTMLInputElement).files?.[0];
-  if (!file) return;
-
-  // ✅ validate pdf
-  if (!file.type.includes("pdf")) {
-    errors.loan_collateral_doc_1 = "Only PDF allowed";
-    return;
-  }
-
-  errors.loan_collateral_doc_1 = "";
-
-  // ✅ revoke old preview
-  if (form.loan_collateral_doc_1_src) {
-    URL.revokeObjectURL(form.loan_collateral_doc_1_src);
-  }
-
-  // ✅ store file (correct)
-  form.loan_collateral_doc_1 = file;
-
-  // ✅ must be number for Laravel
-  form.loan_collateral_doc_1_check = 1;
-
-  // ✅ preview
-  form.loan_collateral_doc_1_src = URL.createObjectURL(file);
-};
-
-
-
-const onFileDocChange2 = (e: Event) => {
-  const file = (e.target as HTMLInputElement).files?.[0];
-  if (!file) return;
-
-  // ✅ validate pdf
-  if (!file.type.includes("pdf")) {
-    errors.loan_collateral_doc_2 = "Only PDF allowed";
-    return;
-  }
-
-  errors.loan_collateral_doc_2 = "";
-
-  // ✅ revoke old preview
-  if (form.loan_collateral_doc_2_src) {
-    URL.revokeObjectURL(form.loan_collateral_doc_2_src);
-  }
-
-  // ✅ store file (correct)
-  form.loan_collateral_doc_2 = file;
-
-  // ✅ must be number for Laravel
-  form.loan_collateral_doc_2_check = 1;
-
-  // ✅ preview
-  form.loan_collateral_doc_2_src = URL.createObjectURL(file);
-};
-
-
-  const formatFileSize = (size?: number) => {
-    if (!size) return "";
-
-    const kb = size / 1024;
-    if (kb < 1024) return kb.toFixed(1) + " KB";
-
-    const mb = kb / 1024;
-    return mb.toFixed(1) + " MB";
-  };
-
-  const getFileUrl = (src: string) => {
-    if (!src) return '#'
-
-    // already blob
-    if (src.startsWith('blob:')) return src
-
-    // already full URL (IMPORTANT FIX)
-    if (src.startsWith('http://') || src.startsWith('https://')) {
-      return src
-    }
-    
-
-    // backend file
-    return '/storage/' + src
   }
 
 </script>
@@ -612,13 +477,71 @@ const onFileDocChange2 = (e: Event) => {
     <ComponentCard title="1. General Information">
 
       <!-- cust_id -->
-      <CommonCustomerSelect2
-        label="Customer"
-        v-model="form.cust_id"
-        :required=true
-        :error="errors.cust_id"
-        :options="customerName1"
+      <!-- <div>
+        <label class="label">Customer</label>
+        <select v-model.number="form.cust_id" class="input">
+          <option v-for="c in customerName1" :key="c.id" :value="c.id">
+            {{ c.label }}
+          </option>
+        </select>
+      </div> -->
+
+
+
+
+  <!-- Native select2 -->
+  <div class="relative select-container">
+    <label class="label" >Customer</label>
+
+    <!-- Native select (hidden, just for v-model sync) -->
+    <select
+      v-model.number="form.cust_id"
+      class="input w-full"
+      @click.prevent="isOpen = true"
+    >
+      <option value="" class="hidden">Select customer</option>
+      <option v-for="c in customerName1" :key="c.id" :value="c.id" class="hidden">
+        {{ c.label }}
+      </option>
+    </select>
+
+    <!-- Search input -->
+    <div v-if="isOpen" class="absolute z-10 w-full mt-1">
+      <input
+        type="text"
+        v-model="search"
+        @keydown="onKeydown"
+        placeholder="Search ..."
+        class="input w-full border rounded px-3 py-2 bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
+        autocomplete="off"
       />
+
+      <!-- Dropdown -->
+      <ul
+        v-if="filteredCustomers.length"
+        class="absolute z-10 w-full mt-1 max-h-40 overflow-auto border rounded bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
+      >
+        <li
+          v-for="(c, index) in filteredCustomers"
+          :key="c.id"
+          @mousedown.prevent="selectCustomer(c)"
+          @mouseenter="highlightedIndex = index"
+          :class="[
+            'px-3 py-1 cursor-pointer transition-colors',
+            index === highlightedIndex
+              ? 'bg-blue-500 text-white dark:bg-blue-600'
+              : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+          ]"
+        >
+          {{ c.id }} - {{ c.label }}
+        </li>
+      </ul>
+    </div>
+  </div>
+ 
+
+
+
 
       <!-- currency_id -->
       <div>
@@ -793,16 +716,8 @@ const onFileDocChange2 = (e: Event) => {
 
   <!-- MIDDLE -->
   <ComponentCard title="2. Guarantor/Comission">
-
       <!-- cust_comission_id -->
-      <CommonCustomerSelect2
-        label="Comission Customer"
-        v-model="form.cust_comission_id"
-        :required=true
-        :error="errors.cust_comission_id"
-        :options="customerName1"
-      />
-      <!-- <div>
+      <div>
         <label class="label">Comission Customer<span class="text-red-500 text-sm"> *</span></label>
         <span class="text-red-500 text-sm">{{ errors.cust_comission_id }}</span>
         <select v-model.number="form.cust_comission_id" class="input">
@@ -811,7 +726,7 @@ const onFileDocChange2 = (e: Event) => {
             {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
           </option>
         </select>
-      </div> -->
+      </div>
   
       <!-- cust_comission_interest_rate -->
       <div>
@@ -821,14 +736,7 @@ const onFileDocChange2 = (e: Event) => {
       </div>
 
        <!-- cust_loangroup_id -->
-      <CommonCustomerSelect2
-        label="Loan Group"
-        v-model="form.cust_loangroup_id"
-        :required=true
-        :error="errors.cust_loangroup_id"
-        :options="customerName1"
-      />
-       <!-- <div>
+       <div>
         <label class="label">Loan Group<span class="text-red-500 text-sm"> *</span></label>
         <span class="text-red-500 text-sm">{{ errors.cust_loangroup_id }}</span>
         <select v-model.number="form.cust_loangroup_id" class="input">
@@ -837,17 +745,10 @@ const onFileDocChange2 = (e: Event) => {
             {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
           </option>
         </select>
-      </div> -->
+      </div>
 
       <!-- cust_guarantor_id -->
-      <CommonCustomerSelect2
-        label="Guarantor Customer"
-        v-model="form.cust_guarantor_id"
-        :required=false
-        :error="errors.cust_guarantor_id"
-        :options="customerName1"
-      />
-      <!-- <div>
+      <div>
         <label class="label">Guarantor Customer</label>
         <select v-model.number="form.cust_guarantor_id" class="input">
           <option value="-1">Choose ...</option>
@@ -855,7 +756,7 @@ const onFileDocChange2 = (e: Event) => {
             {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
           </option>
         </select>
-      </div> -->
+      </div>
 
       <!-- cust_position_loangroup_id -->
       <div>
@@ -892,7 +793,7 @@ const onFileDocChange2 = (e: Event) => {
     </div>
 
     <!-- loan_check_status -->
-    <div :class="{ hidden: !(hasRole('admin') || hasRole('ceo')) }">
+    <div>
       <div class="flex items-center justify-between">
         <label class="label">Approver</label>
       </div>
@@ -905,14 +806,12 @@ const onFileDocChange2 = (e: Event) => {
 
   </ComponentCard>
 
-
-  <!-- RIGHT -->
-<ComponentGrowCard title="3. Collateral/Note" class="h-full">
-
+    <!-- RIGHT -->
+<ComponentSubmitCard title="3. Collateral/Note" class="h-full">
   <!-- Collateral 1 -->
   <div>
     <div class="flex items-center justify-between">
-      <label class="label !text-blue-900 text-bold -ml-1">Collateral 1 - Description</label>
+      <label class="label">Collateral 1</label>
       <span class="text-red-500 text-sm">{{ errors.loan_collateral_1 }}</span>
     </div>
     <textarea v-model="form.loan_collateral_1" class="input" rows="6"></textarea>
@@ -932,59 +831,6 @@ const onFileDocChange2 = (e: Event) => {
     </div>
     <input v-model="form.loan_collateral_map_link_1" class="input" />
   </div>
-
-  <!-- loan_collateral_doc_1 -->
-  <div>
-    <div class="flex items-center justify-between">
-      <label class="label">Collateral 1 - Document <span class="!text-red-300">PDF</span></label>
-      <span class="text-red-500 text-sm">{{ errors.loan_collateral_doc_1 }}</span>
-    </div>
-
-    <input type="file" accept="application/pdf" @change="onFileDocChange1" class="input" />
-
-    <!-- Show only link -->
-    <div v-if="form.loan_collateral_doc_1_src" class="mt-3">
-      <div class="relative group w-full">
-
-        <!-- CLICKABLE LINK -->
-        <a :href="getFileUrl(form.loan_collateral_doc_1_src)" target="_blank"
-          class="flex items-center justify-between p-3 hover:bg-gray-50 transition">
-          <!-- Left -->
-          <div class="flex items-center gap-3">
-            <!-- PDF Icon -->
-            <div class="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-lg">
-              PDF
-            </div>
-
-            <!-- File Info -->
-            <div class="flex flex-col">
-              <span class="text-sm font-medium text-gray-800">
-                {{ form.loan_collateral_doc_1?.name || 'document.pdf' }}
-              </span>
-              <span class="text-xs text-gray-500">
-                {{ formatFileSize(form.loan_collateral_doc_1?.size) }}
-              </span>
-            </div>
-          </div>
-
-        </a>
-
-        <!-- ✅ CHECK OVERLAY -->
-        <div
-          class="absolute bottom-1 right-2 bg-white/90 backdrop-blur px-3 py-1 rounded-full shadow flex items-center gap-2">
-          <input type="checkbox" v-model="form.loan_collateral_doc_1_check" :true-value="1" :false-value="0"
-            class="w-4 h-4 text-blue-600 rounded" />
-          <span class="text-sm text-gray-700">Check</span>
-        </div>
-
-      </div>
-    </div>
-    
-  </div>
-
-
-   <div class="border-b border-gray-100 dark:border-gray-800 !pt-3"></div>
-
 
   <!-- Collateral 2 -->
   <div>
@@ -1009,57 +855,6 @@ const onFileDocChange2 = (e: Event) => {
     </div>
     <input v-model="form.loan_collateral_map_link_2" class="input" />
   </div>
-
-  <!-- loan_collateral_doc_2 -->
-  <div>
-    <div class="flex items-center justify-between">
-      <label class="label">Collateral 2 - Document <span class="!text-red-300">PDF</span></label>
-      <span class="text-red-500 text-sm">{{ errors.loan_collateral_doc_2 }}</span>
-    </div>
-
-    <input type="file" accept="application/pdf" @change="onFileDocChange2" class="input" />
-
-    <!-- Show only link -->
-    <div v-if="form.loan_collateral_doc_2_src" class="mt-3">
-      <div class="relative group w-full">
-
-        <!-- CLICKABLE LINK -->
-        <a :href="getFileUrl(form.loan_collateral_doc_2_src)" target="_blank"
-          class="flex items-center justify-between p-3 hover:bg-gray-50 transition">
-          <!-- Left -->
-          <div class="flex items-center gap-3">
-            <!-- PDF Icon -->
-            <div class="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-lg">
-              PDF
-            </div>
-
-            <!-- File Info -->
-            <div class="flex flex-col">
-              <span class="text-sm font-medium text-gray-800">
-                {{ form.loan_collateral_doc_2?.name || 'document.pdf' }}
-              </span>
-              <span class="text-xs text-gray-500">
-                {{ formatFileSize(form.loan_collateral_doc_2?.size) }}
-              </span>
-            </div>
-          </div>
-
-        </a>
-
-        <!-- ✅ CHECK OVERLAY -->
-        <div
-          class="absolute bottom-1 right-2 bg-white/90 backdrop-blur px-3 py-1 rounded-full shadow flex items-center gap-2">
-          <input type="checkbox" :true-value="1" :false-value="0" v-model="form.loan_collateral_doc_2_check"
-            class="w-4 h-4 text-blue-600 rounded" />
-          <span class="text-sm text-gray-700">Check</span>
-        </div>
-
-      </div>
-    </div>
-
-  </div>
-
-  <div class="border-b border-gray-100 dark:border-gray-800 pt-3"></div>
 
   <!-- Note -->
   <div>
@@ -1107,7 +902,7 @@ const onFileDocChange2 = (e: Event) => {
   </button>
 </div>
   </template>
-</ComponentGrowCard>
+</ComponentSubmitCard>
 
   </div>
 

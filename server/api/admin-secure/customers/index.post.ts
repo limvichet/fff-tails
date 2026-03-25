@@ -54,7 +54,6 @@ export default defineEventHandler(async (event: H3Event) => {
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/json",
-        // ❗ DO NOT set Content-Type manually when using FormData
       },
     })
 

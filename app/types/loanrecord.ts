@@ -12,7 +12,7 @@
 
 export interface LoanrecordFormDataResponse {
   customerName1: Record<string, string | null>;
-  customerName2: Record<string, string | null>;
+  // customerName2: Record<string, string | null>;
   currencies: Record<string, string>;
   loanTypes: Record<string, string>;
   paybacks: Record<string, string>;

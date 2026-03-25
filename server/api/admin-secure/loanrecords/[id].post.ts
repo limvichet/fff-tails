@@ -7,7 +7,7 @@ import {
   type H3Event,
 } from "h3"
 
-import type { Customer } from "~/types/customer"
+import type { Loanrecord } from "~/types/loanrecord"
 
 export default defineEventHandler(async (event: H3Event) => {
   const { apiBaseUrl } = useRuntimeConfig(event)
@@ -60,7 +60,7 @@ export default defineEventHandler(async (event: H3Event) => {
     formData.append("_method", "PUT")
 
     // Send PUT request to Laravel update endpoint
-    const res = await $fetch<Customer>(`${apiBaseUrl}/api/admin-secure/customers/${id}`, {
+    const res = await $fetch<Loanrecord>(`${apiBaseUrl}/api/admin-secure/loanrecords/${id}`, {
       method: "POST",
       body: formData,
       headers: {
@@ -72,7 +72,8 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return res
   } catch (err: any) {
-    const message = err?.data?.message || err?.message || "Failed to update customer"
+    const message = err?.data?.message || err?.message || "Failed to update loan record"
+
     throw createError({
       statusCode: err?.status || 500,
       statusMessage: message,

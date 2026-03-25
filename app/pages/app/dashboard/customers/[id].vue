@@ -499,6 +499,7 @@
     // clone form to avoid mutating original
     const newForm = { ...form };
 
+    // compress
     newForm.img1 = await compressIfNeeded(form.img1);
     newForm.img2 = await compressIfNeeded(form.img2);
     newForm.photo1 = await compressIfNeeded(form.photo1);
@@ -508,18 +509,8 @@
       // console.log("FORM BEFORE PARSE:", form)
       const parsed = schema.safeParse(newForm)
 
-      // if (!parsed.success) {
-      //   parsed.error.errors.forEach((e) => {
-      //     const field = e.path.join('.')
-      //     errors[field] = e.message
-      //   })
-      //   errorMsg.value = "Please fix the validation errors."
-      //   return
-      // }
-
       if (!parsed.success) {
         const errorList: string[] = []
-
         parsed.error.errors.forEach((e) => {
           const field = e.path.join('.')
           errors[field] = e.message
@@ -528,10 +519,11 @@
 
         // errorMsg.value = errorList.join(' | ')
         errorMsg.value = "Please fix the validation errors."
+        loading.value = false
         return
       }
 
-      console.log("PARSED FORM:", parsed)
+      // console.log("PARSED FORM:", parsed)
       const fd = new FormData()
       const formDataObj = parsed.data
       Object.entries(formDataObj).forEach(([k, v]) => {

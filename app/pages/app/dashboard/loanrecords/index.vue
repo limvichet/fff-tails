@@ -39,7 +39,7 @@ type Currency = {
 }
 type Loantype = {
     id:             number;
-    loantype_short: string;
+    loantype_short?: string;
 }
 type LoanRecord = {
     id:                number;
@@ -47,13 +47,13 @@ type LoanRecord = {
     loan_newcash:      string;
     loan_totalcash:    string;
     cust_id:           number;
-    loantype_id:       number;
+    loantype_id?:       number;
     loan_status_id:    number;
     currency_id:       number;
     loan_check_status: number;
     customer:          Customer;
     currency:          Currency;
-    loantype:          Loantype;
+    loantype?:          Loantype;
 }
 type LoanrecordResponses = {
   current_page: number
@@ -286,7 +286,7 @@ const deleteLoan = async () => {
                 </td>
 
                 <td class="px-1 py-1 text-sm">
-                    {{ l.loantype.loantype_short }}
+                    {{ l?.loantype?.loantype_short ??  '' }}
                 </td>
 
                 <td class="px-1 py-1 text-sm">

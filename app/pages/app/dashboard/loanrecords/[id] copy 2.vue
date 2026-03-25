@@ -612,13 +612,58 @@ const onFileDocChange2 = (e: Event) => {
     <ComponentCard title="1. General Information">
 
       <!-- cust_id -->
-      <CommonCustomerSelect2
-        label="Customer"
-        v-model="form.cust_id"
-        :required=true
-        :error="errors.cust_id"
-        :options="customerName1"
-      />
+      <!-- <div>
+        <label class="label">Customer</label>
+        <select v-model.number="form.cust_id" class="input">
+          <option v-for="c in customerName1" :key="c.id" :value="c.id">
+            {{ c.label }}
+          </option>
+        </select>
+      </div> -->
+
+
+
+
+      <!-- Native select2 -->
+      <div class="relative select-container">
+        <div class="flex items-center justify-between">
+          <label class="label">Customer<span class="text-red-500 text-sm"> *</span></label>
+          <span class="text-red-500 text-sm">{{ errors.cust_id }}</span>
+        </div>
+
+        <!-- Native select (hidden, just for v-model sync) -->
+        <select v-model.number="form.cust_id" class="input w-full" @click.prevent="isOpen = true">
+          <option value="" class="hidden">Select customer</option>
+          <option v-for="c in customerName1" :key="c.id" :value="c.id" class="hidden">
+            {{ c.label }}
+          </option>
+        </select>
+
+        <!-- Search input -->
+        <div v-if="isOpen" class="absolute z-10 w-full mt-1">
+          <input type="text" v-model="search" @keydown="onKeydown" placeholder="Search ..."
+            class="input w-full border rounded px-3 py-2 bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
+            autocomplete="off" />
+
+          <!-- Dropdown -->
+          <ul v-if="filteredCustomers.length"
+            class="absolute z-10 w-full mt-1 max-h-40 overflow-auto border rounded bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700">
+            <li v-for="(c, index) in filteredCustomers" :key="c.id" @mousedown.prevent="selectCustomer(c)"
+              @mouseenter="highlightedIndex = index" :class="[
+                'px-3 py-1 cursor-pointer transition-colors',
+                index === highlightedIndex
+                  ? 'bg-blue-500 text-white dark:bg-blue-600'
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+              ]">
+              {{ c.id }} - {{ c.label }}
+            </li>
+          </ul>
+        </div>
+      </div>
+
+
+
+
 
       <!-- currency_id -->
       <div>
@@ -793,16 +838,8 @@ const onFileDocChange2 = (e: Event) => {
 
   <!-- MIDDLE -->
   <ComponentCard title="2. Guarantor/Comission">
-
       <!-- cust_comission_id -->
-      <CommonCustomerSelect2
-        label="Comission Customer"
-        v-model="form.cust_comission_id"
-        :required=true
-        :error="errors.cust_comission_id"
-        :options="customerName1"
-      />
-      <!-- <div>
+      <div>
         <label class="label">Comission Customer<span class="text-red-500 text-sm"> *</span></label>
         <span class="text-red-500 text-sm">{{ errors.cust_comission_id }}</span>
         <select v-model.number="form.cust_comission_id" class="input">
@@ -811,7 +848,7 @@ const onFileDocChange2 = (e: Event) => {
             {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
           </option>
         </select>
-      </div> -->
+      </div>
   
       <!-- cust_comission_interest_rate -->
       <div>
@@ -821,14 +858,7 @@ const onFileDocChange2 = (e: Event) => {
       </div>
 
        <!-- cust_loangroup_id -->
-      <CommonCustomerSelect2
-        label="Loan Group"
-        v-model="form.cust_loangroup_id"
-        :required=true
-        :error="errors.cust_loangroup_id"
-        :options="customerName1"
-      />
-       <!-- <div>
+       <div>
         <label class="label">Loan Group<span class="text-red-500 text-sm"> *</span></label>
         <span class="text-red-500 text-sm">{{ errors.cust_loangroup_id }}</span>
         <select v-model.number="form.cust_loangroup_id" class="input">
@@ -837,17 +867,10 @@ const onFileDocChange2 = (e: Event) => {
             {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
           </option>
         </select>
-      </div> -->
+      </div>
 
       <!-- cust_guarantor_id -->
-      <CommonCustomerSelect2
-        label="Guarantor Customer"
-        v-model="form.cust_guarantor_id"
-        :required=false
-        :error="errors.cust_guarantor_id"
-        :options="customerName1"
-      />
-      <!-- <div>
+      <div>
         <label class="label">Guarantor Customer</label>
         <select v-model.number="form.cust_guarantor_id" class="input">
           <option value="-1">Choose ...</option>
@@ -855,7 +878,7 @@ const onFileDocChange2 = (e: Event) => {
             {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
           </option>
         </select>
-      </div> -->
+      </div>
 
       <!-- cust_position_loangroup_id -->
       <div>

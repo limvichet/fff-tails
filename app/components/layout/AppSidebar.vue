@@ -267,8 +267,8 @@ const menuGroups = [
         icon: TableIcon,
         name: "Loan Records",
         subItems: [
-          { name: "Create", path: "/app/dashboard/loanrecords/create", pro: false },
-          { name: "Search", path: "/app/dashboard/loanrecords", pro: false },
+          { name: "Create", path: "/app/dashboard/loanrecords/create", pro: false, icon: PencilIcon  },
+          { name: "Search", path: "/app/dashboard/loanrecords", pro: false, icon: SearchIcon  },
         ],
       },
 
