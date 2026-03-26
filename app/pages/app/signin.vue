@@ -61,7 +61,7 @@ const redirectTo = route.query.redirectTo?.toString() || "/app/dashboard";
 err.value = null;
 
 try {
-  console.log("Submitting login form:", data);
+  // console.log("Submitting login form:", data);
 
   const res = await login(data);
 

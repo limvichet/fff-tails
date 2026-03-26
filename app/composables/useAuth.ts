@@ -31,8 +31,8 @@ export const useAuth = () => {
 
       // ✅ store everything
       user.value = res.user
-      roles.value = res.roles || []
-      permissions.value = res.permissions || []
+      // roles.value = res.roles || []
+      // permissions.value = res.permissions || []
 
       // ⏳ wait a bit for cookie to be stored in browser
       await new Promise((resolve) => setTimeout(resolve, 100));
