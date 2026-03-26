@@ -53,7 +53,7 @@
           <div v-for="(menuGroup, groupIndex) in menuGroups" :key="groupIndex">
             <h2
               :class="[
-                'mb-4 text-xs uppercase flex leading-[20px] text-gray-400',
+                'mb-4 text-xs uppercase flex leading-[20px] text-blue-900',
                 !isExpanded && !isHovered
                   ? 'lg:justify-center'
                   : 'justify-start',
@@ -241,6 +241,8 @@ import {
   UserGroupIcon,
   SearchIcon,
   PencilIcon,
+  LoanIcon,
+  SettingsIcon,
 } from "../../icons";
 import SidebarWidget from "./SidebarWidget.vue";
 import { useSidebar } from "@/composables/useSidebar";
@@ -253,7 +255,7 @@ const { isExpanded, isMobileOpen, isHovered, openSubmenu } = useSidebar();
 
 const menuGroups = [
   {
-    title: "FFF Mis Menu",
+    title: "Loan Managements",
     items: [
       {
         icon: UserGroupIcon,
@@ -264,30 +266,54 @@ const menuGroups = [
         ],
       },
       {
-        icon: TableIcon,
+        icon: LoanIcon,
         name: "Loan Records",
         subItems: [
           { name: "Create", path: "/app/dashboard/loanrecords/create", pro: false, icon: PencilIcon  },
           { name: "Search", path: "/app/dashboard/loanrecords", pro: false, icon: SearchIcon  },
         ],
       },
+      {
+        icon: CalenderIcon,
+        name: "Schedules",
+        subItems: [
+          { name: "Create", path: "/app/dashboard/schedules/create", pro: false, icon: PencilIcon  },
+          { name: "Search", path: "/app/dashboard/schedules", pro: false, icon: SearchIcon  },
+        ],
+      },
+      {
+        icon: TableIcon,
+        name: "Payments",
+        subItems: [
+          { name: "Create", path: "/app/dashboard/payments/create", pro: false, icon: PencilIcon  },
+          { name: "Search", path: "/app/dashboard/payments", pro: false, icon: SearchIcon  },
+        ],
+      },
+      {
+        icon: PieChartIcon,
+        name: "Reports",
+        subItems: [
+          { name: "Create", path: "/app/dashboard/payments/create", pro: false, icon: PencilIcon  },
+          { name: "Search", path: "/app/dashboard/payments", pro: false, icon: SearchIcon  },
+        ],
+      },
 
     ],
   },
   {
-    title: "Others",
+    title: "Administrative Tools",
     items: [
       {
-        icon: PieChartIcon,
-        name: "Charts",
+        icon: UserGroupIcon,
+        name: "Employee",
         subItems: [
           { name: "Line Chart", path: "/chart/line-chart", pro: false },
           { name: "Bar Chart", path: "/chart/bar-chart", pro: false },
         ],
       },
       {
-        icon: BoxCubeIcon,
-        name: "Ui Elements",
+        icon: SettingsIcon,
+        name: "Users & Permissions",
         subItems: [
           { name: "Alerts", path: "/uielements/alerts", pro: false },
           { name: "Avatars", path: "/uielements/avatars", pro: false },
@@ -298,8 +324,8 @@ const menuGroups = [
         ],
       },
       {
-        icon: PlugInIcon,
-        name: "Authentication",
+        icon: UserCircleIcon,
+        name: "Roles & Permission",
         subItems: [
           { name: "Signin", path: "/auth/signin", pro: false },
           { name: "Signup", path: "/auth/signup", pro: false },

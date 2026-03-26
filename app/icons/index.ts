@@ -47,6 +47,7 @@ import BellIcon from "./BellIcon.vue";
 import BarChartIcon from "./BarChartIcon.vue";
 import SearchIcon from "./SearchIcon.vue";
 import PencilIcon from "./PencilIcon.vue";
+import LoanIcon from "./LoanIcon.vue";
 
 export {
   BellIcon,
@@ -97,5 +98,6 @@ export {
   SendIcon,
   DraftIcon,
   SearchIcon,
-  PencilIcon
+  PencilIcon,
+  LoanIcon,
 };

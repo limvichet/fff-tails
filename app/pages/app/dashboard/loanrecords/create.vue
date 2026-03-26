@@ -48,7 +48,7 @@
       sourceMoneys.value = data.sourceMoneys
       paybacks.value = map(data.paybacks)
       loanStatuses.value = map(data.loanStatuses)
-loanCheckStatuses.value = data.loanCheckStatuses ? map(data.loanCheckStatuses) : []
+      loanCheckStatuses.value = data.loanCheckStatuses ? map(data.loanCheckStatuses) : []
       loanGroupPositions.value = map(data.loanGroupPositions)
     } catch (err: any) {
       errorMsg.value = err?.statusMessage || "Failed to load form data"
