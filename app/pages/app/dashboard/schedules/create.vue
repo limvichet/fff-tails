@@ -5,10 +5,13 @@ definePageMeta({
   breadcrumb: { title: "Schedules", subTitle: "Create" }
 })
 
-import { ref, reactive, onMounted, watch } from "vue"
+
+import { ref, reactive, onMounted, onActivated, watch } from "vue"
 import ComponentCard from "@/components/common/ComponentCard.vue"
+import ComponentSubmitCard from "@/components/common/ComponentSubmitCard.vue"
 import CommonCustomerSelect2 from "@/components/common/CommonCustomerSelect2.vue"
 import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
+import { number, string } from "zod"
 
 const { successMsg, errorMsg } = useMessage()
 const loading = ref(false)
@@ -41,6 +44,7 @@ type Loantype = { id:number, loantype_detail:string }
 
 const customers = ref<{id:number,label:string}[]>([])
 const loanrecords = ref<Loanrecord[]>([])
+const schedules = ref<any[]>([])
 
 /* FORM */
 const form = reactive({
@@ -63,11 +67,17 @@ const form = reactive({
 /* FETCH FORM DATA */
 const fetchFormData = async () => {
   loading.value = true
+  errorMsg.value = null
+
   try {
     const res = await $fetch<{
         customers: { [key: string]: string },
         loanrecords: Loanrecord[]
-    }>("/api/admin-secure/schedules-form-data")
+    }>("/api/admin-secure/schedules-form-data", {
+       params: {
+        t: Date.now() // ✅ cache buster
+      }
+    })
 
     const map = (obj: Record<string,string>) =>
       Object.entries(obj).map(([id,label])=>({ id:Number(id), label:String(label) }))
@@ -76,8 +86,8 @@ const fetchFormData = async () => {
     loanrecords.value = res.loanrecords
 
     // Debug logs
-    console.log("Mapped customers:", customers.value)
-    console.log("Loan records:", loanrecords.value)
+    // console.log("Mapped customers:", customers.value)
+    // console.log("Loan records:", loanrecords.value)
 
   } catch (err: any) {
     errorMsg.value = err?.statusMessage || "Failed to load form data"
@@ -88,6 +98,7 @@ const fetchFormData = async () => {
 }
 
 onMounted(() => { fetchFormData() })
+onActivated(() => { fetchFormData() })
 
 watch(
   () => form.loan_id,
@@ -137,6 +148,63 @@ watch(
   { immediate: true } // 🔥 important
 )
 
+/* SUBMIT */
+const submitForm = async () => {
+  loading.value = true
+  errorMsg.value = null
+  successMsg.value = null
+    
+  console.log("Schedules:", schedules.value)         // ✅ direct object
+
+  const payload = {
+    loan_id: form.loan_id,
+    schedule_paymentnumber: schedules.value.map(s => s.schedule_paymentnumber),
+    schedule_startdate: schedules.value.map(s => formatDateForOutput(s.schedule_startdate)),
+    schedule_enddate: schedules.value.map(s => formatDateForOutput(s.schedule_enddate)),
+    schedule_totaldays: schedules.value.map(s => Number(s.schedule_totaldays || 0)),
+    schedule_outstanding: schedules.value.map(s => Number(s.schedule_outstanding || 0)),
+    schedule_over_draft: schedules.value.map(s => Number(s.schedule_over_draft || 0)),
+    schedule_principle: schedules.value.map(s => Number(s.schedule_principle || 0)),
+    schedule_interest_rate: schedules.value.map(s => Number(s.schedule_interest_rate || 0)),
+    schedule_interest: schedules.value.map(s => Number(s.schedule_interest || 0)),
+    schedule_totalpay: schedules.value.map(s => Number(s.schedule_totalpay || 0)),
+  }
+  
+  console.log("Payload:", payload)                   // ✅ direct object
+  // console.log("Payload JSON:", JSON.stringify(payload, null, 2))
+  try {
+    const res = await $fetch<{ success: boolean; message: string; loan_id: number }>("/api/admin-secure/schedules",{
+      method: "POST",
+      body: payload,
+    })
+    console.log(res.loan_id)
+    successMsg.value = res.message
+
+    if (res && res.loan_id) {
+      await navigateTo(`/app/dashboard/schedules/${res.loan_id}`)
+    }
+
+  } catch (err: any) {
+        console.log('FULL ERROR:', err)
+        console.log('DATA:', err?.data)
+        console.log('MESSAGE:', err?.data?.message)
+      if (err.errors) {
+        err.errors.forEach((e: any) => {
+          const path = e.path[0]
+          if (typeof path === 'string' || typeof path === 'number') {
+            errors[path] = e.message
+          }
+        })
+      } else {
+        errorMsg.value = "Error while saving loanrecord"
+      }
+    } finally {
+      loading.value = false
+  }
+
+}
+
+
 /* DATE FORMAT HELPER */
 function formatDateForInput(date: string | null) {
   if (!date) return ""
@@ -159,35 +227,90 @@ function formatDateForOutput(date: Date) {
   return `${d}-${m}-${y}`;
 }
 
+  const fixDouble = (value: number, n: number): number => {
+    const power = Math.pow(10, n)
+    return Math.floor(value * power) / power
+  }
 
-const schedules = ref<any[]>([])
+
+
+
 const generateLoanM11 = () => {
   schedules.value = []
-  //const endtDate = startDate
-  var startDate = new Date(formatDateForInput(form.loan_startdate))
   
   for (let i = 0; i < form.loan_peroid; i++) {
-    var newStartDate = new Date(startDate);
+    let startDate = new Date(formatDateForInput(form.loan_startdate))
+    let newStartDate = new Date(startDate);
     newStartDate.setMonth(newStartDate.getMonth() + i)
 
-    var newEndDate = new Date(newStartDate); // clone!
+    let newEndDate = new Date(newStartDate); // clone!
     newEndDate.setMonth(newStartDate.getMonth() + 1)
-    newEndDate.setDate(newEndDate.getDate()-1);  
 
-      const totalDays = Math.ceil((newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24))
+    let totalDays = Math.ceil((newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24))
+
+    let schedule_outstanding = 0.000
+    let schedule_principle = 0.000
+    let schedule_totalpay = 0.000
+    let schedule_interest = 0.000
+
+    const loan_totalcash = Number(String(form.loan_totalcash).replace(/,/g, '') || 0)
+    const loan_principle = Number(String(form.loan_principle).replace(/,/g, '') || 0)
+    let loan_interest_rate = Number(String(form.loan_interest_rate).replace(/,/g, '') || 0)
+
+    schedule_outstanding = loan_totalcash - (loan_principle * i)
+    if(schedule_outstanding <= 0){
+      schedule_outstanding = 0.000;
+      schedule_principle = 0.000;
+      schedule_interest = 0.000;
+      schedule_totalpay = 0.000;
+    }else{
+      schedule_principle = loan_principle;
+      schedule_interest = Number(fixDouble(loan_interest_rate / 100, 3)) * ( loan_totalcash - (loan_principle * i));
+      schedule_totalpay =(schedule_principle) + (fixDouble(loan_interest_rate / 100, 3)) * (loan_totalcash - (loan_principle * i));
+    }
+
 
     schedules.value.push({
       schedule_paymentnumber: i + 1,
-      schedule_startdate: formatDateForOutput(newStartDate),
-      schedule_enddate: formatDateForOutput(newEndDate),
+      schedule_startdate: newStartDate,
+      schedule_enddate: newEndDate,
       schedule_totaldays: totalDays,
-      schedule_interest_rate: form.loan_interest_rate,
-      schedule_over_draft: 0.000
+      schedule_interest_rate: loan_interest_rate,
+      schedule_outstanding: schedule_outstanding,
+      schedule_over_draft: 0.000,
+      schedule_principle: schedule_principle,
+      schedule_interest: schedule_interest
     })
   }
-  //console.log(schedules)
+  
+  recalculcateDateM()
 }
 
+
+const recalculcateDateM = () => {
+  schedules.value.forEach((item, index) => {
+    if (index > 0) {
+      const prevEnd = new Date(schedules.value[index - 1].schedule_enddate)
+
+      // +1 day
+      prevEnd.setDate(prevEnd.getDate() + 1)
+
+      // ⚠️ IMPORTANT: assign Date (not timestamp)
+      schedules.value[index].schedule_startdate = new Date(prevEnd)
+    }
+
+    const start = new Date(schedules.value[index].schedule_startdate)
+    const end = new Date(schedules.value[index].schedule_enddate)
+
+    let totalDays =
+      Math.round((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)) + 1
+
+    // fix 32 → 31
+    if (totalDays >= 32) totalDays = 31
+
+    schedules.value[index].schedule_totaldays = totalDays
+  })
+}
 
 // 1️⃣ Map each loan type ID to its generator function
 const scheduleGenerators: Record<number, () => void> = {
@@ -344,41 +467,72 @@ watch(
   </ComponentCard>
 
   <!-- Generate Schedule -->
-  <ComponentCard title="2. Generate Schedule" class="mt-3">
+  <ComponentSubmitCard title="2. Generate Schedule" class="mt-3">
     <div class="max-w-full overflow-x-auto custom-scrollbar">
       <table class="min-w-full">
         <thead>
           <tr class="border-b border-gray-200 dark:border-gray-700">
-            <td class="px5 text-sm text-semi-bold text-blue-900">PayNum</td>
-            <td class="px5 text-sm text-semi-bold text-blue-900">Startdate</td>
-            <td class="px5 text-sm text-semi-bold text-blue-900">Enddate</td>
-            <td class="px5 text-sm text-semi-bold text-blue-900">Totaldays</td>
-            <td class="px5 text-sm text-semi-bold text-blue-900">Interestrate</td>
-            <td class="px5 text-sm text-semi-bold text-blue-900">Outstanding</td>
-            <td class="px5 text-sm text-semi-bold text-blue-900">Over Draft</td>
-            <td class="px5 text-sm text-semi-bold text-blue-900">Principle</td>
-            <td class="px5 text-sm text-semi-bold text-blue-900">Interest</td>
-            <td class="px5 text-sm text-semi-bold text-blue-900">TotalPay</td>
+            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">#</td>
+            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">Start</td>
+            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">Endd</td>
+            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">Days</td>
+            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">Rate</td>
+            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">Outstanding</td>
+            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">OverDraft</td>
+            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">Principle</td>
+            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">Interest</td>
+            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">TotalPay</td>
           </tr>
         </thead>
-        <tbody class="divide-gray-200 dark:divide-gray-700">
+        <!-- <tbody class="divide-gray-200 dark:divide-gray-700">
           <tr v-for="(s, index) in schedules" :key="index">
             <td><input class="input" :value="s.schedule_paymentnumber" readonly /></td>
-            <td><input class="input" :value="s.schedule_startdate" readonly /></td>
-            <td><input class="input" :value="s.schedule_enddate" readonly /></td>
+            <td><input class="input" :value="formatDateForOutput(s.schedule_startdate)" readonly /></td>
+            <td><input class="input" :value="formatDateForOutput(s.schedule_enddate)" readonly /></td>
             <td><input class="input" :value="s.schedule_totaldays" readonly /></td>
-            <td><input class="input" :value="s.schedule_interest_rate" readonly /></td>
-            <td><input class="input" :value="s.schedule_outstanding" readonly /></td>
-            <td><input class="input" :value="s.schedule_over_draft" readonly /></td>
-            <td><input class="input" :value="s.schedule_principle" readonly /></td>
-            <td><input class="input" :value="s.schedule_interest" readonly /></td>
-            <td><input class="input" :value="s.schedule_totalpay" readonly /></td>
+            <td><input class="input" :value="Number(s.schedule_interest_rate || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })" readonly /></td>
+            <td><input class="input" :value="Number(s.schedule_outstanding || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })" readonly /></td>
+            <td><input class="input" :value="Number(s.schedule_over_draft || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })" readonly /></td>
+            <td><input class="input" :value="Number(s.schedule_principle || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })" readonly /></td>
+            <td><input class="input" :value="Number(s.schedule_interest || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })" readonly /></td>
+            <td><input class="input" :value="Number(s.schedule_totalpay || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })" readonly /></td>
+          </tr>
+        </tbody> -->
+        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+          <tr v-for="(s, index) in schedules" :key="index"  class="hover:bg-blue-50 dark:hover:bg-white/5 transition">
+            <td class="px-3 py-2 font-medium text-gray-500">{{s.schedule_paymentnumber}}</td>
+            <td class="px-3 py-2">{{formatDateForOutput(s.schedule_startdate)}}</td>
+            <td class="px-3 py-2">{{formatDateForOutput(s.schedule_enddate)}}</td>
+            <td class="px-3 py-2">{{s.schedule_totaldays}}</td>
+            <td class="px-3 py-2">{{Number(s.schedule_interest_rate || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
+            <td class="px-3 py-2">{{Number(s.schedule_outstanding || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
+            <td class="px-3 py-2">{{Number(s.schedule_over_draft || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
+            <td class="px-3 py-2">{{Number(s.schedule_principle || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
+            <td class="px-3 py-2">{{Number(s.schedule_interest || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
+            <td class="px-3 py-2 text-right text-blue-600">{{Number(s.schedule_totalpay || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-  </ComponentCard>
+      <!-- BUTTON -->
+  <template #footer v-if="form.loan_id > 0">
+    <button
+      :disabled="loading"
+      class="px-6 py-2 !mt-5 bg-yellow-400 text-white rounded-lg hover:bg-blue-700"
+    >
+      {{ loading ? "Saving..." : "Reculculate" }}
+    </button>
+    <button
+      @click="submitForm"
+      :disabled="loading"
+      class="px-6 py-2 !mt-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+    >
+      {{ loading ? "Saving..." : "Create Schedule" }}
+    </button>
+  </template>
+
+  </ComponentSubmitCard>
 
 
 

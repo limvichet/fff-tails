@@ -58,18 +58,22 @@ export default defineEventHandler(async (event) => {
       {
         method: "GET",
         headers: {
-          Accept: "application/json",
           Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          'cache-control': 'no-cache'   // ✅ prevent upstream cache
         },
       }
     );
 
+    // 🔥 IMPORTANT: disable Nitro cache
+    setHeader(event, 'Cache-Control', 'no-store')
+
     // Caching for performance
-    setResponseHeader(
-      event,
-      "Cache-Control",
-      `public, max-age=${CACHE_TTL}, stale-while-revalidate=60`
-    );
+    // setResponseHeader(
+    //   event,
+    //   "Cache-Control",
+    //   `public, max-age=${CACHE_TTL}, stale-while-revalidate=60`
+    // );
 
     return res;
   } catch (error: any) {

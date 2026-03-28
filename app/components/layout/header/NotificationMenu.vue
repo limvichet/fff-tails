@@ -59,7 +59,7 @@ const handleItemClick = (event: MouseEvent, notification: LoanNotification) => {
 // Handle "View All"
 const handleViewAllClick = (event: MouseEvent) => {
   event.preventDefault()
-  console.log('View All Loans clicked')
+  // console.log('View All Loans clicked')
   closeDropdown()
 }
 
@@ -71,12 +71,12 @@ const loadNotifications = async () => {
 
   try {
     const res = await $fetch<ApiResponse>("/api/admin-secure/loanrecords-need-approval")
-    console.log("res ", res)
+    // console.log("res ", res)
     notifications.value = Array.isArray(res.data) ? res?.data : []
     unreadCount.value = res.unread_count ? res.unread_count : 0
     notifying.value = unreadCount.value > 0
   } catch (err) {
-    console.error("Failed to fetch loan notifications:", err)
+    // console.error("Failed to fetch loan notifications:", err)
   }
 }
 

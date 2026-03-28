@@ -65,15 +65,15 @@ try {
 
   const res = await login(data);
 
-  console.log("Login response:", res);
+  // console.log("Login response:", res);
 
   await navigateTo(redirectTo);
 
 } catch (error: any) {
-  console.error("Login error:", error);
+  // console.error("Login error:", error);
 
   // show full response in console
-  console.log("Error response:", error?.data);
+  // console.log("Error response:", error?.data);
 
   if (!error?.data) {
     err.value = ["Server connection failed"];
