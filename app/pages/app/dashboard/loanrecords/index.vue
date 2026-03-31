@@ -2,7 +2,7 @@
 definePageMeta({
   layout: "auth",
   requiresAuth: true,
-  breadcrumb: { title: "Loanrecords", subTitle: "Search" },
+  breadcrumb: { title: "Loans", subTitle: "Search" },
   ssr: false
 })
 
@@ -304,17 +304,17 @@ function formatDate(date: string | null) {
             <thead>
               <tr class="border-b border-gray-200 dark:border-gray-700">
                 <th class="px-2 py-3 text-left text-sm w-[2%]">#</th>
-                <th class="px-2 py-3 text-left text-sm w-[3%]">LoanID</th>
+                <th class="px-1 py-3 text-left text-sm w-[3%]">ID</th>
                 <!-- <th class="px-2 py-3 text-left text-sm w-[2%]">CustID</th> -->
-                <th class="px-2 py-3 text-left text-sm w-[3%]">Loan</th>
-                <th class="px-1 py-3 text-left text-sm w-[12%]">Customer</th>
-                <th class="px-1 py-3 text-left text-sm w-[10%]">Last Cash</th>
-                <th class="px-1 py-3 text-left text-sm w-[10%]">New Cash</th>
-                <th class="px-1 py-3 text-left text-sm w-[10%]">Total Cash</th>
-                <th class="px-2 py-2 text-left text-sm w-[9%]">Created</th>
-                <th class="px-2 py-2 text-left text-sm w-[9%]">Updated</th>
+                <th class="px-1 py-3 text-left text-sm w-[3%]">Loan</th>
+                <th class="px-1 py-3 text-left text-sm w-[15%]">Customer</th>
+                <!-- <th class="px-1 py-3 text-left text-sm w-[10%]">Last Cash</th> -->
+                <th class="px-1 py-3 text-left text-sm w-[10%]">New</th>
+                <th class="px-1 py-3 text-left text-sm w-[10%]">Total</th>
+                <th class="px-1 py-3 text-left text-sm w-[12%]">Created/Updated</th>
+                <!-- <th class="px-2 py-2 text-left text-sm w-[9%]">Updated</th> -->
                 <th class="px-1 py-3 text-center text-sm w-[20%]">Contracts</th>
-                <th class="px-1 py-3 text-center text-sm w-[20%]">Actions</th>
+                <th class="px-1 py-3 text-center text-sm w-[15%]">Actions</th>
               </tr>
             </thead>
 
@@ -344,9 +344,9 @@ function formatDate(date: string | null) {
                   {{ l.customer.nametitle1.nametitle_kh }} {{ l.customer.cust_name_1 }}
                 </td>
 
-                <td class="px-1 py-1 text-sm text-gray-700">
+                <!-- <td class="px-1 py-1 text-sm text-gray-700">
                   {{ l.loan_lastcash }}
-                </td>
+                </td> -->
 
                 <td class="px-1 py-1 text-sm text-gray-700">
                   {{ l.loan_newcash }}
@@ -357,12 +357,13 @@ function formatDate(date: string | null) {
                 </td>
 
                   <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
-                    <span class="font-semibold">{{ l.createdby.employee.full_name }}</span> - {{ formatDate(l.created_at) }}
+                    <p class="font-semibold">{{ l.createdby.employee.full_name }} - {{ formatDate(l.created_at) }} </p>
+                    <p class="font-semibold">{{ l.updatedby.employee.full_name }} - {{ formatDate(l.updated_at) }} </p> 
                   </td>
 
-                  <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
-                    <span class="font-semibold">{{ l.updatedby.employee.full_name }}</span> - {{ formatDate(l.updated_at) }}
-                  </td>
+                  <!-- <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
+                    <span class="font-semibold">{{ l.updatedby.employee.full_name }}- {{ formatDate(l.updated_at) }} </span> 
+                  </td> -->
 
                 <!-- contacts -->
                 <td class="px-1 py-1 text-sm text-gray-700">
