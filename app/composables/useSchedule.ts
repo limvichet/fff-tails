@@ -367,6 +367,7 @@ export const useSchedule = () => {
 
   const handleReround = (form: FormType) => {
     try {
+      reroundLoading.value = true
       const fn = reroundMap[Number(form.loantype_id)]
       if (fn) fn()
 
@@ -375,9 +376,9 @@ export const useSchedule = () => {
 
     } catch (err) {
       console.error(err)
+    } finally {
+      reroundLoading.value = false
     }
-
-    reroundLoading.value = true
   }
 
 
