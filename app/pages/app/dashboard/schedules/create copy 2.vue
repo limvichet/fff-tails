@@ -15,7 +15,7 @@ import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
 
 
 import { useSchedule } from "@/composables/useSchedule"
-const { schedules, generateSchedule, reroundLoading, handleReround } = useSchedule()
+const { schedules, generateSchedule } = useSchedule()
 
 const { successMsg, errorMsg } = useMessage()
 const loading = ref(false)
@@ -143,7 +143,14 @@ watch(
       form.loan_over_draft = selectedLoan.loan_over_draft ?? ""
 
       // 🔥 Generate schedule immediately based on loantype
+      // const generator = scheduleGenerators[Number(form.loantype_id)]
+      // if (generator) {
+      //   generator()
+      // }
       const generator = generateSchedule(form)
+      // if (generator) {
+      //   generator()
+      // }
     }
   },
   { immediate: true } // 🔥 important
@@ -206,10 +213,140 @@ const submitForm = async () => {
 }
 
 
+/* DATE FORMAT HELPER */
+// function formatDateForInput(date: string | null) {
+//   if (!date) return ""
+
+//   // already correct
+//   if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+//     return date
+//   }
+
+//   // convert dd-MM-yyyy → yyyy-MM-dd
+//   const [d, m, y] = date.split("-")
+
+//   return `${y}-${m}-${d}`
+// }
+
+// function formatDateForOutput(date: Date) {
+//   const y = date.getFullYear();
+//   const m = String(date.getMonth() + 1).padStart(2, "0");
+//   const d = String(date.getDate()).padStart(2, "0");
+//   return `${d}-${m}-${y}`;
+// }
+
+  // const fixDouble = (value: number, n: number): number => {
+  //   const power = Math.pow(10, n)
+  //   return Math.floor(value * power) / power
+  // }
+
+
+
+
+// const generateLoanM11 = () => {
+//   schedules.value = []
+  
+//   for (let i = 0; i < form.loan_peroid; i++) {
+//     let startDate = new Date(formatDateForInput(form.loan_startdate))
+//     let newStartDate = new Date(startDate);
+//     newStartDate.setMonth(newStartDate.getMonth() + i)
+
+//     let newEndDate = new Date(newStartDate); // clone!
+//     newEndDate.setMonth(newStartDate.getMonth() + 1)
+
+//     let totalDays = Math.ceil((newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24))
+
+//     let schedule_outstanding = 0.000
+//     let schedule_principle = 0.000
+//     let schedule_totalpay = 0.000
+//     let schedule_interest = 0.000
+
+//     const loan_totalcash = Number(String(form.loan_totalcash).replace(/,/g, '') || 0)
+//     const loan_principle = Number(String(form.loan_principle).replace(/,/g, '') || 0)
+//     let loan_interest_rate = Number(String(form.loan_interest_rate).replace(/,/g, '') || 0)
+
+//     schedule_outstanding = loan_totalcash - (loan_principle * i)
+//     if(schedule_outstanding <= 0){
+//       schedule_outstanding = 0.000;
+//       schedule_principle = 0.000;
+//       schedule_interest = 0.000;
+//       schedule_totalpay = 0.000;
+//     }else{
+//       schedule_principle = loan_principle;
+//       schedule_interest = Number(fixDouble(loan_interest_rate / 100, 3)) * ( loan_totalcash - (loan_principle * i));
+//       schedule_totalpay =(schedule_principle) + (fixDouble(loan_interest_rate / 100, 3)) * (loan_totalcash - (loan_principle * i));
+//     }
+
+
+//     schedules.value.push({
+//       schedule_paymentnumber: i + 1,
+//       schedule_startdate: newStartDate,
+//       schedule_enddate: newEndDate,
+//       schedule_totaldays: totalDays,
+//       schedule_interest_rate: loan_interest_rate,
+//       schedule_outstanding: schedule_outstanding,
+//       schedule_over_draft: 0.000,
+//       schedule_principle: schedule_principle,
+//       schedule_interest: schedule_interest
+//     })
+//   }
+  
+//   recalculcateDateM()
+// }
+
+
+// const recalculcateDateM = () => {
+//   schedules.value.forEach((item, index) => {
+//     if (index > 0) {
+//       const prevEnd = new Date(schedules.value[index - 1].schedule_enddate)
+
+//       // +1 day
+//       prevEnd.setDate(prevEnd.getDate() + 1)
+
+//       // ⚠️ IMPORTANT: assign Date (not timestamp)
+//       schedules.value[index].schedule_startdate = new Date(prevEnd)
+//     }
+
+//     const start = new Date(schedules.value[index].schedule_startdate)
+//     const end = new Date(schedules.value[index].schedule_enddate)
+
+//     let totalDays =
+//       Math.round((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)) + 1
+
+//     // fix 32 → 31
+//     if (totalDays >= 32) totalDays = 31
+
+//     schedules.value[index].schedule_totaldays = totalDays
+//   })
+// }
+
+// 1️⃣ Map each loan type ID to its generator function
+// const scheduleGenerators: Record<number, () => void> = {
+//   11: generateLoanM11,
+//   12: generateLoanM11,
+//   13: generateLoanM11,
+//   14: () => {
+//     if (Number(form.loan_over_draft) === 0) {
+//       alert("Loanrecord has no over draft")
+//     } else {
+//       generateLoanM11()
+//     }
+//   },
+//   // add more types here...
+// }
+
 
 // 2️⃣ Watch loan type and call the correct generator
 watch(
   () => [form.loantype_id, form.loan_over_draft], // watch relevant dependencies
+  // ([loantype_id]) => {
+  //   schedules.value = [] // always reset before generating
+
+  //   const generator = scheduleGenerators[Number(loantype_id)]
+  //   if (generator) {
+  //     generator() // call the generator function dynamically
+  //   }
+  // },
   () => {
     if (form.loan_id > 0) {
       generateSchedule(form)
@@ -360,6 +497,20 @@ watch(
             <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">TotalPay</td>
           </tr>
         </thead>
+        <!-- <tbody class="divide-gray-200 dark:divide-gray-700">
+          <tr v-for="(s, index) in schedules" :key="index">
+            <td><input class="input" :value="s.schedule_paymentnumber" readonly /></td>
+            <td><input class="input" :value="formatDateForOutput(s.schedule_startdate)" readonly /></td>
+            <td><input class="input" :value="formatDateForOutput(s.schedule_enddate)" readonly /></td>
+            <td><input class="input" :value="s.schedule_totaldays" readonly /></td>
+            <td><input class="input" :value="Number(s.schedule_interest_rate || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })" readonly /></td>
+            <td><input class="input" :value="Number(s.schedule_outstanding || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })" readonly /></td>
+            <td><input class="input" :value="Number(s.schedule_over_draft || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })" readonly /></td>
+            <td><input class="input" :value="Number(s.schedule_principle || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })" readonly /></td>
+            <td><input class="input" :value="Number(s.schedule_interest || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })" readonly /></td>
+            <td><input class="input" :value="Number(s.schedule_totalpay || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })" readonly /></td>
+          </tr>
+        </tbody> -->
         <tbody class="border-b divide-y divide-gray-200 dark:divide-gray-700">
           <tr v-for="(s, index) in schedules" :key="index"  class="hover:bg-blue-50 dark:hover:bg-white/5 transition">
             <td class="px-3 py-2 font-medium text-gray-500">{{s.schedule_paymentnumber}}</td>
@@ -380,11 +531,10 @@ watch(
       <!-- BUTTON -->
   <template #footer v-if="form.loan_id > 0">
     <button
-      @click="handleReround(form)"
-      :disabled="reroundLoading"
+      :disabled="loading"
       class="px-6 py-2 !mt-5 bg-yellow-400 text-white rounded-lg hover:bg-blue-700"
     >
-      {{ reroundLoading ? "Calculating..." : "Reround Down" }}
+      {{ loading ? "Saving..." : "Reculculate" }}
     </button>
     <button
       @click="submitForm"

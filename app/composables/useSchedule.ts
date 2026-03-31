@@ -1,6 +1,8 @@
 import { ref } from "vue"
+import { formatDateForInput } from "@/utils/date"
+import { fixDouble } from "@/utils/number"
 
-/* ================= TYPES ================= */
+/*  TYPES  */
 type FormType = {
   loan_startdate: string
   loan_totalcash: string
@@ -11,26 +13,13 @@ type FormType = {
   loan_over_draft: string
 }
 
-/* ================= STATE ================= */
+/*  STATE  */
 export const useSchedule = () => {
+
   const schedules = ref<any[]>([])
 
-  /* ================= HELPERS ================= */
-  function formatDateForInput(date: string | null) {
-    if (!date) return ""
-    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) return date
-
-    const [d, m, y] = date.split("-")
-    return `${y}-${m}-${d}`
-  }
-
-  const fixDouble = (value: number, n: number): number => {
-    const power = Math.pow(10, n)
-    return Math.floor(value * power) / power
-  }
-
-  /* ================= GENERATOR ================= */
-  const generateLoanM11 = (form: FormType) => {
+  /*  GENERATOR  */
+  const generateM11 = (form: FormType) => {
     schedules.value = []
 
     for (let i = 0; i < form.loan_peroid; i++) {
@@ -80,41 +69,282 @@ export const useSchedule = () => {
     }
 
     recalculcateDateM()
+    reculculateNClean()
+    reculculateFixOutstanding()
   }
 
+
+  /* if end date >28 force to 28th day */
   const recalculcateDateM = () => {
     schedules.value.forEach((item, index) => {
+
+      // ----------------------------
+      // FIX START DATE (chain)
+      // ----------------------------
       if (index > 0) {
         const prevEnd = new Date(schedules.value[index - 1].schedule_enddate)
-        prevEnd.setDate(prevEnd.getDate() + 1)
-        schedules.value[index].schedule_startdate = new Date(prevEnd)
+        // prevEnd.setDate(prevEnd.getDate() + 1)
+        item.schedule_startdate = new Date(prevEnd)
       }
 
-      const start = new Date(item.schedule_startdate)
-      const end = new Date(item.schedule_enddate)
+      let start = new Date(item.schedule_startdate)
+      let end = new Date(item.schedule_enddate)
 
+      // ----------------------------
+      // 🔥 FIX END DATE → MAX 28
+      // ----------------------------
+      if (end.getDate() > 28) {
+        end.setDate(28)
+        item.schedule_enddate = new Date(end)
+      }
+
+      // ----------------------------
+      // RECALCULATE DAYS
+      // ----------------------------
       let totalDays =
         Math.round((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)) + 1
-
-      if (totalDays >= 32) totalDays = 31
 
       item.schedule_totaldays = totalDays
     })
   }
 
-  /* ================= MAIN ================= */
+
+  /* if last record adjust principle fix it */
+  const reculculateNClean = () => {
+    schedules.value.forEach((item, index) => {
+      const outstanding = Number(item.schedule_outstanding || 0)
+      const principle = Number(item.schedule_principle || 0)
+
+      if (outstanding <= principle) {
+        try {
+          // adjust principle
+          item.schedule_principle = outstanding
+
+          // recalc total pay
+          item.schedule_totalpay =
+            Number(item.schedule_principle || 0) +
+            Number(item.schedule_interest || 0)
+
+          // stop at last item (optional, same as your jQuery)
+          if (index === schedules.value.length - 1) return
+        } catch (err) {
+          console.error(err)
+        }
+      }
+    })
+  }
+
+
+  /* if last record adjust outstanding fix it */
+  const reculculateFixOutstanding = () => {
+    const lastRow = schedules.value.at(-1)
+    if (!lastRow) return
+
+    const interestRate = Number(lastRow.schedule_interest_rate || 0)
+    const outstanding = Number(lastRow.schedule_outstanding || 0)
+    const principle = Number(lastRow.schedule_principle || 0)
+
+    if (outstanding > principle) {
+      lastRow.schedule_principle = outstanding
+
+      lastRow.schedule_interest = fixDouble(
+        outstanding * (interestRate / 100),
+        2
+      )
+
+      lastRow.schedule_totalpay = fixDouble(
+        outstanding + (outstanding * (interestRate / 100)),
+        2
+      )
+    }
+  }
+
+
+  /* reroundDownM */
+  const reroundDownM = () => {
+    const f = 0
+    const m = 30
+
+    if (!schedules.value.length) return
+
+    let remainDD = 0
+    let allDD = 0
+
+    const first = schedules.value[f]
+
+    const First_Interest = Number(first.schedule_interest_rate || 0)
+    const First_outstanding = Number(first.schedule_outstanding || 0)
+    const First_Depreciation = Number(first.schedule_principle || 0)
+
+    let First_PtEndDate = new Date(first.schedule_enddate)
+
+    // --------------------
+    // FIRST ROW FIX
+    // --------------------
+    remainDD = First_PtEndDate.getDate()
+
+    // move back to end of previous month
+    First_PtEndDate.setDate(First_PtEndDate.getDate() - remainDD)
+
+    allDD = First_PtEndDate.getDate()
+    const totaldays = allDD - remainDD
+
+    first.schedule_enddate = new Date(First_PtEndDate)
+    first.schedule_totaldays = totaldays
+    first.schedule_principle_date = new Date(First_PtEndDate)
+
+    if (totaldays >= 27) {
+      first.schedule_interest = fixDouble(
+        (First_Interest / 100) * First_outstanding,
+        3
+      )
+
+      first.schedule_totalpay = fixDouble(
+        (First_Interest / 100) * First_outstanding + First_Depreciation,
+        3
+      )
+    } else {
+      first.schedule_interest = fixDouble(
+        ((First_Interest / 100) / m) *
+          First_outstanding *
+          totaldays,
+        3
+      )
+
+      first.schedule_totalpay = fixDouble(
+        ((First_Interest / 100) / m) *
+          (First_outstanding * totaldays) +
+          First_Depreciation,
+        3
+      )
+    }
+
+    // --------------------
+    // LOOP NEXT ROWS
+    // --------------------
+    for (let i = f; i < schedules.value.length - 1; i++) {
+      const current = schedules.value[i]
+      const next = schedules.value[i + 1]
+
+      // start date = previous end + 1 day
+      const PtStartDate = new Date(current.schedule_enddate)
+      PtStartDate.setDate(PtStartDate.getDate() + 1)
+
+      next.schedule_startdate = new Date(PtStartDate)
+
+      // end date = start + 1 month - 1 day
+      const endDate = new Date(PtStartDate)
+      endDate.setMonth(endDate.getMonth() + 1)
+      endDate.setDate(endDate.getDate() - 1)
+
+      next.schedule_enddate = new Date(endDate)
+
+      // total days
+      const totaldays1 =
+        endDate.getDate() - PtStartDate.getDate() + 1
+
+      next.schedule_totaldays = totaldays1
+      next.schedule_principle_date = new Date(PtStartDate)
+    }
+  }
+
+
+  /* reroundDownF */
+  const reroundDownF = () => {
+    const f = 0
+    const m = 30
+
+    if (!schedules.value.length) return
+
+    let remainDD = 0
+    let allDD = 0
+
+    const first = schedules.value[f]
+
+    const First_Interest = Number(first.schedule_interest_rate || 0)
+    const First_outstanding = Number(first.schedule_outstanding || 0)
+    const First_Depreciation = Number(first.schedule_principle || 0)
+
+    let First_PtEndDate = new Date(first.schedule_enddate)
+
+    // --------------------
+    // FIRST ROW
+    // --------------------
+    remainDD = First_PtEndDate.getDate()
+
+    // move to end of previous month
+    First_PtEndDate.setDate(First_PtEndDate.getDate() - remainDD)
+
+    allDD = First_PtEndDate.getDate()
+
+    // ⚠️ safer
+    const totaldays = Math.abs(allDD - remainDD)
+
+    first.schedule_enddate = new Date(First_PtEndDate)
+    first.schedule_totaldays = totaldays
+    first.schedule_principle_date = new Date(First_PtEndDate)
+
+    if (totaldays >= 27) {
+      first.schedule_interest =
+        (First_Interest / 100) * First_outstanding
+
+      first.schedule_totalpay =
+        (First_Interest / 100) * First_outstanding +
+        First_Depreciation
+    } else {
+      first.schedule_interest =
+        (First_Interest / m / 100) *
+        First_outstanding *
+        totaldays
+
+      first.schedule_totalpay =
+        (First_Interest / m / 100) *
+          (First_outstanding * totaldays) +
+        First_Depreciation
+    }
+
+    // --------------------
+    // LOOP NEXT ROWS
+    // --------------------
+    for (let i = f; i < schedules.value.length - 1; i++) {
+      const current = schedules.value[i]
+      const next = schedules.value[i + 1]
+
+      // start = previous end + 1
+      const start = new Date(current.schedule_enddate)
+      start.setDate(start.getDate() + 1)
+
+      next.schedule_startdate = new Date(start)
+
+      // end = +1 month -1 day
+      const end = new Date(start)
+      end.setMonth(end.getMonth() + 1)
+      end.setDate(end.getDate() - 1)
+
+      next.schedule_enddate = new Date(end)
+
+      // ⚠️ difference from M version (NO +1)
+      const totaldays1 =
+        end.getDate() - start.getDate()
+
+      next.schedule_totaldays = totaldays1
+      next.schedule_principle_date = new Date(start)
+    }
+  }
+
+  /*  MAIN  */
   const generateSchedule = (form: FormType) => {
     schedules.value = []
 
     const generators: Record<number, () => void> = {
-      11: () => generateLoanM11(form),
-      12: () => generateLoanM11(form),
-      13: () => generateLoanM11(form),
+      11: () => generateM11(form),
+      12: () => generateM11(form),
+      13: () => generateM11(form),
       14: () => {
         if (Number(form.loan_over_draft) === 0) {
           alert("Loanrecord has no over draft")
         } else {
-          generateLoanM11(form)
+          generateM11(form)
         }
       },
     }
@@ -123,8 +353,38 @@ export const useSchedule = () => {
     if (generator) generator()
   }
 
+
+  const reroundLoading = ref(false)
+
+  /* handleReround */
+  const reroundMap: Record<number, () => void> = {
+    11: reroundDownM,
+    12: reroundDownM,
+    14: reroundDownM,
+    13: reroundDownF,
+    31: reroundDownF,
+  }
+
+  const handleReround = (form: FormType) => {
+    try {
+      const fn = reroundMap[Number(form.loantype_id)]
+      if (fn) fn()
+
+      reculculateNClean()
+      reculculateFixOutstanding()
+
+    } catch (err) {
+      console.error(err)
+    }
+
+    reroundLoading.value = true
+  }
+
+
   return {
     schedules,
     generateSchedule,
+    handleReround,
+    reroundLoading,
   }
 }
