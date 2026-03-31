@@ -206,6 +206,7 @@ function formatDate(date: string | null) {
 
   return `${d}/${m}/${y}`
 }
+
 </script>
 
 <template>
@@ -266,8 +267,8 @@ function formatDate(date: string | null) {
                   <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[15%] w-[40%]">Name2</th>
                   <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[20%] hidden sm:table-cell">Phone1</th>
                   <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[20%] hidden sm:table-cell">DOB</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[20%] hidden sm:table-cell">Created At</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[20%] hidden sm:table-cell">Updated At</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[20%] hidden sm:table-cell">Created</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[20%] hidden sm:table-cell">Updated</th>
                   <th class="px-2 py-2 text-sm font-semibold text-center sm:w-[15%] w-[15%]">Actions</th>
                 </tr>
               </thead>

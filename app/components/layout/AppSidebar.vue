@@ -1,3 +1,162 @@
+<script setup>
+import { ref, computed } from "vue";
+import { useRoute } from "vue-router";
+
+import {
+  GridIcon,
+  CalenderIcon,
+  UserCircleIcon,
+  ChatIcon,
+  MailIcon,
+  DocsIcon,
+  PieChartIcon,
+  ChevronDownIcon,
+  HorizontalDots,
+  PageIcon,
+  TableIcon,
+  ListIcon,
+  PlugInIcon,
+  BoxCubeIcon,
+  PlusIcon,
+  UserGroupIcon,
+  SearchIcon,
+  PencilIcon,
+  LoanIcon,
+  SettingsIcon,
+} from "../../icons";
+import SidebarWidget from "./SidebarWidget.vue";
+import { useSidebar } from "@/composables/useSidebar";
+// import BoxCubeIcon from "@/icons/BoxCubeIcon.vue";
+// import UserGroupIcon from "@/icons/UserGroupIcon.vue";
+
+const route = useRoute();
+
+const { isExpanded, isMobileOpen, isHovered, openSubmenu } = useSidebar();
+
+const menuGroups = [
+  {
+    title: "Loan Managements",
+    items: [
+      {
+        icon: UserGroupIcon,
+        name: "Customers",
+        subItems: [
+          { name: "Create", path: "/app/dashboard/customers/create", pro: false, icon: PencilIcon },
+          { name: "Search", path: "/app/dashboard/customers", pro: false, icon: SearchIcon },
+        ],
+      },
+      {
+        icon: LoanIcon,
+        name: "Loans",
+        subItems: [
+          { name: "Create", path: "/app/dashboard/loanrecords/create", pro: false, icon: PencilIcon  },
+          { name: "Search", path: "/app/dashboard/loanrecords", pro: false, icon: SearchIcon  },
+        ],
+      },
+      {
+        icon: ListIcon,
+        name: "Schedules",
+        subItems: [
+          { name: "Create", path: "/app/dashboard/schedules/create", pro: false, icon: PencilIcon  },
+          { name: "Search", path: "/app/dashboard/schedules", pro: false, icon: SearchIcon  },
+        ],
+      },
+      {
+        icon: TableIcon,
+        name: "Payments",
+        subItems: [
+          { name: "Create", path: "/app/dashboard/payments/create", pro: false, icon: PencilIcon  },
+          { name: "Search", path: "/app/dashboard/payments", pro: false, icon: SearchIcon  },
+        ],
+      },
+      {
+        icon: PieChartIcon,
+        name: "Reports",
+        subItems: [
+          { name: "Create", path: "/app/dashboard/payments/create", pro: false, icon: PencilIcon  },
+          { name: "Search", path: "/app/dashboard/payments", pro: false, icon: SearchIcon  },
+        ],
+      },
+
+    ],
+  },
+  {
+    title: "Administrative Tools",
+    items: [
+      {
+        icon: UserGroupIcon,
+        name: "Employee",
+        subItems: [
+          { name: "Line Chart", path: "/chart/line-chart", pro: false },
+          { name: "Bar Chart", path: "/chart/bar-chart", pro: false },
+        ],
+      },
+      {
+        icon: SettingsIcon,
+        name: "Users & Permissions",
+        subItems: [
+          { name: "Alerts", path: "/uielements/alerts", pro: false },
+          { name: "Avatars", path: "/uielements/avatars", pro: false },
+          { name: "Badge", path: "/uielements/badge", pro: false },
+          { name: "Buttons", path: "/uielements/buttons", pro: false },
+          { name: "Images", path: "/uielements/images", pro: false },
+          { name: "Videos", path: "/uielements/videos", pro: false },
+        ],
+      },
+      {
+        icon: UserCircleIcon,
+        name: "Roles & Permission",
+        subItems: [
+          { name: "Signin", path: "/auth/signin", pro: false },
+          { name: "Signup", path: "/auth/signup", pro: false },
+        ],
+      },
+      // ... Add other menu items here
+    ],
+  },
+];
+
+const isActive = (path) => route.path === path;
+
+const toggleSubmenu = (groupIndex, itemIndex) => {
+  const key = `${groupIndex}-${itemIndex}`;
+  openSubmenu.value = openSubmenu.value === key ? null : key;
+};
+
+const isAnySubmenuRouteActive = computed(() => {
+  return menuGroups.some((group) =>
+    group.items.some(
+      (item) =>
+        item.subItems && item.subItems.some((subItem) => isActive(subItem.path))
+    )
+  );
+});
+
+const isSubmenuOpen = (groupIndex, itemIndex) => {
+  const key = `${groupIndex}-${itemIndex}`;
+  return (
+    openSubmenu.value === key ||
+    (isAnySubmenuRouteActive.value &&
+      menuGroups[groupIndex].items[itemIndex].subItems?.some((subItem) =>
+        isActive(subItem.path)
+      ))
+  );
+};
+
+const startTransition = (el) => {
+  el.style.height = "auto";
+  const height = el.scrollHeight;
+  el.style.height = "0px";
+  el.offsetHeight; // force reflow
+  el.style.height = height + "px";
+};
+
+const endTransition = (el) => {
+  el.style.height = "";
+};
+</script>
+
+
 <template>
   <aside
     :class="[
@@ -218,160 +377,3 @@
   </aside>
 </template>
 
-<script setup>
-import { ref, computed } from "vue";
-import { useRoute } from "vue-router";
-
-import {
-  GridIcon,
-  CalenderIcon,
-  UserCircleIcon,
-  ChatIcon,
-  MailIcon,
-  DocsIcon,
-  PieChartIcon,
-  ChevronDownIcon,
-  HorizontalDots,
-  PageIcon,
-  TableIcon,
-  ListIcon,
-  PlugInIcon,
-  BoxCubeIcon,
-  PlusIcon,
-  UserGroupIcon,
-  SearchIcon,
-  PencilIcon,
-  LoanIcon,
-  SettingsIcon,
-} from "../../icons";
-import SidebarWidget from "./SidebarWidget.vue";
-import { useSidebar } from "@/composables/useSidebar";
-// import BoxCubeIcon from "@/icons/BoxCubeIcon.vue";
-// import UserGroupIcon from "@/icons/UserGroupIcon.vue";
-
-const route = useRoute();
-
-const { isExpanded, isMobileOpen, isHovered, openSubmenu } = useSidebar();
-
-const menuGroups = [
-  {
-    title: "Loan Managements",
-    items: [
-      {
-        icon: UserGroupIcon,
-        name: "Customers",
-        subItems: [
-          { name: "Create", path: "/app/dashboard/customers/create", pro: false, icon: PencilIcon },
-          { name: "Search", path: "/app/dashboard/customers", pro: false, icon: SearchIcon },
-        ],
-      },
-      {
-        icon: LoanIcon,
-        name: "Loan Records",
-        subItems: [
-          { name: "Create", path: "/app/dashboard/loanrecords/create", pro: false, icon: PencilIcon  },
-          { name: "Search", path: "/app/dashboard/loanrecords", pro: false, icon: SearchIcon  },
-        ],
-      },
-      {
-        icon: CalenderIcon,
-        name: "Schedules",
-        subItems: [
-          { name: "Create", path: "/app/dashboard/schedules/create", pro: false, icon: PencilIcon  },
-          { name: "Search", path: "/app/dashboard/schedules", pro: false, icon: SearchIcon  },
-        ],
-      },
-      {
-        icon: TableIcon,
-        name: "Payments",
-        subItems: [
-          { name: "Create", path: "/app/dashboard/payments/create", pro: false, icon: PencilIcon  },
-          { name: "Search", path: "/app/dashboard/payments", pro: false, icon: SearchIcon  },
-        ],
-      },
-      {
-        icon: PieChartIcon,
-        name: "Reports",
-        subItems: [
-          { name: "Create", path: "/app/dashboard/payments/create", pro: false, icon: PencilIcon  },
-          { name: "Search", path: "/app/dashboard/payments", pro: false, icon: SearchIcon  },
-        ],
-      },
-
-    ],
-  },
-  {
-    title: "Administrative Tools",
-    items: [
-      {
-        icon: UserGroupIcon,
-        name: "Employee",
-        subItems: [
-          { name: "Line Chart", path: "/chart/line-chart", pro: false },
-          { name: "Bar Chart", path: "/chart/bar-chart", pro: false },
-        ],
-      },
-      {
-        icon: SettingsIcon,
-        name: "Users & Permissions",
-        subItems: [
-          { name: "Alerts", path: "/uielements/alerts", pro: false },
-          { name: "Avatars", path: "/uielements/avatars", pro: false },
-          { name: "Badge", path: "/uielements/badge", pro: false },
-          { name: "Buttons", path: "/uielements/buttons", pro: false },
-          { name: "Images", path: "/uielements/images", pro: false },
-          { name: "Videos", path: "/uielements/videos", pro: false },
-        ],
-      },
-      {
-        icon: UserCircleIcon,
-        name: "Roles & Permission",
-        subItems: [
-          { name: "Signin", path: "/auth/signin", pro: false },
-          { name: "Signup", path: "/auth/signup", pro: false },
-        ],
-      },
-      // ... Add other menu items here
-    ],
-  },
-];
-
-const isActive = (path) => route.path === path;
-
-const toggleSubmenu = (groupIndex, itemIndex) => {
-  const key = `${groupIndex}-${itemIndex}`;
-  openSubmenu.value = openSubmenu.value === key ? null : key;
-};
-
-const isAnySubmenuRouteActive = computed(() => {
-  return menuGroups.some((group) =>
-    group.items.some(
-      (item) =>
-        item.subItems && item.subItems.some((subItem) => isActive(subItem.path))
-    )
-  );
-});
-
-const isSubmenuOpen = (groupIndex, itemIndex) => {
-  const key = `${groupIndex}-${itemIndex}`;
-  return (
-    openSubmenu.value === key ||
-    (isAnySubmenuRouteActive.value &&
-      menuGroups[groupIndex].items[itemIndex].subItems?.some((subItem) =>
-        isActive(subItem.path)
-      ))
-  );
-};
-
-const startTransition = (el) => {
-  el.style.height = "auto";
-  const height = el.scrollHeight;
-  el.style.height = "0px";
-  el.offsetHeight; // force reflow
-  el.style.height = height + "px";
-};
-
-const endTransition = (el) => {
-  el.style.height = "";
-};
-</script>

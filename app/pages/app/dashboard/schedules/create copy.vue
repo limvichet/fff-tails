@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 definePageMeta({
   layout: "auth",
   requiresAuth: true,
@@ -12,10 +11,7 @@ import ComponentCard from "@/components/common/ComponentCard.vue"
 import ComponentSubmitCard from "@/components/common/ComponentSubmitCard.vue"
 import CommonCustomerSelect2 from "@/components/common/CommonCustomerSelect2.vue"
 import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
-
-
-import { useSchedule } from "@/composables/useSchedule"
-const { schedules, generateSchedule } = useSchedule()
+import { number, string } from "zod"
 
 const { successMsg, errorMsg } = useMessage()
 const loading = ref(false)
@@ -48,7 +44,7 @@ type Loantype = { id:number, loantype_detail:string }
 
 const customers = ref<{id:number,label:string}[]>([])
 const loanrecords = ref<Loanrecord[]>([])
-// const schedules = ref<any[]>([])
+const schedules = ref<any[]>([])
 
 /* FORM */
 const form = reactive({
@@ -143,14 +139,10 @@ watch(
       form.loan_over_draft = selectedLoan.loan_over_draft ?? ""
 
       // 🔥 Generate schedule immediately based on loantype
-      // const generator = scheduleGenerators[Number(form.loantype_id)]
-      // if (generator) {
-      //   generator()
-      // }
-      const generator = generateSchedule(form)
-      // if (generator) {
-      //   generator()
-      // }
+      const generator = scheduleGenerators[Number(form.loantype_id)]
+      if (generator) {
+        generator()
+      }
     }
   },
   { immediate: true } // 🔥 important
@@ -243,113 +235,108 @@ function formatDateForOutput(date: Date) {
 
 
 
-// const generateLoanM11 = () => {
-//   schedules.value = []
+const generateLoanM11 = () => {
+  schedules.value = []
   
-//   for (let i = 0; i < form.loan_peroid; i++) {
-//     let startDate = new Date(formatDateForInput(form.loan_startdate))
-//     let newStartDate = new Date(startDate);
-//     newStartDate.setMonth(newStartDate.getMonth() + i)
+  for (let i = 0; i < form.loan_peroid; i++) {
+    let startDate = new Date(formatDateForInput(form.loan_startdate))
+    let newStartDate = new Date(startDate);
+    newStartDate.setMonth(newStartDate.getMonth() + i)
 
-//     let newEndDate = new Date(newStartDate); // clone!
-//     newEndDate.setMonth(newStartDate.getMonth() + 1)
+    let newEndDate = new Date(newStartDate); // clone!
+    newEndDate.setMonth(newStartDate.getMonth() + 1)
 
-//     let totalDays = Math.ceil((newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24))
+    let totalDays = Math.ceil((newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24))
 
-//     let schedule_outstanding = 0.000
-//     let schedule_principle = 0.000
-//     let schedule_totalpay = 0.000
-//     let schedule_interest = 0.000
+    let schedule_outstanding = 0.000
+    let schedule_principle = 0.000
+    let schedule_totalpay = 0.000
+    let schedule_interest = 0.000
 
-//     const loan_totalcash = Number(String(form.loan_totalcash).replace(/,/g, '') || 0)
-//     const loan_principle = Number(String(form.loan_principle).replace(/,/g, '') || 0)
-//     let loan_interest_rate = Number(String(form.loan_interest_rate).replace(/,/g, '') || 0)
+    const loan_totalcash = Number(String(form.loan_totalcash).replace(/,/g, '') || 0)
+    const loan_principle = Number(String(form.loan_principle).replace(/,/g, '') || 0)
+    let loan_interest_rate = Number(String(form.loan_interest_rate).replace(/,/g, '') || 0)
 
-//     schedule_outstanding = loan_totalcash - (loan_principle * i)
-//     if(schedule_outstanding <= 0){
-//       schedule_outstanding = 0.000;
-//       schedule_principle = 0.000;
-//       schedule_interest = 0.000;
-//       schedule_totalpay = 0.000;
-//     }else{
-//       schedule_principle = loan_principle;
-//       schedule_interest = Number(fixDouble(loan_interest_rate / 100, 3)) * ( loan_totalcash - (loan_principle * i));
-//       schedule_totalpay =(schedule_principle) + (fixDouble(loan_interest_rate / 100, 3)) * (loan_totalcash - (loan_principle * i));
-//     }
+    schedule_outstanding = loan_totalcash - (loan_principle * i)
+    if(schedule_outstanding <= 0){
+      schedule_outstanding = 0.000;
+      schedule_principle = 0.000;
+      schedule_interest = 0.000;
+      schedule_totalpay = 0.000;
+    }else{
+      schedule_principle = loan_principle;
+      schedule_interest = Number(fixDouble(loan_interest_rate / 100, 3)) * ( loan_totalcash - (loan_principle * i));
+      schedule_totalpay =(schedule_principle) + (fixDouble(loan_interest_rate / 100, 3)) * (loan_totalcash - (loan_principle * i));
+    }
 
 
-//     schedules.value.push({
-//       schedule_paymentnumber: i + 1,
-//       schedule_startdate: newStartDate,
-//       schedule_enddate: newEndDate,
-//       schedule_totaldays: totalDays,
-//       schedule_interest_rate: loan_interest_rate,
-//       schedule_outstanding: schedule_outstanding,
-//       schedule_over_draft: 0.000,
-//       schedule_principle: schedule_principle,
-//       schedule_interest: schedule_interest
-//     })
-//   }
+    schedules.value.push({
+      schedule_paymentnumber: i + 1,
+      schedule_startdate: newStartDate,
+      schedule_enddate: newEndDate,
+      schedule_totaldays: totalDays,
+      schedule_interest_rate: loan_interest_rate,
+      schedule_outstanding: schedule_outstanding,
+      schedule_over_draft: 0.000,
+      schedule_principle: schedule_principle,
+      schedule_interest: schedule_interest
+    })
+  }
   
-//   recalculcateDateM()
-// }
+  recalculcateDateM()
+}
 
 
-// const recalculcateDateM = () => {
-//   schedules.value.forEach((item, index) => {
-//     if (index > 0) {
-//       const prevEnd = new Date(schedules.value[index - 1].schedule_enddate)
+const recalculcateDateM = () => {
+  schedules.value.forEach((item, index) => {
+    if (index > 0) {
+      const prevEnd = new Date(schedules.value[index - 1].schedule_enddate)
 
-//       // +1 day
-//       prevEnd.setDate(prevEnd.getDate() + 1)
+      // +1 day
+      prevEnd.setDate(prevEnd.getDate() + 1)
 
-//       // ⚠️ IMPORTANT: assign Date (not timestamp)
-//       schedules.value[index].schedule_startdate = new Date(prevEnd)
-//     }
+      // ⚠️ IMPORTANT: assign Date (not timestamp)
+      schedules.value[index].schedule_startdate = new Date(prevEnd)
+    }
 
-//     const start = new Date(schedules.value[index].schedule_startdate)
-//     const end = new Date(schedules.value[index].schedule_enddate)
+    const start = new Date(schedules.value[index].schedule_startdate)
+    const end = new Date(schedules.value[index].schedule_enddate)
 
-//     let totalDays =
-//       Math.round((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)) + 1
+    let totalDays =
+      Math.round((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)) + 1
 
-//     // fix 32 → 31
-//     if (totalDays >= 32) totalDays = 31
+    // fix 32 → 31
+    if (totalDays >= 32) totalDays = 31
 
-//     schedules.value[index].schedule_totaldays = totalDays
-//   })
-// }
+    schedules.value[index].schedule_totaldays = totalDays
+  })
+}
 
 // 1️⃣ Map each loan type ID to its generator function
-// const scheduleGenerators: Record<number, () => void> = {
-//   11: generateLoanM11,
-//   12: generateLoanM11,
-//   13: generateLoanM11,
-//   14: () => {
-//     if (Number(form.loan_over_draft) === 0) {
-//       alert("Loanrecord has no over draft")
-//     } else {
-//       generateLoanM11()
-//     }
-//   },
-//   // add more types here...
-// }
+const scheduleGenerators: Record<number, () => void> = {
+  11: generateLoanM11,
+  12: generateLoanM11,
+  13: generateLoanM11,
+  14: () => {
+    if (Number(form.loan_over_draft) === 0) {
+      alert("Loanrecord has no over draft")
+    } else {
+      generateLoanM11()
+    }
+  },
+  // add more types here...
+}
 
 
 // 2️⃣ Watch loan type and call the correct generator
 watch(
   () => [form.loantype_id, form.loan_over_draft], // watch relevant dependencies
-  // ([loantype_id]) => {
-  //   schedules.value = [] // always reset before generating
+  ([loantype_id]) => {
+    schedules.value = [] // always reset before generating
 
-  //   const generator = scheduleGenerators[Number(loantype_id)]
-  //   if (generator) {
-  //     generator() // call the generator function dynamically
-  //   }
-  // },
-  () => {
-    if (form.loan_id > 0) {
-      generateSchedule(form)
+    const generator = scheduleGenerators[Number(loantype_id)]
+    if (generator) {
+      generator() // call the generator function dynamically
     }
   },
   { immediate: true }

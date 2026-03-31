@@ -23,6 +23,25 @@ errorMsg.value = null
 
 
 // Types
+type Employee = {
+  id: number;
+  surname: string;
+  first_name: string;
+  full_name: string;
+}
+
+type Createdby = {
+  id: number;
+  emp_id: number;
+  employee: Employee;
+}
+
+type Updatedby = {
+  id: number;
+  emp_id: number;
+  employee: Employee;
+}
+
 type  Nametitle1 = {
     id:           number;
     nametitle_kh: string;
@@ -54,6 +73,12 @@ type LoanRecord = {
     customer:          Customer;
     currency:          Currency;
     loantype?:          Loantype;
+    created_by: number;
+    created_at: string;
+    createdby: Createdby;
+    updated_by: string;
+    updated_at: string;
+    updatedby: Updatedby;
 }
 type LoanrecordResponses = {
   current_page: number
@@ -197,6 +222,31 @@ const deleteLoan = async () => {
     errorMsg.value = "Delete failed"
   }
 }
+
+/* DATE FORMAT HELPER */
+function formatDate(date: string | null) {
+  if (!date) return ""
+
+  // Case 1: already yyyy-MM-dd
+  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return date
+  }
+
+  // Case 2: ISO or datetime (like 2026/03/25T03:04:59.000000Z)
+  const parsed = new Date(date)
+  if (!isNaN(parsed.getTime())) {
+    return parsed.toISOString().split("T")[0]
+  }
+
+  // Case 3: dd-MM-yyyy
+  if (/^\d{2}-\d{2}-\d{4}$/.test(date)) {
+    const [d, m, y] = date.split("-")
+    return `${y}-${m}-${d}`
+  }
+
+  return ""
+}
+
 </script>
 
 <template>
@@ -255,15 +305,16 @@ const deleteLoan = async () => {
               <tr class="border-b border-gray-200 dark:border-gray-700">
                 <th class="px-2 py-3 text-left text-sm w-[2%]">#</th>
                 <th class="px-2 py-3 text-left text-sm w-[3%]">LoanID</th>
-                <th class="px-2 py-3 text-left text-sm w-[2%]">CustID</th>
+                <!-- <th class="px-2 py-3 text-left text-sm w-[2%]">CustID</th> -->
                 <th class="px-2 py-3 text-left text-sm w-[3%]">Loan</th>
-                <th class="px-2 py-3 text-left text-sm w-[5%]">Title</th>
-                <th class="px-1 py-3 text-left text-sm w-[8%]">Customer</th>
-                <th class="px-1 py-3 text-left text-sm w-[9.5%]">Last Cash</th>
+                <th class="px-1 py-3 text-left text-sm w-[12%]">Customer</th>
+                <th class="px-1 py-3 text-left text-sm w-[10%]">Last Cash</th>
                 <th class="px-1 py-3 text-left text-sm w-[10%]">New Cash</th>
                 <th class="px-1 py-3 text-left text-sm w-[10%]">Total Cash</th>
-                <th class="px-1 py-3 text-center text-sm w-[33.5%]">Contracts</th>
-                <th class="px-1 py-3 text-center text-sm w-[17%]">Actions</th>
+                <th class="px-2 py-2 text-left text-sm w-[9%]">Created</th>
+                <th class="px-2 py-2 text-left text-sm w-[9%]">Updated</th>
+                <th class="px-1 py-3 text-center text-sm w-[20%]">Contracts</th>
+                <th class="px-1 py-3 text-center text-sm w-[20%]">Actions</th>
               </tr>
             </thead>
 
@@ -281,20 +332,16 @@ const deleteLoan = async () => {
                   {{ l.id }}
                 </td>
                 
-                <td class="px-1 py-1 text-sm">
+                <!-- <td class="px-1 py-1 text-sm">
                   {{ l.cust_id }}
-                </td>
+                </td> -->
 
                 <td class="px-1 py-1 text-sm">
                     {{ l?.loantype?.loantype_short ??  '' }}
                 </td>
 
                 <td class="px-1 py-1 text-sm">
-                  {{ l.customer.nametitle1.nametitle_kh }}
-                </td>
-
-                <td class="px-1 py-1 text-sm">
-                   {{ l.customer.cust_name_1 }}
+                  {{ l.customer.nametitle1.nametitle_kh }} {{ l.customer.cust_name_1 }}
                 </td>
 
                 <td class="px-1 py-1 text-sm text-gray-700">
@@ -308,6 +355,14 @@ const deleteLoan = async () => {
                 <td class="px-1 py-1 text-sm text-gray-700">
                   {{ l.loan_totalcash }}
                 </td>
+
+                  <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
+                    <span class="font-semibold">{{ l.createdby.employee.full_name }}</span> - {{ formatDate(l.created_at) }}
+                  </td>
+
+                  <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
+                    <span class="font-semibold">{{ l.updatedby.employee.full_name }}</span> - {{ formatDate(l.updated_at) }}
+                  </td>
 
                 <!-- contacts -->
                 <td class="px-1 py-1 text-sm text-gray-700">

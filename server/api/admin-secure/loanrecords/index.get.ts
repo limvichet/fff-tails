@@ -1,5 +1,24 @@
 import { getCookie, getQuery, createError, type H3Event } from "h3"
 
+type Employee = {
+  id: number;
+  surname: string;
+  first_name: string;
+  full_name: string;
+}
+
+type Createdby = {
+  id: number;
+  emp_id: number;
+  employee: Employee;
+}
+
+type Updatedby = {
+  id: number;
+  emp_id: number;
+  employee: Employee;
+}
+
 type Currency = {
     id:          number;
     currency_en: string;
@@ -35,6 +54,12 @@ type Loarnrecord = {
     customer:          Customer;
     currency:          Currency;
     loantype:          Loantype;
+    created_by: number;
+    created_at: string;
+    createdby: Createdby;
+    updated_by: string;
+    updated_at: string;
+    updatedby: Updatedby;
 }
 
 type LoarnrecordResponses = {

@@ -101,7 +101,7 @@ onMounted(() => {
 
         <!-- Dropdown -->
         <ul v-if="isOpen && filtered.length"
-          class="absolute z-10 w-full mt-1 max-h-40 overflow-auto border rounded bg-white">
+          class="absolute z-10 w-full bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700">
           <li v-for="(c, index) in filtered"
               :key="c.id"
               @mousedown.prevent="selectItem(c)"
