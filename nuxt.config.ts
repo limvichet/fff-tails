@@ -18,6 +18,19 @@ export default defineNuxtConfig({
   },
   app: {
     baseURL: '/',
+    head: {
+      meta: [
+        { name: 'theme-color', content: '#4F46E5' },
+        { name: 'apple-mobile-web-app-capable', content: 'yes' },
+        { name: 'apple-mobile-web-app-status-bar-style', content: 'default' }
+      ],
+      link: [
+        {
+          rel: 'apple-touch-icon',
+          href: '/icons/icon-192.png'
+        }
+      ]
+    }
   },
   $development: {
     runtimeConfig: {
@@ -76,6 +89,6 @@ export default defineNuxtConfig({
         }
       ]
     }
-  }
+  },
 
 })

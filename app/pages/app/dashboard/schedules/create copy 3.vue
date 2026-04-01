@@ -28,34 +28,34 @@ const {
 
 const { successMsg, errorMsg } = useMessage()
 const loading = ref(false)
-const errors = reactive<Record<string, string>>({})
+const errors = reactive<Record<string,string>>({})
 
-errorMsg.value = null
-successMsg.value = null
+  errorMsg.value = null
+  successMsg.value = null
 
 /* FORM OPTIONS */
 type Loanrecord = {
-  id: number;
-  cust_id: number;
-  currency_id: number | null;
-  loan_startdate: string | null;
-  loan_enddate: string | null;
-  loan_totalcash: string;
-  loan_principle: string;
-  loan_interest_rate: string;
-  loan_peroid: number | null;
-  loantype_id: number | null;
-  loan_over_draft?: string;
-  customer: Customer;
-  currency: Currency | null;
-  loantype: Loantype | null;
+    id: number;
+    cust_id: number;
+    currency_id: number | null;
+    loan_startdate: string | null;
+    loan_enddate: string | null;
+    loan_totalcash: string;
+    loan_principle: string;
+    loan_interest_rate: string;
+    loan_peroid: number | null;
+    loantype_id: number | null;
+    loan_over_draft?: string;
+    customer: Customer;
+    currency: Currency | null;
+    loantype: Loantype | null;
 }
 
-type Customer = { id: number, cust_name_1: string, cust_name_2: string | null }
-type Currency = { id: number, currency_en: string }
-type Loantype = { id: number, loantype_detail: string }
+type Customer = { id:number, cust_name_1:string, cust_name_2:string|null }
+type Currency = { id:number, currency_en:string }
+type Loantype = { id:number, loantype_detail:string }
 
-const customers = ref<{ id: number, label: string }[]>([])
+const customers = ref<{id:number,label:string}[]>([])
 const loanrecords = ref<Loanrecord[]>([])
 // const schedules = ref<any[]>([])
 
@@ -84,16 +84,16 @@ const fetchFormData = async () => {
 
   try {
     const res = await $fetch<{
-      customers: { [key: string]: string },
-      loanrecords: Loanrecord[]
+        customers: { [key: string]: string },
+        loanrecords: Loanrecord[]
     }>("/api/admin-secure/schedules-form-data", {
-      params: {
+       params: {
         t: Date.now() // ✅ cache buster
       }
     })
 
-    const map = (obj: Record<string, string>) =>
-      Object.entries(obj).map(([id, label]) => ({ id: Number(id), label: String(label) }))
+    const map = (obj: Record<string,string>) =>
+      Object.entries(obj).map(([id,label])=>({ id:Number(id), label:String(label) }))
 
     customers.value = map(res.customers)
     loanrecords.value = res.loanrecords
@@ -163,7 +163,7 @@ const submitForm = async () => {
   loading.value = true
   errorMsg.value = null
   successMsg.value = null
-
+    
   console.log("Schedules:", schedules.value)         // ✅ direct object
 
   const payload = {
@@ -179,11 +179,11 @@ const submitForm = async () => {
     schedule_interest: schedules.value.map(s => Number(s.schedule_interest || 0)),
     schedule_totalpay: schedules.value.map(s => Number(s.schedule_totalpay || 0)),
   }
-
+  
   console.log("Payload:", payload)                   // ✅ direct object
   // console.log("Payload JSON:", JSON.stringify(payload, null, 2))
   try {
-    const res = await $fetch<{ success: boolean; message: string; loan_id: number }>("/api/admin-secure/schedules", {
+    const res = await $fetch<{ success: boolean; message: string; loan_id: number }>("/api/admin-secure/schedules",{
       method: "POST",
       body: payload,
     })
@@ -195,21 +195,21 @@ const submitForm = async () => {
     }
 
   } catch (err: any) {
-    console.log('FULL ERROR:', err)
-    console.log('DATA:', err?.data)
-    console.log('MESSAGE:', err?.data?.message)
-    if (err.errors) {
-      err.errors.forEach((e: any) => {
-        const path = e.path[0]
-        if (typeof path === 'string' || typeof path === 'number') {
-          errors[path] = e.message
-        }
-      })
-    } else {
-      errorMsg.value = "Error while saving loanrecord"
-    }
-  } finally {
-    loading.value = false
+        console.log('FULL ERROR:', err)
+        console.log('DATA:', err?.data)
+        console.log('MESSAGE:', err?.data?.message)
+      if (err.errors) {
+        err.errors.forEach((e: any) => {
+          const path = e.path[0]
+          if (typeof path === 'string' || typeof path === 'number') {
+            errors[path] = e.message
+          }
+        })
+      } else {
+        errorMsg.value = "Error while saving loanrecord"
+      }
+    } finally {
+      loading.value = false
   }
 
 }
@@ -233,7 +233,7 @@ watch(
 
 <template>
 
-  <!-- Messages -->
+    <!-- Messages -->
   <div v-if="errorMsg" class="mb-3 p-2 rounded bg-red-500/20 text-red-300 text-sm">
     {{ errorMsg }}
   </div>
@@ -243,136 +243,108 @@ watch(
 
 
 
-  <!-- Infomation -->
+   <!-- Infomation -->
   <ComponentCard title="1. Infomation">
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 
       <!-- col 1 -->
       <div>
         <!-- customer -->
-        <CommonCustomerSelect2 label="Customer" v-model="form.loan_id" :required="true" :error="errors.cust_id"
-          :options="customers" />
+        <CommonCustomerSelect2 
+          label="Customer" 
+          v-model="form.loan_id" 
+          :required="true" 
+          :error="errors.cust_id"
+          :options="customers" 
+        />
 
         <!-- Spouse/Partner -->
         <div class="py-3">
           <label class="label">Spouse/Partner</label>
-          <input v-if="form.loan_id === -1"
-            class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text"
-            readonly />
-          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
-            type="text" v-model="form.cust_name_2" readonly />
+          <input v-if="form.loan_id === -1" class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" readonly />
+          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" v-model="form.cust_name_2" readonly />
         </div>
 
         <!-- loan_id -->
         <div class="">
           <label class="label">Loan ID</label>
-          <input v-if="form.loan_id === -1"
-            class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text"
-            readonly />
-          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
-            type="text" v-model="form.loan_id" readonly />
+          <input v-if="form.loan_id === -1" class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" readonly />
+          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" v-model="form.loan_id" readonly />
         </div>
       </div>
 
 
-      <!-- col 2 -->
+       <!-- col 2 -->
       <div>
         <!-- loan_startdate -->
         <div class="">
           <label class="label">Start Date</label>
-          <input v-if="form.loan_id === -1"
-            class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text"
-            readonly />
-          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
-            type="text" v-model="form.loan_startdate" readonly />
+          <input v-if="form.loan_id === -1" class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" readonly />
+          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" v-model="form.loan_startdate" readonly />
         </div>
 
         <!-- loan_enddate -->
         <div class="py-2">
           <label class="label">End Date</label>
-          <input v-if="form.loan_id === -1"
-            class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text"
-            readonly />
-          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
-            type="text" v-model="form.loan_enddate" readonly />
+          <input v-if="form.loan_id === -1" class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" readonly />
+          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" v-model="form.loan_enddate" readonly />
         </div>
 
         <!-- currency_en -->
         <div class="py-2">
           <label class="label">Currency</label>
-          <input v-if="form.loan_id === -1"
-            class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text"
-            readonly />
-          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
-            type="text" v-model="form.currency_en" readonly />
+          <input v-if="form.loan_id === -1" class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" readonly />
+          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" v-model="form.currency_en" readonly />
         </div>
       </div>
 
 
-      <!-- col 3 -->
+       <!-- col 3 -->
       <div>
         <!-- loan_totalcash -->
         <div class="">
           <label class="label">Total Cash</label>
-          <input v-if="form.loan_id === -1"
-            class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text"
-            readonly />
-          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
-            type="text" v-model="form.loan_totalcash" readonly />
+          <input v-if="form.loan_id === -1" class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" readonly />
+          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" v-model="form.loan_totalcash" readonly />
         </div>
 
         <!-- loan_principle -->
         <div class="py-2">
           <label class="label">Principle</label>
-          <input v-if="form.loan_id === -1"
-            class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text"
-            readonly />
-          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
-            type="text" v-model="form.loan_principle" readonly />
+          <input v-if="form.loan_id === -1" class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" readonly />
+          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" v-model="form.loan_principle" readonly />
         </div>
 
         <!-- loan_interest_rate -->
         <div class="py-2">
           <label class="label">Interest Rate</label>
-          <input v-if="form.loan_id === -1"
-            class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text"
-            readonly />
-          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
-            type="text" v-model="form.loan_interest_rate" readonly />
+          <input v-if="form.loan_id === -1" class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" readonly />
+          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" v-model="form.loan_interest_rate" readonly />
         </div>
       </div>
 
 
-      <!-- col 4 -->
+       <!-- col 4 -->
       <div>
         <!-- loan_peroid -->
         <div class="">
           <label class="label">Period</label>
-          <input v-if="form.loan_id === -1"
-            class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text"
-            readonly />
-          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
-            type="text" v-model="form.loan_peroid" readonly />
+          <input v-if="form.loan_id === -1" class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" readonly />
+          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" v-model="form.loan_peroid" readonly />
         </div>
 
         <!-- loantype_detail -->
         <div class="py-2">
           <label class="label">Loan Type</label>
-          <input v-if="form.loan_id === -1"
-            class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text"
-            readonly />
-          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
-            type="text" v-model="form.loantype_detail" readonly />
+          <input v-if="form.loan_id === -1" class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" readonly />
+          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" v-model="form.loantype_detail" readonly />
         </div>
 
         <!-- loan_over_draft -->
         <div class="py-2">
           <label class="label">Over Draft</label>
-          <input v-if="form.loan_id === -1"
-            class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text"
-            readonly />
-          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
-            type="text" v-model="form.loan_over_draft" readonly />
+          <input v-if="form.loan_id === -1" class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" readonly />
+          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text" v-model="form.loan_over_draft" readonly />
         </div>
       </div>
     </div>
@@ -398,76 +370,40 @@ watch(
           </tr>
         </thead>
         <tbody class="border-b divide-y divide-gray-200 dark:divide-gray-700">
-          <tr v-for="(s, index) in paginatedSchedules" :key="index"
-            class="hover:bg-blue-50 dark:hover:bg-white/5 transition">
-            <td class="px-3 py-2 font-medium text-gray-500">{{ s.schedule_paymentnumber }}</td>
-            <td class="px-3 py-2">{{ formatDateForOutput(s.schedule_startdate) }}</td>
-            <td class="px-3 py-2">{{ formatDateForOutput(s.schedule_enddate) }}</td>
-            <td class="px-3 py-2">{{ s.schedule_totaldays }}</td>
-            <td class="px-3 py-2">{{ Number(s.schedule_interest_rate || 0).toLocaleString(undefined, {
-              minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
-            <td class="px-3 py-2">{{ Number(s.schedule_outstanding || 0).toLocaleString(undefined, {
-              minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
-            <td class="px-3 py-2">{{ Number(s.schedule_over_draft || 0).toLocaleString(undefined, {
-              minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
-            <td class="px-3 py-2">{{ Number(s.schedule_principle || 0).toLocaleString(undefined, {
-              minimumFractionDigits:
-                2, maximumFractionDigits: 2 })}}</td>
-            <td class="px-3 py-2">{{ Number(s.schedule_interest || 0).toLocaleString(undefined, {
-              minimumFractionDigits:
-                2, maximumFractionDigits: 2 })}}</td>
-            <td class="px-3 py-2 text-right text-blue-600">{{ Number(s.schedule_totalpay || 0).toLocaleString(undefined,
-              { minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
+          <tr v-for="(s, index) in schedules" :key="index"  class="hover:bg-blue-50 dark:hover:bg-white/5 transition">
+            <td class="px-3 py-2 font-medium text-gray-500">{{s.schedule_paymentnumber}}</td>
+            <td class="px-3 py-2">{{formatDateForOutput(s.schedule_startdate)}}</td>
+            <td class="px-3 py-2">{{formatDateForOutput(s.schedule_enddate)}}</td>
+            <td class="px-3 py-2">{{s.schedule_totaldays}}</td>
+            <td class="px-3 py-2">{{Number(s.schedule_interest_rate || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
+            <td class="px-3 py-2">{{Number(s.schedule_outstanding || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
+            <td class="px-3 py-2">{{Number(s.schedule_over_draft || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
+            <td class="px-3 py-2">{{Number(s.schedule_principle || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
+            <td class="px-3 py-2">{{Number(s.schedule_interest || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
+            <td class="px-3 py-2 text-right text-blue-600">{{Number(s.schedule_totalpay || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div v-if="form.loan_id > 0" class="flex justify-between items-center mt-4">
-
-  <!-- LEFT: Pagination -->
-  <div class="flex items-center gap-2">
-    <button 
-      @click="prevPage" 
-      :disabled="currentPage === 1"
-      class="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50"
-    >
-      Prev
-    </button>
-
-    <span class="text-sm">
-      Page {{ currentPage }} / {{ totalPages }}
-    </span>
-
-    <button 
-      @click="nextPage" 
-      :disabled="currentPage === totalPages"
-      class="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50"
-    >
-      Next
-    </button>
-  </div>
-
-  <!-- RIGHT: Actions -->
-  <div class="flex gap-2">
-    <button 
-      @click="handleReround(form)" 
+      <!-- BUTTON -->
+  <template #footer v-if="form.loan_id > 0">
+    <button
+      @click="handleReround(form)"
       :disabled="reroundLoading"
-      class="px-6 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500"
+      class="px-6 py-2 !mt-5 bg-yellow-400 text-white rounded-lg hover:bg-blue-700"
     >
       {{ reroundLoading ? "Calculating..." : "Reround Down" }}
     </button>
-
-    <button 
-      @click="submitForm" 
+    <button
+      @click="submitForm"
       :disabled="loading"
-      class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+      class="px-6 py-2 !mt-5 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
     >
       {{ loading ? "Saving..." : "Create Schedule" }}
     </button>
-  </div>
+  </template>
 
-</div>
   </ComponentGrowCard>
 
 
@@ -476,17 +412,20 @@ watch(
 </template>
 
 <style scoped>
-.label {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 14px;
-  color: #555;
+
+.label{
+display:block;
+margin-bottom:4px;
+font-size:14px;
+color:#555;
 }
 
-.input {
-  width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 8px 12px;
+.input{
+width:100%;
+border:1px solid #ddd;
+border-radius:8px;
+padding:8px 12px;
 }
+
+
 </style>
