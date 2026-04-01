@@ -2,12 +2,15 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineNuxtConfig({
   devtools: { enabled: true },
   compatibilityDate: '2025-07-15',
-  future: { compatibilityVersion: 4},
-  css: ['~/assets/css/main.css','~/assets/css/fonts.css'],
+  future: { compatibilityVersion: 4 },
+  css: ['~/assets/css/main.css', '~/assets/css/fonts.css'],
   vite: {
     plugins: [tailwindcss()],
   },
-  modules: ['@nuxt/fonts', '@nuxt/icon', '@nuxt/image', "@nuxtjs/color-mode", 'nuxt-og-image'],
+  modules: [
+    '@nuxt/fonts', '@nuxt/icon', '@nuxt/image', "@nuxtjs/color-mode", 'nuxt-og-image',
+    '@vite-pwa/nuxt'
+  ],
   colorMode: {
     storageKey: 'color-theme',
     fallback: 'light',
@@ -30,11 +33,11 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
-      failOnError: false, 
+      failOnError: false,
     }
   },
   ogImage: {
-    enabled : true,
+    enabled: true,
     defaults: {
       renderer: "satori",
     },
@@ -47,5 +50,32 @@ export default defineNuxtConfig({
     '/signup': { redirect: '/app/signup' },
     '/dashboard': { redirect: '/app/dashboard' },
   },
-  
+  pwa: {
+    registerType: 'autoUpdate',
+    workbox: {
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}']
+    },
+    manifest: {
+      name: 'Loan Schedule Generator',
+      short_name: 'LoanSchedule',
+      description: 'A simple loan schedule generator',
+      theme_color: '#4F46E5',
+      background_color: '#ffffff',
+      display: 'standalone',
+      start_url: '/',
+      icons: [
+        {
+          src: '/icons/icon-192.png',
+          sizes: '192x192',
+          type: 'image/png'
+        },
+        {
+          src: '/icons/icon-512.png',
+          sizes: '512x512',
+          type: 'image/png'
+        }
+      ]
+    }
+  }
+
 })

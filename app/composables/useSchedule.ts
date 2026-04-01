@@ -2,6 +2,8 @@ import { ref } from "vue"
 import { formatDateForInput } from "@/utils/date"
 import { fixDouble } from "@/utils/number"
 
+const reroundLoading = ref(false)
+
 /*  TYPES  */
 type FormType = {
   loan_startdate: string
@@ -18,7 +20,7 @@ export const useSchedule = () => {
 
   const schedules = ref<any[]>([])
 
-  /*  GENERATOR  */
+  /*  generateM11  */
   const generateM11 = (form: FormType) => {
     schedules.value = []
 
@@ -73,14 +75,149 @@ export const useSchedule = () => {
     reculculateFixOutstanding()
   }
 
+  /* generateM12 */
+  const generateM12 = (form: FormType) => {
+    schedules.value = []
+
+    const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
+    const loan_principle = Number(form.loan_principle.replace(/,/g, "") || 0)
+    const loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+
+    for (let i = 0; i < form.loan_peroid; i++) {
+
+      // DATE
+      let startDate = new Date(formatDateForInput(form.loan_startdate))
+
+      let newStartDate = new Date(startDate)
+      newStartDate.setMonth(newStartDate.getMonth() + i)
+
+      let newEndDate = new Date(newStartDate)
+      newEndDate.setMonth(newStartDate.getMonth() + 1)
+      newEndDate.setDate(newEndDate.getDate() - 1) // 🔥 important (like jQuery)
+
+      let totalDays =
+        Math.round(
+          (newEndDate.getTime() - newStartDate.getTime()) /
+          (1000 * 60 * 60 * 24)
+        ) + 1
+
+      // LOGIC (M12)
+      const schedule_outstanding = loan_totalcash
+
+      const schedule_principle = 0 // 🔥 always 0
+
+      const schedule_interest =
+        fixDouble(loan_interest_rate / 100, 3) * loan_totalcash
+
+      const schedule_totalpay =
+        schedule_interest + schedule_principle
+
+      // PUSH
+      schedules.value.push({
+        schedule_paymentnumber: i + 1,
+        schedule_startdate: newStartDate,
+        schedule_enddate: newEndDate,
+        schedule_totaldays: totalDays,
+        schedule_interest_rate: loan_interest_rate,
+        schedule_outstanding,
+        schedule_over_draft: 0,
+        schedule_principle,
+        schedule_interest,
+        schedule_totalpay,
+      })
+    }
+
+    // POST PROCESS
+    recalculcateDateM()
+    reculculateNClean()
+    reculculateFixOutstanding()
+  }
+
+
+  /* reculculateCreatloanM13 */
+  const reculculateCreatloanM13 = () => {
+    for (let i = 0; i < schedules.value.length - 1; i++) {
+      const current = schedules.value[i]
+      const next = schedules.value[i + 1]
+
+      const outstanding = Number(current.schedule_outstanding || 0)
+      const depreciation = Number(current.schedule_principle || 0)
+
+      const interestRate = Number(next.schedule_interest_rate || 0)
+
+      // calculate next row
+      const nextOutstanding = outstanding - depreciation
+      const interest = nextOutstanding * (interestRate / 100)
+      const principle =
+        Number(next.schedule_totalpay || 0) - interest
+
+      next.schedule_outstanding = nextOutstanding
+      next.schedule_principle = principle
+      next.schedule_interest = interest
+      next.schedule_totalpay = principle + interest
+    }
+
+    // keep your existing fixes
+    reculculateNClean()
+    reculculateFixOutstanding()
+  }
+
+
+  /* generateM13 */
+  const generateM13 = (form: FormType) => {
+    schedules.value = []
+
+    const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
+    const loan_principle = Number(form.loan_principle.replace(/,/g, "") || 0)
+    const loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+
+    for (let i = 0; i < form.loan_peroid; i++) {
+      let startDate = new Date(formatDateForInput(form.loan_startdate))
+
+      let newStartDate = new Date(startDate)
+      newStartDate.setMonth(newStartDate.getMonth() + i)
+
+      let newEndDate = new Date(newStartDate)
+      newEndDate.setMonth(newStartDate.getMonth() + 1)
+      newEndDate.setDate(newEndDate.getDate() - 1)
+
+      const totalDays =
+        Math.round(
+          (newEndDate.getTime() - newStartDate.getTime()) /
+            (1000 * 60 * 60 * 24)
+        ) + 1
+
+      const interest =
+        loan_totalcash * fixDouble(loan_interest_rate / 100, 3)
+
+      const principle =
+        loan_principle - interest
+
+      schedules.value.push({
+        schedule_paymentnumber: i + 1,
+        schedule_startdate: newStartDate,
+        schedule_enddate: newEndDate,
+        schedule_totaldays: totalDays,
+        schedule_interest_rate: loan_interest_rate,
+        schedule_principle_date: newStartDate,
+        schedule_outstanding: loan_totalcash,
+        schedule_over_draft: 0,
+        schedule_principle: principle,
+        schedule_interest: interest,
+        schedule_totalpay: loan_principle,
+      })
+    }
+
+    recalculcateDateM()
+    reculculateCreatloanM13()
+  }
+
 
   /* if end date >28 force to 28th day */
   const recalculcateDateM = () => {
     schedules.value.forEach((item, index) => {
 
-      // ----------------------------
       // FIX START DATE (chain)
-      // ----------------------------
       if (index > 0) {
         const prevEnd = new Date(schedules.value[index - 1].schedule_enddate)
         // prevEnd.setDate(prevEnd.getDate() + 1)
@@ -90,17 +227,13 @@ export const useSchedule = () => {
       let start = new Date(item.schedule_startdate)
       let end = new Date(item.schedule_enddate)
 
-      // ----------------------------
       // 🔥 FIX END DATE → MAX 28
-      // ----------------------------
       if (end.getDate() > 28) {
         end.setDate(28)
         item.schedule_enddate = new Date(end)
       }
 
-      // ----------------------------
       // RECALCULATE DAYS
-      // ----------------------------
       let totalDays =
         Math.round((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000)) + 1
 
@@ -338,8 +471,8 @@ export const useSchedule = () => {
 
     const generators: Record<number, () => void> = {
       11: () => generateM11(form),
-      12: () => generateM11(form),
-      13: () => generateM11(form),
+      12: () => generateM12(form),
+      13: () => generateM13(form),
       14: () => {
         if (Number(form.loan_over_draft) === 0) {
           alert("Loanrecord has no over draft")
@@ -354,7 +487,7 @@ export const useSchedule = () => {
   }
 
 
-  const reroundLoading = ref(false)
+  
 
   /* handleReround */
   const reroundMap: Record<number, () => void> = {
@@ -364,7 +497,6 @@ export const useSchedule = () => {
     13: reroundDownF,
     31: reroundDownF,
   }
-
   const handleReround = (form: FormType) => {
     try {
       reroundLoading.value = true
