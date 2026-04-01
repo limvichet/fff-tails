@@ -83,8 +83,8 @@ const fetchData = async () => {
     )
 
     loan.value = res.data.loanrecord
-    schedules.value = res.data.schedules ?? []
-console.log("Fetched schedules:", schedules.value)
+    schedules.value = res.data.schedules.data ?? []
+
   } catch (err: any) {
     errorMsg.value = err?.statusMessage || "Failed to fetch schedule"
   } finally {
@@ -214,10 +214,10 @@ onMounted(fetchData)
                     <!-- BODY -->
                     <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
 
-                        <tr v-for="(s, i) in paginatedSchedules" :key="i"
+                        <tr v-for="(s, i) in schedules" :key="i"
                             class="hover:bg-blue-50 dark:hover:bg-white/5 transition">
                             <td class="px-3 py-2 font-medium text-gray-500">
-                                {{ Number(i) + 1 }}
+                                {{ i + 1 }}
                             </td>
 
                             <td class="px-3 py-2">
@@ -264,29 +264,6 @@ onMounted(fetchData)
                 </table>
 
             </div>
-
-            <div v-if="schedules.length > 0" class="flex justify-between items-center mt-4">
-
-      <!-- LEFT: Pagination -->
-      <div class="flex items-center gap-2">
-        <button @click="prevPage" :disabled="currentPage === 1"
-          class="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50">
-          Prev
-        </button>
-
-        <span class="text-sm">
-          Page {{ currentPage }} / {{ totalPages }}
-        </span>
-
-        <button @click="nextPage" :disabled="currentPage === totalPages"
-          class="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50">
-          Next
-        </button>
-      </div>
-
-
-
-    </div>
 
         </ComponentCard>
 

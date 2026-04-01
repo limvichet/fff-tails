@@ -405,19 +405,24 @@ watch(
             <td class="px-3 py-2">{{ formatDateForOutput(s.schedule_enddate) }}</td>
             <td class="px-3 py-2">{{ s.schedule_totaldays }}</td>
             <td class="px-3 py-2">{{ Number(s.schedule_interest_rate || 0).toLocaleString(undefined, {
-              minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
+              minimumFractionDigits: 2, maximumFractionDigits: 2
+            }) }}</td>
             <td class="px-3 py-2">{{ Number(s.schedule_outstanding || 0).toLocaleString(undefined, {
-              minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
+              minimumFractionDigits: 2, maximumFractionDigits: 2
+            }) }}</td>
             <td class="px-3 py-2">{{ Number(s.schedule_over_draft || 0).toLocaleString(undefined, {
-              minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
+              minimumFractionDigits: 2, maximumFractionDigits: 2
+            }) }}</td>
             <td class="px-3 py-2">{{ Number(s.schedule_principle || 0).toLocaleString(undefined, {
               minimumFractionDigits:
-                2, maximumFractionDigits: 2 })}}</td>
+                2, maximumFractionDigits: 2
+            }) }}</td>
             <td class="px-3 py-2">{{ Number(s.schedule_interest || 0).toLocaleString(undefined, {
               minimumFractionDigits:
-                2, maximumFractionDigits: 2 })}}</td>
+                2, maximumFractionDigits: 2
+            }) }}</td>
             <td class="px-3 py-2 text-right text-blue-600">{{ Number(s.schedule_totalpay || 0).toLocaleString(undefined,
-              { minimumFractionDigits: 2, maximumFractionDigits: 2 })}}</td>
+              { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</td>
           </tr>
         </tbody>
       </table>
@@ -425,49 +430,37 @@ watch(
 
     <div v-if="form.loan_id > 0" class="flex justify-between items-center mt-4">
 
-  <!-- LEFT: Pagination -->
-  <div class="flex items-center gap-2">
-    <button 
-      @click="prevPage" 
-      :disabled="currentPage === 1"
-      class="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50"
-    >
-      Prev
-    </button>
+      <!-- LEFT: Pagination -->
+      <div class="flex items-center gap-2">
+        <button @click="prevPage" :disabled="currentPage === 1"
+          class="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50">
+          Prev
+        </button>
 
-    <span class="text-sm">
-      Page {{ currentPage }} / {{ totalPages }}
-    </span>
+        <span class="text-sm">
+          Page {{ currentPage }} / {{ totalPages }}
+        </span>
 
-    <button 
-      @click="nextPage" 
-      :disabled="currentPage === totalPages"
-      class="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50"
-    >
-      Next
-    </button>
-  </div>
+        <button @click="nextPage" :disabled="currentPage === totalPages"
+          class="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50">
+          Next
+        </button>
+      </div>
 
-  <!-- RIGHT: Actions -->
-  <div class="flex gap-2">
-    <button 
-      @click="handleReround(form)" 
-      :disabled="reroundLoading"
-      class="px-6 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500"
-    >
-      {{ reroundLoading ? "Calculating..." : "Reround Down" }}
-    </button>
+      <!-- RIGHT: Actions -->
+      <div class="flex gap-2">
+        <button @click="handleReround(form)" :disabled="reroundLoading"
+          class="px-6 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500">
+          {{ reroundLoading ? "Calculating..." : "Reround Down" }}
+        </button>
 
-    <button 
-      @click="submitForm" 
-      :disabled="loading"
-      class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-    >
-      {{ loading ? "Saving..." : "Create Schedule" }}
-    </button>
-  </div>
+        <button @click="submitForm" :disabled="loading"
+          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          {{ loading ? "Saving..." : "Create Schedule" }}
+        </button>
+      </div>
 
-</div>
+    </div>
   </ComponentGrowCard>
 
 

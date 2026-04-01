@@ -136,12 +136,28 @@ const viewSchedule = (loanId: number) => {
     <ComponentCard title="Schedules">
 
       <!-- Search -->
-      <div class="relative mb-3">
+      <div class="relative">
+        <!-- Icon -->
+        <svg
+          class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"
+          />
+        </svg>
+
+        <!-- Search Input -->
         <input
           v-model="searchInput"
           type="text"
-          placeholder="Search schedules..."
-          class="input"
+          placeholder="Search records..."
+          class="input text-sm !pl-9"
         />
       </div>
 
@@ -156,54 +172,54 @@ const viewSchedule = (loanId: number) => {
       </div>
 
       <!-- Table -->
-      <div v-else class="overflow-hidden rounded-xl border">
-        <div class="overflow-x-auto">
-          <table class="min-w-full text-sm">
+      <div v-else class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        <div class="max-w-full overflow-x-auto custom-scrollbar">
+          <table class="min-w-full">
             <thead class="border-b">
-              <tr>
-                <th class="px-2 py-2 text-left">#</th>
-                <th class="px-2 py-2 text-left">Loan ID</th>
-                <th class="px-2 py-2 text-left">Customer</th>
-                <th class="px-2 py-2 text-left">Start</th>
-                <th class="px-2 py-2 text-left">End</th>
-                <th class="px-2 py-2 text-left">Currency</th>
-                <th class="px-2 py-2 text-left">Total</th>
-                <th class="px-2 py-2 text-center">Status</th>
-                <th class="px-2 py-2 text-center">Actions</th>
+              <tr class="border-b border-gray-200 dark:border-gray-700">
+                <th class="px-2 py-3 text-left text-sm">#</th>
+                <th class="px-2 py-3 text-left text-sm">LID</th>
+                <th class="px-2 py-3 text-left text-sm">Customer</th>
+                <th class="px-2 py-3 text-left text-sm">Start</th>
+                <th class="px-2 py-3 text-left text-sm">End</th>
+                <th class="px-2 py-3 text-left text-sm">Currency</th>
+                <th class="px-2 py-3 text-left text-sm">Total</th>
+                <th class="px-2 py-3 text-center text-sm">Status</th>
+                <th class="px-2 py-3 text-center text-sm">Actions</th>
               </tr>
             </thead>
 
-            <tbody>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
               <tr
                 v-for="(s, i) in paginated"
                 :key="s.id"
-                class="border-b hover:bg-gray-100/10"
+                class="hover:bg-blue-300/20 transition"
               >
-                <td class="px-2 py-1">
+                <td class="px-2 py-1 text-sm">
                   {{ (page - 1) * perPage + i + 1 }}
                 </td>
 
-                <td class="px-2 py-1">
+                <td class="px-2 py-1 text-sm">
                   {{ s.loan_id }}
                 </td>
 
-                <td class="px-2 py-1">
+                <td class="px-2 py-1 text-sm">
                   {{ s.cust_name_1 }}
                 </td>
 
-                <td class="px-2 py-1">
+                <td class="px-2 py-1 text-sm">
                   {{ s.loan_startdate }}
                 </td>
 
-                <td class="px-2 py-1">
+                <td class="px-2 py-1 text-sm">
                   {{ s.loan_enddate }}
                 </td>
 
-                <td class="px-2 py-1">
+                <td class="px-2 py-1 text-sm">
                   {{ s.currency_en }}
                 </td>
 
-                <td class="px-2 py-1">
+                <td class="px-2 py-1 text-sm">
                   {{ s.loan_totalcash }}
                 </td>
 
@@ -269,11 +285,27 @@ const viewSchedule = (loanId: number) => {
   </div>
 </template>
 
+
 <style scoped>
+.label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+  /* color: #555; */
+}
+
 .input {
   width: 100%;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 8px 12px;
+}
+
+.text-red-500 {
+  color: #f56565;
+}
+
+.text-sm {
+  font-size: 12px;
 }
 </style>
