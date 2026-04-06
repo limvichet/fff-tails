@@ -82,16 +82,22 @@ export const useSchedule = () => {
     schedules.value = []
 
     for (let i = 0; i < form.loan_peroid; i++) {
-      let startDate = new Date(formatDateForInput(form.loan_startdate))
+      const baseStart = new Date(formatDateForInput(form.loan_startdate))
 
-      let newStartDate = new Date(formatDateForInput(form.loan_startdate))
-      //newStartDate.setMonth(newStartDate.getMonth() + i)
+      const newStartDate = new Date(baseStart)
+      newStartDate.setMonth(newStartDate.getMonth() + i)
 
-      let newEndDate = form.loan_first_paid_date 
-                        ? new Date(formatDateForInput(form.loan_first_paid_date))
-                        : new Date(newStartDate.setMonth(newStartDate.getMonth() + 1))
+      let newEndDate: Date
 
-      newEndDate.setMonth(newEndDate.getMonth() + i)
+      if (form.loan_first_paid_date) {
+        newEndDate = new Date(formatDateForInput(form.loan_first_paid_date))
+        newEndDate.setMonth(newEndDate.getMonth() + i)
+      } else {
+        newEndDate = new Date(baseStart) // ✅ fresh copy
+        newEndDate.setMonth(newEndDate.getMonth() + i + 1) // ✅ FIX HERE
+        newEndDate.setDate(newEndDate.getDate() - 1) // 🔥 important (like jQuery)
+      }
+
 
       let totalDays = Math.ceil(
         (newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24)
