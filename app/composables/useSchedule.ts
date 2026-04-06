@@ -89,9 +89,9 @@ export const useSchedule = () => {
 
       let newEndDate = form.loan_first_paid_date 
                         ? new Date(formatDateForInput(form.loan_first_paid_date))
-                        : new Date(newStartDate.setMonth(newStartDate.getMonth() + i))
+                        : new Date(newStartDate.setMonth(newStartDate.getMonth() + 1))
 
-      newEndDate.setMonth(newStartDate.getMonth() + i)
+      newEndDate.setMonth(newEndDate.getMonth() + i)
 
       let totalDays = Math.ceil(
         (newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24)
