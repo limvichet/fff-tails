@@ -15,7 +15,7 @@ import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
 
 
 import { useSchedule } from "@/composables/useSchedule"
-const { schedules, generateSchedule, reroundLoading, handleReround } = useSchedule()
+const { schedules, generateSchedule, reroundLoading, reroundDone, handleReround } = useSchedule()
 
 import { usePagination } from "@/composables/usePagination"
 const {
@@ -30,6 +30,7 @@ const { successMsg, errorMsg } = useMessage()
 const loading = ref(false)
 const errors = reactive<Record<string, string>>({})
 
+
 errorMsg.value = null
 successMsg.value = null
 
@@ -39,6 +40,7 @@ type Loanrecord = {
   cust_id: number;
   currency_id: number | null;
   loan_startdate: string | null;
+  loan_first_paid_date: string | null;
   loan_enddate: string | null;
   loan_totalcash: string;
   loan_principle: string;
@@ -65,6 +67,7 @@ const form = reactive({
   cust_name_1: "",
   cust_name_2: "",
   loan_startdate: "",
+  loan_first_paid_date: "",
   loan_enddate: "",
   currency_en: "",
   loan_totalcash: "",
@@ -122,6 +125,7 @@ watch(
       form.cust_name_1 = ""
       form.cust_name_2 = ""
       form.loan_startdate = ""
+      form.loan_first_paid_date = ""
       form.loan_enddate = ""
       form.currency_en = ""
       form.loan_totalcash = ""
@@ -141,6 +145,7 @@ watch(
       form.cust_name_2 = selectedLoan.customer?.cust_name_2 ?? ""
       form.cust_name_2 = selectedLoan.customer?.cust_name_2 ?? ""
       form.loan_startdate = selectedLoan.loan_startdate ?? ""
+      form.loan_first_paid_date = selectedLoan.loan_first_paid_date ?? ""
       form.loan_enddate = selectedLoan.loan_enddate ?? ""
       form.currency_en = selectedLoan.currency?.currency_en ?? ""
       form.loan_totalcash = selectedLoan.loan_totalcash
@@ -286,16 +291,26 @@ watch(
           <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
             type="text" v-model="form.loan_startdate" readonly />
         </div>
+        
+        <!-- loan_first_paid_date -->
+        <div class="py-2">
+          <label class="label">First Paid Date</label>
+          <input v-if="form.loan_id === -1"
+            class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text"
+            readonly />
+          <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
+            type="text" v-model="form.loan_first_paid_date" readonly />
+        </div>
 
         <!-- loan_enddate -->
-        <div class="py-2">
+        <!-- <div class="py-2">
           <label class="label">End Date</label>
           <input v-if="form.loan_id === -1"
             class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text"
             readonly />
           <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
             type="text" v-model="form.loan_enddate" readonly />
-        </div>
+        </div> -->
 
         <!-- currency_en -->
         <div class="py-2">
@@ -449,9 +464,9 @@ watch(
 
       <!-- RIGHT: Actions -->
       <div class="flex gap-2">
-        <button @click="handleReround(form)" :disabled="reroundLoading"
+        <button @click="handleReround(form)" :disabled="reroundLoading || reroundDone"
           class="px-6 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500">
-          {{ reroundLoading ? "Calculating..." : "Reround Down" }}
+  {{ reroundLoading ? "Calculating..." : reroundDone ? "Reround Done" : "Reround Down" }}
         </button>
 
         <button @click="submitForm" :disabled="loading"

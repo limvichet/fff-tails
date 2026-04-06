@@ -12,6 +12,10 @@ import ComponentCard from "@/components/common/ComponentCard.vue"
 import ComponentSubmitCard from "@/components/common/ComponentSubmitCard.vue"
 import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
 import type { LoanrecordFormDataResponse } from "~/types/loanrecord"
+import { formatDateForInput } from "@/utils/date"
+import { useCustomToast } from '~/composables/useCustomToast';
+
+const { showToast } = useCustomToast();
 
 const { hasRole } = useAuth()
 
@@ -73,6 +77,7 @@ const form = reactive<any>({
     payback_id:1,
     loan_peroid:1,
     loan_startdate:"",
+    loan_first_paid_date:"",
     loan_enddate:"",
     loan_interest_rate:0,
     invoice_id:"",
@@ -119,20 +124,8 @@ const { data } = await useAsyncData(
 
 const loanrecord = computed(()=>data.value?.data ?? null)
 
-/* DATE FORMAT HELPER */
-function formatDateForInput(date: string | null) {
-  if (!date) return ""
 
-  // already correct
-  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-    return date
-  }
 
-  // convert dd-MM-yyyy → yyyy-MM-dd
-  const [d, m, y] = date.split("-")
-
-  return `${y}-${m}-${d}`
-}
 
 watchEffect(() => {
   const lastCash = Number(String(form.loan_lastcash).replace(/,/g, '') || 0)
@@ -159,6 +152,7 @@ watch(loanrecord,(l)=>{
     payback_id:l.payback_id ?? 1,
     loan_peroid:l.loan_peroid ?? 1,
     loan_startdate:formatDateForInput(l.loan_startdate ?? ""),
+    loan_first_paid_date:formatDateForInput(l.loan_first_paid_date ?? ""),
     loan_enddate:formatDateForInput(l.loan_enddate ?? ""),
     loan_interest_rate:l.loan_interest_rate ?? 0,
     invoice_id:(l.invoice?.invoice_type ?? "") + String(l.invoice_id).padStart(8, '0'),
@@ -233,6 +227,7 @@ const schema = z.object({
   payback_id:z.number().min(1,"Please select"),
   loan_peroid:z.coerce.number().min(1,"Required"),
   loan_startdate:z.string().nonempty("Required"),
+  loan_first_paid_date:z.string().nonempty("Required"),
   loan_enddate:z.string().nonempty("Required"),
   loan_interest_rate:z.coerce.number().min(0.000001,"Required"),
   invoice_id:z.string().optional(),
@@ -395,6 +390,12 @@ const updateForm = async () => {
     })
 
     successMsg.value = "Loan updated successfully!"
+
+    showToast(
+      `ID #${id}`,
+      `Updated successfully!`,
+      `success`
+    )
 
     // ✅ REFRESH IMAGE FROM BACKEND
     const refreshed = await $fetch<{ succes: number, data: any }>(`/api/admin-secure/loanrecords/${id}`)
@@ -768,6 +769,15 @@ const onFileDocChange2 = (e: Event) => {
         <span class="text-red-500 text-sm">{{ errors.loan_startdate }}</span>
       </div>
       <input v-model="form.loan_startdate" type="date" class="input"/>
+    </div>
+
+    <!-- loan_first_paid_date -->
+    <div>
+      <div class="flex items-center justify-between">
+        <label class="label">First Paid Date<span class="text-red-500 text-sm"> *</span></label>
+        <span class="text-red-500 text-sm">{{ errors.loan_first_paid_date }}</span>
+      </div>
+      <input v-model="form.loan_first_paid_date" type="date" class="input"/>
     </div>
 
     <!-- loan_enddate -->

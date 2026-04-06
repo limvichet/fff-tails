@@ -36,6 +36,7 @@ const {
 type Loanrecord = {
   id: number
   loan_startdate: string
+  loan_first_paid_date: string
   loan_enddate: string
   loan_totalcash: string
   loan_principle: string
@@ -124,66 +125,74 @@ onMounted(fetchData)
         <ComponentCard title="1. Information">
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 
+                <!-- col 1 -->
                 <div>
-                    <label class="label">Customer</label>
-                    <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.customer.cust_name_1" readonly />
+                    <div>
+                        <label class="label">Customer</label>
+                        <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.customer.cust_name_1" readonly />
+                    </div>
+                    <div>
+                        <label class="label">Spouse</label>
+                        <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.customer.cust_name_2" readonly />
+                    </div>
+
+                    <div>
+                        <label class="label">Loan ID</label>
+                        <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.id" readonly />
+                    </div>
                 </div>
 
-                <div>
-                    <label class="label">Spouse</label>
-                    <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.customer.cust_name_2" readonly />
-                </div>
+                <!-- col 2 -->
+                 <div>
+                    <div>
+                        <label class="label">Start Date</label>
+                        <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_startdate" readonly />
+                    </div>
+                    <div>
+                        <label class="label">First Paid Date</label>
+                        <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_first_paid_date" readonly />
+                    </div>
+                    <!-- <div>
+                        <label class="label">End Date</label>
+                        <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_enddate" readonly />
+                    </div> -->
+                    <div>
+                        <label class="label">Currency</label>
+                        <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.currency.currency_en" readonly />
+                    </div>
+                 </div>
 
-                <div>
-                    <label class="label">Loan ID</label>
-                    <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.id" readonly />
-                </div>
+                 <!-- col 3 -->
+                 <div>
+                     <div>
+                         <label class="label">Total Cash</label>
+                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_totalcash" readonly />
+                     </div>
+                     <div>
+                         <label class="label">Principle</label>
+                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_principle" readonly />
+                     </div>
+                     <div>
+                         <label class="label">Interest Rate</label>
+                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_interest_rate" readonly />
+                     </div>
+                 </div>
 
-                <div>
-                    <label class="label">Currency</label>
-                    <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.currency.currency_en" readonly />
-                </div>
-
-                <div>
-                    <label class="label">Start Date</label>
-                    <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_startdate" readonly />
-                </div>
-
-                <div>
-                    <label class="label">End Date</label>
-                    <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_enddate" readonly />
-                </div>
-
-                <div>
-                    <label class="label">Total Cash</label>
-                    <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_totalcash" readonly />
-                </div>
-
-                <div>
-                    <label class="label">Principle</label>
-                    <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_principle" readonly />
-                </div>
-
-                <div>
-                    <label class="label">Interest Rate</label>
-                    <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_interest_rate" readonly />
-                </div>
-
-                <div>
-                    <label class="label">Period</label>
-                    <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_peroid" readonly />
-                </div>
-
-                <div>
-                    <label class="label">Loan Type</label>
-                    <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loantype.loantype_detail" readonly />
-                </div>
-
-                <div>
-                    <label class="label">Over Draft</label>
-                    <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_over_draft" readonly />
-                </div>
-
+                 <!-- col 4 -->
+                 <div>
+                     <div>
+                         <label class="label">Period</label>
+                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_peroid" readonly />
+                     </div>
+                     <div>
+                         <label class="label">Loan Type</label>
+                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loantype.loantype_detail" readonly />
+                     </div>
+                     <div>
+                         <label class="label">Over Draft</label>
+                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_over_draft" readonly />
+                     </div>
+                 </div>
             </div>
 
         </ComponentCard>

@@ -1,0 +1,71 @@
+/* store */
+
+import {
+  getCookie,
+  createError,
+  readMultipartFormData,
+  type H3Event,
+} from "h3"
+
+import type { Employee } from "~/types/employess"
+
+export default defineEventHandler(async (event: H3Event) => {
+  const { apiBaseUrl } = useRuntimeConfig(event)
+
+  const token = getCookie(event, "token")
+  if (!token) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Unauthorized",
+    })
+  }
+
+  try {
+
+    const formFields = await readMultipartFormData(event)
+
+    if (!formFields) {
+      throw createError({
+        statusCode: 400,
+        statusMessage: "Invalid form data",
+      })
+    }
+
+    // Convert multipart to browser Data
+    const formData = new FormData()
+
+    for (const field of formFields) {
+      if (!field.name) continue
+
+      if (field.filename) {
+        formData.append(
+          field.name,
+          new Blob([new Uint8Array(field.data)]),
+          field.filename
+        )
+      } else {
+        formData.append(field.name, field.data.toString("utf-8"))
+      }
+    }
+
+    const res = await $fetch<Employee>(`${apiBaseUrl}/api/admin-secure/employees`, {
+      method: "POST",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+      },
+    })
+
+    return res
+  } catch (err: any) {
+    const message =
+      err?.data?.message || err?.message || "Failed to create customer"
+
+    throw createError({
+      statusCode: err?.status || 500,
+      statusMessage: message,
+      data: err?.data,
+    })
+  }
+})

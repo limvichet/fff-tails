@@ -71,6 +71,7 @@
     payback_id:1,
     loan_peroid:1,
     loan_startdate:"",
+    loan_first_paid_date:"",
     loan_enddate:"",
     loan_interest_rate:0,
     invoice_id:"",
@@ -119,8 +120,8 @@ watchEffect(() => {
 // )
 
 watch(
-  () => [form.loan_startdate, form.loan_peroid, form.loantype_id],
-  ([start, period, loantype]) => {
+  () => [form.loan_startdate, form.loan_first_paid_date, form.loan_peroid, form.loantype_id],
+  ([start, firstPaid, period, loantype]) => {
     if (!start || !period || loantype === undefined || loantype === null) return
 
     const startDate = new Date(start)
@@ -147,7 +148,7 @@ watch(
 
 /* VALIDATION */
 const MIN_FILE_SIZE = 2.01 * 1024 * 1024       // 2MB
-const schema = z.object({
+const baseSchema = z.object({
   cust_id:z.number().min(1,"Required"),
   currency_id:z.number().min(1,"Required"),
   loan_lastcash:z.coerce.number().min(0,"Required"),
@@ -160,6 +161,7 @@ const schema = z.object({
   payback_id:z.number().min(1,"Required"),
   loan_peroid:z.coerce.number().min(1,"Required"),
   loan_startdate:z.string().nonempty("Required"),
+  loan_first_paid_date:z.string().nonempty("Required"),
   loan_enddate:z.string().nonempty("Required"),
   loan_interest_rate:z.coerce.number().min(0.000001,"Required"),
   invoice_id:z.string().optional(),
@@ -196,19 +198,31 @@ const schema = z.object({
   loan_note:z.string().optional()
 })
 
-const validateField = (field: keyof typeof schema.shape) => {
+const schema = baseSchema.refine((data) => {
+  if (!data.loan_startdate || !data.loan_first_paid_date) return true
+
+  const start = new Date(data.loan_startdate)
+  const first = new Date(data.loan_first_paid_date)
+
+  return first > start
+}, {
+  message: "must be greater than Start Date",
+  path: ["loan_first_paid_date"]
+})
+
+const validateField = (field: keyof typeof baseSchema.shape) => {
   try {
-    schema.shape[field].parse(form[field])
+    baseSchema.shape[field].parse(form[field])
     errors[field] = ""
   } catch (err: any) {
     errors[field] = err.errors?.[0]?.message || ""
   }
 }
 
-Object.keys(schema.shape).forEach((field) => {
+Object.keys(baseSchema.shape).forEach((field) => {
   watch(
     () => form[field as keyof typeof form],
-    () => validateField(field as keyof typeof schema.shape)
+    () => validateField(field as keyof typeof baseSchema.shape)
   )
 })
 
@@ -688,6 +702,15 @@ watch(form, () => {
         <span class="text-red-500 text-sm">{{ errors.loan_startdate }}</span>
       </div>
       <input v-model="form.loan_startdate" type="date" class="input"/>
+    </div>
+
+    <!-- loan_first_paid_date -->
+    <div>
+      <div class="flex items-center justify-between">
+        <label class="label">First Paid Date<span class="text-red-500 text-sm"> *</span></label>
+        <span class="text-red-500 text-sm">{{ errors.loan_first_paid_date }}</span>
+      </div>
+      <input v-model="form.loan_first_paid_date" type="date" class="input"/>
     </div>
 
     <!-- loan_enddate -->

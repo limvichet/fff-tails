@@ -6,16 +6,20 @@
     breadcrumb: { title: "Customers", subTitle: "Create" }
   })
 
+  useHead({
+    title: "Create customers",
+    meta: [{ name: "customers", content: "create customers" }],
+  })
+
   import { z } from "zod"
   import { reactive, ref, onMounted, watch } from "vue"
   import ComponentCard from "@/components/common/ComponentCard.vue"
   import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
-  import ComponentSubmitCard from "@/components/common/ComponentSubmitCard.vue"
   import type { CustomerFormDataResponse } from "~/types/customer"
 
   const { successMsg, errorMsg, success } = useMessage()
-  const loading = ref(false)
   const errors = reactive<Record<string, string>>({})
+  const loading = ref(false)
   const formReady = ref(false)
 
   errorMsg.value = null
@@ -87,15 +91,12 @@
     img1: null as File | null,
     img1_src: null as string | null,
     img1_check: false,
-
     img2: null as File | null,
     img2_src: null as string | null,
     img2_check: false,
-
     photo1: null as File | null,
     photo1_src: null as string | null,
     photo1_check: false,
-
     photo2: null as File | null,
     photo2_src: null as string | null,
     photo2_check: false,

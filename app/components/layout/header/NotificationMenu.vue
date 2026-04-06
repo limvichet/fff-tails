@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useCustomToast } from '~/composables/useCustomToast';
+
+const { showToast } = useCustomToast();
 
 const { hasRole } = useAuth()
-
 
 const dropdownOpen = ref(false)
 const notifying = ref(true)
 // TypeScript knows this is an HTMLDivElement
 const dropdownRef = ref<HTMLDivElement | null>(null)
 
-const notifications = ref<any[]>([])
-const unreadCount = ref(0)
-let interval: number | undefined
 
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value
@@ -64,6 +63,10 @@ const handleViewAllClick = (event: MouseEvent) => {
 }
 
 // Fetch loan notifications from Nuxt proxy API
+const notifications = ref<any[]>([])
+const previousCount = ref(0) // Track the count separately
+const unreadCount = ref(0)
+let interval: number | undefined
 const loadNotifications = async () => {
 
   // ❌ block non-admin
@@ -71,10 +74,26 @@ const loadNotifications = async () => {
 
   try {
     const res = await $fetch<ApiResponse>("/api/admin-secure/loanrecords-need-approval")
-    // console.log("res ", res)
-    notifications.value = Array.isArray(res.data) ? res?.data : []
-    unreadCount.value = res.unread_count ? res.unread_count : 0
-    notifying.value = unreadCount.value > 0
+    const newData = Array.isArray(res.data) ? res.data : []
+    const newCount = newData.length
+
+    // 🔥 Only toast if the count has INCREASED
+    if (newCount > previousCount.value && previousCount.value !== 0) {
+      const latest = newData[0] // Get the most recent one
+
+      if (latest) {
+        showToast(
+          `New Loan Request #${latest.id}`,
+          `Amount: ${latest.loan_totalcash}. Please review for approval.`,
+          `warning`
+        )
+      }
+    }
+
+    // Update the refs for the next poll
+    notifications.value = newData
+    unreadCount.value = res.unread_count || 0
+    previousCount.value = newCount
   } catch (err) {
     // console.error("Failed to fetch loan notifications:", err)
   }
@@ -193,3 +212,4 @@ const editLoan = (id: number) => {
     </div>
   </div>
 </template>
+

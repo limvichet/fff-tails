@@ -9,6 +9,7 @@ type Loanrecord = {
     cust_id:            number;
     currency_id:        number | null;
     loan_startdate:     null | string;
+    loan_first_paid_date:     null | string;
     loan_enddate:       null | string;
     loan_totalcash:     string;
     loan_principle:     string;
@@ -67,13 +68,6 @@ export default defineEventHandler(async (event) => {
 
     // 🔥 IMPORTANT: disable Nitro cache
     setHeader(event, 'Cache-Control', 'no-store')
-
-    // Caching for performance
-    // setResponseHeader(
-    //   event,
-    //   "Cache-Control",
-    //   `public, max-age=${CACHE_TTL}, stale-while-revalidate=60`
-    // );
 
     return res;
   } catch (error: any) {

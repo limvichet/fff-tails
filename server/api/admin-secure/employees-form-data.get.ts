@@ -1,7 +1,9 @@
 import { getCookie, createError } from "h3"
-import { CustomerFormDataResponse } from "~/types/customer";
+import { APIResponse } from "~/types/employess";
 
 const CACHE_TTL = 60 * 60 * 12; // 12 hours
+
+
 
 export default defineEventHandler(async (event) => {
   const { apiBaseUrl } = useRuntimeConfig(event);
@@ -17,14 +19,11 @@ export default defineEventHandler(async (event) => {
 
     // Updated URL to the endpoint that returns the titles, occupations, etc.
     // Replace '/admin-secure/staffs/metadata' with your actual target route
-    const res = await $fetch<CustomerFormDataResponse>(
-      `${apiBaseUrl}/api/admin-secure/customers-form-data`, 
+    const res = await $fetch<APIResponse>(
+      `${apiBaseUrl}/api/admin-secure/employees-form-data`, 
       {
         method: "GET",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` }
       }
     );
 

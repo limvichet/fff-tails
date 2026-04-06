@@ -35,6 +35,7 @@ export interface Loanrecord {
     payback_id?:                   number;
     loan_peroid?:                  number;
     loan_startdate?:               string;
+    loan_first_paid_date?:               string;
     loan_enddate?:                 string;
     loan_startdate_principle?:     string;
     loan_interest_rate?:           number;

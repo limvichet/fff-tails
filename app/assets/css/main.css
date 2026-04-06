@@ -299,6 +299,69 @@ layer(base);
   }
 }
 
+/* Custom Toast */
+#custom-toast-container {
+  position: fixed;
+  top: 72px;
+  right: 24px;
+  z-index: 999999; /* Higher than everything */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none; /* Allow clicking through empty space */
+}
+
+.my-custom-toast {
+  pointer-events: auto; /* Enable clicking on the toast itself */
+  width: 340px;
+  background: orange; /* Your Gold Color */
+  color: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transform: translateX(120%);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.my-custom-toast.is-visible {
+  transform: translateX(0);
+}
+
+.toast-content {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.toast-icon {
+  font-size: 20px;
+  flex-shrink: 0; /* Prevents icon from squishing */
+}
+.my-custom-toast {
+  /* Keep your existing styles, but remove the static background-color 
+     since JS is now setting it dynamically */
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  /* ... rest of your styles ... */
+}
+.toast-title {
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.toast-description {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  margin-left: auto;
+  line-height: 1;
+}
 
 /* Light mode */
 .input-invalid {

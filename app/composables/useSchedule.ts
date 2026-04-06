@@ -3,10 +3,12 @@ import { formatDateForInput } from "@/utils/date"
 import { fixDouble } from "@/utils/number"
 
 const reroundLoading = ref(false)
+const reroundDone = ref(false)
 
 /*  TYPES  */
 type FormType = {
   loan_startdate: string
+  loan_first_paid_date: string
   loan_totalcash: string
   loan_principle: string
   loan_interest_rate: string
@@ -20,6 +22,61 @@ export const useSchedule = () => {
 
   const schedules = ref<any[]>([])
 
+  /*  generateM11 original  */
+  // const generateM11 = (form: FormType) => {
+  //   schedules.value = []
+
+  //   for (let i = 0; i < form.loan_peroid; i++) {
+  //     let startDate = new Date(formatDateForInput(form.loan_startdate))
+
+  //     let newStartDate = new Date(startDate)
+  //     newStartDate.setMonth(newStartDate.getMonth() + i)
+
+  //     let newEndDate = new Date(newStartDate)
+  //     newEndDate.setMonth(newStartDate.getMonth() + 1)
+
+  //     let totalDays = Math.ceil(
+  //       (newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24)
+  //     )
+
+  //     const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
+  //     const loan_principle = Number(form.loan_principle.replace(/,/g, "") || 0)
+  //     let loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+
+  //     let schedule_outstanding = loan_totalcash - loan_principle * i
+
+  //     let schedule_principle = 0
+  //     let schedule_interest = 0
+  //     let schedule_totalpay = 0
+
+  //     if (schedule_outstanding > 0) {
+  //       schedule_principle = loan_principle
+  //       schedule_interest =
+  //         fixDouble(loan_interest_rate / 100, 3) *
+  //         (loan_totalcash - loan_principle * i)
+
+  //       schedule_totalpay = schedule_principle + schedule_interest
+  //     }
+
+  //     schedules.value.push({
+  //       schedule_paymentnumber: i + 1,
+  //       schedule_startdate: newStartDate,
+  //       schedule_enddate: newEndDate,
+  //       schedule_totaldays: totalDays,
+  //       schedule_interest_rate: loan_interest_rate,
+  //       schedule_outstanding,
+  //       schedule_over_draft: 0,
+  //       schedule_principle,
+  //       schedule_interest,
+  //       schedule_totalpay,
+  //     })
+  //   }
+
+  //   recalculcateDateM()
+  //   reculculateNClean()
+  //   reculculateFixOutstanding()
+  // }
+
   /*  generateM11  */
   const generateM11 = (form: FormType) => {
     schedules.value = []
@@ -27,11 +84,14 @@ export const useSchedule = () => {
     for (let i = 0; i < form.loan_peroid; i++) {
       let startDate = new Date(formatDateForInput(form.loan_startdate))
 
-      let newStartDate = new Date(startDate)
-      newStartDate.setMonth(newStartDate.getMonth() + i)
+      let newStartDate = new Date(formatDateForInput(form.loan_startdate))
+      //newStartDate.setMonth(newStartDate.getMonth() + i)
 
-      let newEndDate = new Date(newStartDate)
-      newEndDate.setMonth(newStartDate.getMonth() + 1)
+      let newEndDate = form.loan_first_paid_date 
+                        ? new Date(formatDateForInput(form.loan_first_paid_date))
+                        : new Date(newStartDate.setMonth(newStartDate.getMonth() + i))
+
+      newEndDate.setMonth(newStartDate.getMonth() + i)
 
       let totalDays = Math.ceil(
         (newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24)
@@ -220,16 +280,16 @@ export const useSchedule = () => {
       // FIX START DATE (chain)
       if (index > 0) {
         const prevEnd = new Date(schedules.value[index - 1].schedule_enddate)
-        // prevEnd.setDate(prevEnd.getDate() + 1)
+         prevEnd.setDate(prevEnd.getDate() + 1)
         item.schedule_startdate = new Date(prevEnd)
       }
 
       let start = new Date(item.schedule_startdate)
       let end = new Date(item.schedule_enddate)
 
-      // 🔥 FIX END DATE → MAX 28
-      if (end.getDate() > 28) {
-        end.setDate(28)
+      // 🔥 FIX END DATE → MAX 31
+      if (end.getDate() >= 31) {
+        end.setDate(31)
         item.schedule_enddate = new Date(end)
       }
 
@@ -293,10 +353,104 @@ export const useSchedule = () => {
   }
 
 
-  /* reroundDownM */
+
+  /* reroundDownM modify */
+  // const reroundDownM = () => {
+  //   const f = 0     // 🔥 first row only
+  //   const m = 30    // 🔥 assume 30 days in a month (for interest calculation)
+  //   const e = 27    // 🔥 if total days >= 27
+  //   const d = null    // 🔥 move to 28th day of first month
+
+  //   if (!schedules.value.length) return
+
+  //   let remainDD = 0
+  //   let allDD = 0
+
+  //   const first = schedules.value[f]
+
+  //   const First_Interest = Number(first.schedule_interest_rate || 0)
+  //   const First_outstanding = Number(first.schedule_outstanding || 0)
+  //   const First_Depreciation = Number(first.schedule_principle || 0)
+
+  //   // clone date (important to avoid mutating original)
+  //   let First_PtEndDate = new Date(first.schedule_enddate)
+
+  //   // if d exists → set custom day
+  //   if (d != null) {
+  //     First_PtEndDate.setDate(d)
+  //   }
+
+  //   // FIRST ROW FIX
+  //   remainDD = First_PtEndDate.getDate()
+
+  //   // move back to end of previous month
+  //   First_PtEndDate.setDate(First_PtEndDate.getDate() - remainDD)
+
+  //   allDD = First_PtEndDate.getDate()
+  //   const totaldays = allDD - remainDD
+
+  //   first.schedule_enddate = new Date(First_PtEndDate)
+  //   first.schedule_totaldays = totaldays
+  //   first.schedule_principle_date = new Date(First_PtEndDate)
+
+  //   if (totaldays >= e) {
+  //     first.schedule_interest = fixDouble(
+  //       (First_Interest / 100) * First_outstanding,
+  //       3
+  //     )
+
+  //     first.schedule_totalpay = fixDouble(
+  //       (First_Interest / 100) * First_outstanding + First_Depreciation,
+  //       3
+  //     )
+  //   } else {
+  //     first.schedule_interest = fixDouble(
+  //       ((First_Interest / 100) / m) *
+  //         First_outstanding *
+  //         totaldays,
+  //       3
+  //     )
+
+  //     first.schedule_totalpay = fixDouble(
+  //       ((First_Interest / 100) / m) *
+  //         (First_outstanding * totaldays) +
+  //         First_Depreciation,
+  //       3
+  //     )
+  //   }
+
+  //   // LOOP NEXT ROWS
+  //   for (let i = f; i < schedules.value.length - 1; i++) {
+  //     const current = schedules.value[i]
+  //     const next = schedules.value[i + 1]
+
+  //     // start date = previous end + 1 day
+  //     const PtStartDate = new Date(current.schedule_enddate)
+  //     PtStartDate.setDate(PtStartDate.getDate() + 1)
+
+  //     next.schedule_startdate = new Date(PtStartDate)
+
+  //     // end date = start + 1 month - 1 day
+  //     const endDate = new Date(PtStartDate)
+  //     endDate.setMonth(endDate.getMonth() + 1)
+  //     endDate.setDate(endDate.getDate() - 1)
+
+  //     next.schedule_enddate = new Date(endDate)
+
+  //     // total days
+  //     const totaldays1 =
+  //       endDate.getDate() - PtStartDate.getDate() + 1
+
+  //     next.schedule_totaldays = totaldays1
+  //     next.schedule_principle_date = new Date(PtStartDate)
+  //   }
+  // }
+
+  /* reroundDownM original */
   const reroundDownM = () => {
-    const f = 0
-    const m = 30
+    const f = 0     // 🔥 first row only
+    const m = 30    // 🔥 assume 30 days in a month (for interest calculation)
+    const e = 27    // 🔥 if total days >= 27
 
     if (!schedules.value.length) return
 
@@ -311,9 +465,7 @@ export const useSchedule = () => {
 
     let First_PtEndDate = new Date(first.schedule_enddate)
 
-    // --------------------
     // FIRST ROW FIX
-    // --------------------
     remainDD = First_PtEndDate.getDate()
 
     // move back to end of previous month
@@ -326,7 +478,7 @@ export const useSchedule = () => {
     first.schedule_totaldays = totaldays
     first.schedule_principle_date = new Date(First_PtEndDate)
 
-    if (totaldays >= 27) {
+    if (totaldays >= e) {
       first.schedule_interest = fixDouble(
         (First_Interest / 100) * First_outstanding,
         3
@@ -352,9 +504,7 @@ export const useSchedule = () => {
       )
     }
 
-    // --------------------
     // LOOP NEXT ROWS
-    // --------------------
     for (let i = f; i < schedules.value.length - 1; i++) {
       const current = schedules.value[i]
       const next = schedules.value[i + 1]
@@ -400,9 +550,7 @@ export const useSchedule = () => {
 
     let First_PtEndDate = new Date(first.schedule_enddate)
 
-    // --------------------
     // FIRST ROW
-    // --------------------
     remainDD = First_PtEndDate.getDate()
 
     // move to end of previous month
@@ -436,9 +584,7 @@ export const useSchedule = () => {
         First_Depreciation
     }
 
-    // --------------------
     // LOOP NEXT ROWS
-    // --------------------
     for (let i = f; i < schedules.value.length - 1; i++) {
       const current = schedules.value[i]
       const next = schedules.value[i + 1]
@@ -487,8 +633,6 @@ export const useSchedule = () => {
   }
 
 
-  
-
   /* handleReround */
   const reroundMap: Record<number, () => void> = {
     11: reroundDownM,
@@ -505,6 +649,7 @@ export const useSchedule = () => {
 
       reculculateNClean()
       reculculateFixOutstanding()
+      reroundDone.value = true
 
     } catch (err) {
       console.error(err)
@@ -519,5 +664,6 @@ export const useSchedule = () => {
     generateSchedule,
     handleReround,
     reroundLoading,
+    reroundDone
   }
 }
