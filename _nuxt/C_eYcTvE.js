@@ -1,0 +1,1 @@
+function u(t){if(!t)return"";if(/^\d{4}-\d{2}-\d{2}$/.test(t))return t;const[r,n,o]=t.split("-");return`${o}-${n}-${r}`}function a(t){const r=t.getFullYear(),n=String(t.getMonth()+1).padStart(2,"0");return`${String(t.getDate()).padStart(2,"0")}-${n}-${r}`}export{a,u as f};
