@@ -104,8 +104,7 @@ export const useSchedule = () => {
       )
 
       const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
-      // const loan_principle = Number(form.loan_principle.replace(/,/g, "") || 0)
-      const loan_principle = 0 // 🔥 principle is 0 for M11, interest only
+      const loan_principle = Number(form.loan_principle.replace(/,/g, "") || 0)
       let loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
 
       let schedule_outstanding = loan_totalcash - loan_principle * i
@@ -327,7 +326,7 @@ export const useSchedule = () => {
             3
           )
         }
-        item.schedule_totalpay = item.schedule_interest
+        item.schedule_totalpay = item.schedule_interest + principle
       }
 
       /* fix last record */
