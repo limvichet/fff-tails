@@ -14,6 +14,7 @@
   import { z } from "zod"
   import { reactive, onMounted, watch } from "vue"
   import ComponentCard from "@/components/common/ComponentCard.vue"
+
   import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
   import EducationTable from "@/components/forms/EducationTable.vue"
   import WorkHistoryTable from "@/components/forms/WorkHistoryTable.vue"
@@ -99,6 +100,18 @@
 
 
   /* VALIDATION ZOD */
+  // Replace your existing tableRowSchema with this:
+  const tableEducationRowSchema = z.object({
+    id: z.number().optional(),
+    description: z.string().optional(),
+    date: z.string().optional(),
+  })
+  const tableWorkHistoryRowSchema = z.object({
+    id: z.number().optional(),
+    description: z.string().optional(),
+    date: z.string().optional(),
+    end_date: z.string().optional()
+  })
   const MIN_FILE_SIZE = 1.01 * 1024 * 1024       // 1MB
   const schema = z.object({
     surname: z.string().min(1, "Required"),
@@ -126,10 +139,9 @@
     guarantor_address: z.string().optional(),
     guarantor_phone: z.string().optional(),
     status_id: z.number().min(0, "Required"),
-    education: z.array(z.string()).optional(),
-    work_histories: z.array(z.string()).optional(),
+    education: z.array(tableEducationRowSchema).optional(),
+    work_histories: z.array(tableWorkHistoryRowSchema).optional(),
 
-    
     // Image Customer 1 (Optional)
     img1: z
       .any()
@@ -223,8 +235,34 @@
         return f;
       };
 
+      // 1. Log the raw form state before any processing
+      console.log("Raw Form State:", JSON.parse(JSON.stringify(form)))
+
       // clone form to avoid mutating original
-      const newForm = { ...form };
+      // const newForm = { ...form };
+      const newForm = JSON.parse(JSON.stringify(form));
+      newForm.education = (form.education || []).filter(item => item.description && item.description.trim() !== "");
+      newForm.work_histories = (form.work_histories || []).filter(item => item.description && item.description.trim() !== "");
+      
+      const numericFields: (keyof typeof form)[] = [
+        "gender_id",
+        "role_id",
+        "marital_status_id",
+        "status_id",
+      ]
+
+      numericFields.forEach(field => {
+        const value = newForm[field]
+        if (typeof value === "string") {
+          // Remove commas and parse
+          (newForm as any)[field] = parseFloat(value.replace(/,/g, '')) || 0
+        } else {
+          (newForm as any)[field] = Number(value) || 0
+        }
+      })
+
+      // 2. Log processed object before Zod validation
+      console.log("Processed Object (Pre-Validation):", newForm)
 
       newForm.img1 = await compressIfNeeded(form.img1);
       newForm.photo1 = await compressIfNeeded(form.photo1);
@@ -239,8 +277,8 @@
           errorList.push(`${field}: ${e.message}`)
         })
 
-        // errorMsg.value = errorList.join(' | ')
-        errorMsg.value = "Please fix the validation errors."
+        errorMsg.value = errorList.join(' | ')
+        // errorMsg.value = "Please fix the validation errors."
         return
       }
 
@@ -249,8 +287,19 @@
       const formDataObj = parsed.data
 
       Object.entries(formDataObj).forEach(([k, v]) => {
-        if (v === -1 || v === "") {
+        // Skip files, we handle them manually below
+        if (k === 'img1' || k === 'photo1') return
+
+        if (v === -1 || v === "" || v === null) {
           fd.append(k, "")
+        } else if (Array.isArray(v)) {
+          // If the array is empty, send an empty string. 
+          // If it has data, stringify it.
+          if (v.length === 0) {
+            fd.append(k, "") 
+          } else {
+            fd.append(k, JSON.stringify(v))
+          }
         } else {
           fd.append(k, String(v))
         }
@@ -265,7 +314,22 @@
       if (form.img1_check) fd.append("img1_check", "1")
       if (form.photo1_check) fd.append("photo1_check", "1")
 
+
+      // 3. IMPORTANT: Log the actual FormData content
+      // You cannot just console.log(fd). You must loop through it:
+      console.log("--- Final FormData Sent to API ---")
+      fd.forEach((value, key) => {
+        if (value instanceof File) {
+          console.log(`${key}: [File] ${value.name} (${value.size} bytes)`)
+        } else {
+          console.log(`${key}:`, value)
+        }
+      })
+
       const res = await $fetch("/api/admin-secure/employees", {
+        headers: {
+          Accept: "application/json",
+        },
         method: "POST",
         body: fd,
       })

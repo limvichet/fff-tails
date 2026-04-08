@@ -3,6 +3,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
   const guestOnly = to.matched.some((record) => record.meta.guestOnly);
+  
+  // ✅ 1. Allow Nuxt error handling
+  if (to.fullPath.includes('/errors') || to.name === 'error') {
+    return
+  }
 
   if (requiresAuth || guestOnly) {
     // Prevents re-fetching on every client-side navigation.

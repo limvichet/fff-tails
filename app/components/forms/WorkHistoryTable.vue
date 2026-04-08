@@ -18,32 +18,28 @@ const emit = defineEmits(["update:modelValue"])
 const maxRow = 5
 let counter = 1
 
-const workHistories = ref<WorkHistory[]>([])
+
+const workHistories = defineModel<WorkHistory[]>({ default: () => [] })
 
 // init from parent
 watch(
   () => props.modelValue,
-  (val) => {
-    workHistories.value = val?.length
-      ? [...val]
-      : [
-          {
-            id: 1,
-            description: "",
-            date: "",
-            end_date: ""
-          }
-        ]
-
-    counter = workHistories.value.length
+  (newVal) => {
+    // Only update if the local version is empty or lengths differ 
+    // to prevent the recursive loop
+    if (newVal && JSON.stringify(newVal) !== JSON.stringify(workHistories.value)) {
+      workHistories.value = newVal.length ? [...newVal] : [{ id: Date.now(), description: "", date: "", end_date: "" }]
+    }
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 )
 
 // emit to parent
 watch(
   workHistories,
-  (val) => emit("update:modelValue", val),
+  (newVal) => {
+    emit("update:modelValue", newVal)
+  },
   { deep: true }
 )
 
@@ -66,12 +62,12 @@ const removeRow = (index: number) => {
   workHistories.value.splice(index, 1)
 }
 
-// date formatter (dd-mm-yyyy)
-const formatDate = (value: string) => {
-  return value
-    .replace(/\D/g, "")
-    .replace(/(\d{2})(\d{2})(\d{4})/, "$1-$2-$3")
-}
+onMounted(() => {
+  if (workHistories.value.length === 0) {
+    addRow()
+  }
+})
+
 </script>
 
 <template>
@@ -119,11 +115,9 @@ const formatDate = (value: string) => {
             <td class="px-1 py-2">
               <input
                 v-model="item.date"
-                type="text"
+                type="date"
                 maxlength="10"
-                @input="item.date = formatDate(item.date)"
                 class="w-full border rounded px-2 py-1"
-                placeholder="dd-mm-yyyy"
               />
             </td>
 
@@ -131,11 +125,9 @@ const formatDate = (value: string) => {
             <td class="px-1 py-2">
               <input
                 v-model="item.end_date"
-                type="text"
+                type="date"
                 maxlength="10"
-                @input="item.end_date = formatDate(item.end_date)"
                 class="w-full border rounded px-2 py-1"
-                placeholder="dd-mm-yyyy"
               />
             </td>
 

@@ -6,6 +6,11 @@ definePageMeta({
   ssr: false
 })
 
+useHead({
+  title: "Search schedules",
+  meta: [{ name: "loanrecords", content: "search schedules" }],
+})
+
 import ComponentCard from "@/components/common/ComponentCard.vue"
 import { ref, computed, onMounted, watch } from "vue"
 import { useRouter } from "vue-router"

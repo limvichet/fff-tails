@@ -87,8 +87,8 @@ const menuGroups = [
         icon: UserGroupIcon,
         name: "Employees",
         subItems: [
-          { name: "Create", path: "/app/dashboard/employees/create", pro: false, icon: PencilIcon  },
-          { name: "Search", path: "/app/dashboard/employees", pro: false, icon: SearchIcon  },
+          { name: "Create", path: "/app/dashboard/employeess/create", pro: false, icon: PencilIcon  },
+          { name: "Search", path: "/app/dashboard/employeess", pro: false, icon: SearchIcon  },
         ],
       },
       {

@@ -6,6 +6,11 @@ definePageMeta({
   ssr: false
 })
 
+useHead({
+  title: "Edit schedules",
+  meta: [{ name: "loanrecords", content: "edit schedules" }],
+})
+
 import { ref, reactive, onMounted } from "vue"
 import { useRoute } from "vue-router"
 import ComponentCard from "@/components/common/ComponentCard.vue"

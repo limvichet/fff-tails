@@ -17,25 +17,28 @@ const emit = defineEmits(["update:modelValue"])
 const maxRow = 5
 let counter = 1
 
-// local state
-const educations = ref<Education[]>([])
+// 1. Initialize local state once
+const educations = defineModel<Education[]>({ default: () => [] })
 
-// init from parent
+// 2. Sync from Parent to Local (Only if different)
 watch(
   () => props.modelValue,
-  (val) => {
-    educations.value = val?.length ? [...val] : [
-      { id: 1, description: "", date: "" }
-    ]
-    counter = educations.value.length
+  (newVal) => {
+    // Only update if the local version is empty or lengths differ 
+    // to prevent the recursive loop
+    if (newVal && JSON.stringify(newVal) !== JSON.stringify(educations.value)) {
+      educations.value = newVal.length ? [...newVal] : [{ id: Date.now(), description: "", date: "" }]
+    }
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 )
 
-// emit to parent
+// 3. Sync from Local to Parent
 watch(
   educations,
-  (val) => emit("update:modelValue", val),
+  (newVal) => {
+    emit("update:modelValue", newVal)
+  },
   { deep: true }
 )
 
@@ -56,12 +59,14 @@ const removeRow = (index: number) => {
   educations.value.splice(index, 1)
 }
 
-// simple date format
-const formatDate = (value: string) => {
-  return value
-    .replace(/\D/g, "")
-    .replace(/(\d{2})(\d{2})(\d{4})/, "$1-$2-$3")
-}
+
+// If the array is empty, add one row on mount
+onMounted(() => {
+  if (educations.value.length === 0) {
+    addRow()
+  }
+})
+
 </script>
 
 <template>
@@ -105,11 +110,9 @@ const formatDate = (value: string) => {
             <td class="px-3 py-2">
               <input
                 v-model="item.date"
-                type="text"
+                type="date"
                 maxlength="10"
-                @input="item.date = formatDate(item.date)"
                 class="w-full border rounded px-2 py-1 focus:outline-none focus:ring"
-                placeholder="dd-mm-yyyy"
               />
             </td>
 

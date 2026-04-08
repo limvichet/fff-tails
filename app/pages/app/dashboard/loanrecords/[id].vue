@@ -3,7 +3,12 @@
 definePageMeta({
   layout: "auth",
   requiresAuth: true,
-  breadcrumb: { title: "Loanrecords", subTitle: "Detail" }
+  breadcrumb: { title: "Loans", subTitle: "Detail" }
+})
+
+useHead({
+  title: "Edit loans",
+  meta: [{ name: "loanrecords", content: "edit loan records" }],
 })
 
 import { z } from "zod"

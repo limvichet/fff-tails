@@ -6,6 +6,11 @@ definePageMeta({
   breadcrumb: { title: "Schedules", subTitle: "Create" }
 })
 
+useHead({
+  title: "Create schedules",
+  meta: [{ name: "loanrecords", content: "create schedules" }],
+})
+
 
 import { ref, reactive, onMounted, onActivated, watch } from "vue"
 import ComponentCard from "@/components/common/ComponentCard.vue"

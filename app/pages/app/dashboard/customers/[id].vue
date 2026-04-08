@@ -6,6 +6,11 @@
     breadcrumb: { title: "Customers", subTitle: "Detail" },
   })
 
+  useHead({
+    title: "Edit customers",
+    meta: [{ name: "customers", content: "edit customers" }],
+  })
+
   import { z } from "zod"
   import { useRoute } from "vue-router"
   import ComponentCard from "@/components/common/ComponentCard.vue"

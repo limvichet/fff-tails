@@ -104,7 +104,8 @@ export const useSchedule = () => {
       )
 
       const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
-      const loan_principle = Number(form.loan_principle.replace(/,/g, "") || 0)
+      // const loan_principle = Number(form.loan_principle.replace(/,/g, "") || 0)
+      const loan_principle = 0 // 🔥 principle is 0 for M11, interest only
       let loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
 
       let schedule_outstanding = loan_totalcash - loan_principle * i
@@ -112,7 +113,7 @@ export const useSchedule = () => {
       let schedule_principle = 0
       let schedule_interest = 0
       let schedule_totalpay = 0
-
+      
       if (schedule_outstanding > 0) {
         schedule_principle = loan_principle
         schedule_interest =
@@ -137,7 +138,7 @@ export const useSchedule = () => {
     }
 
     recalculcateDateM()
-    reculculateNClean()
+     reculculateNClean()
     reculculateFixOutstanding()
   }
 
@@ -313,7 +314,23 @@ export const useSchedule = () => {
     schedules.value.forEach((item, index) => {
       const outstanding = Number(item.schedule_outstanding || 0)
       const principle = Number(item.schedule_principle || 0)
+      const rate = Number(item.schedule_interest_rate || 0) / 100
+      const totalDays = Number(item.schedule_totaldays || 0)
 
+      /* fix interest and total pay for M11 */
+      if (outstanding > 0) {
+        if (totalDays >= 28) {
+          item.schedule_interest = rate * outstanding
+        } else {
+          item.schedule_interest = fixDouble(
+            (rate / 30) * outstanding * totalDays,
+            3
+          )
+        }
+        item.schedule_totalpay = item.schedule_interest
+      }
+
+      /* fix last record */
       if (outstanding <= principle) {
         try {
           // adjust principle
@@ -330,12 +347,14 @@ export const useSchedule = () => {
           console.error(err)
         }
       }
+
     })
   }
 
 
   /* if last record adjust outstanding fix it */
   const reculculateFixOutstanding = () => {
+
     const lastRow = schedules.value.at(-1)
     if (!lastRow) return
 
