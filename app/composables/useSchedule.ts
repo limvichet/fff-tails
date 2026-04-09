@@ -108,7 +108,6 @@ export const useSchedule = () => {
       let loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
 
       let schedule_outstanding = loan_totalcash - loan_principle * i
-
       let schedule_principle = 0
       let schedule_interest = 0
       let schedule_totalpay = 0
@@ -141,42 +140,110 @@ export const useSchedule = () => {
     reculculateFixOutstanding()
   }
 
+  /* generateM12 original*/
+  // const generateM12 = (form: FormType) => {
+  //   schedules.value = []
+
+  //   const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
+  //   const loan_principle = Number(form.loan_principle.replace(/,/g, "") || 0)
+  //   const loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+
+  //   for (let i = 0; i < form.loan_peroid; i++) {
+
+  //     // DATE
+  //     let startDate = new Date(formatDateForInput(form.loan_startdate))
+
+  //     let newStartDate = new Date(startDate)
+  //     newStartDate.setMonth(newStartDate.getMonth() + i)
+
+  //     let newEndDate = new Date(newStartDate)
+  //     newEndDate.setMonth(newStartDate.getMonth() + 1)
+  //     newEndDate.setDate(newEndDate.getDate() - 1) // 🔥 important (like jQuery)
+
+  //     let totalDays =
+  //       Math.round(
+  //         (newEndDate.getTime() - newStartDate.getTime()) /
+  //         (1000 * 60 * 60 * 24)
+  //       ) + 1
+
+  //     // LOGIC (M12)
+  //     const schedule_outstanding = loan_totalcash
+
+  //     const schedule_principle = 0 // 🔥 always 0
+
+  //     const schedule_interest =
+  //       fixDouble(loan_interest_rate / 100, 3) * loan_totalcash
+
+  //     const schedule_totalpay =
+  //       schedule_interest + schedule_principle
+
+  //     // PUSH
+  //     schedules.value.push({
+  //       schedule_paymentnumber: i + 1,
+  //       schedule_startdate: newStartDate,
+  //       schedule_enddate: newEndDate,
+  //       schedule_totaldays: totalDays,
+  //       schedule_interest_rate: loan_interest_rate,
+  //       schedule_outstanding,
+  //       schedule_over_draft: 0,
+  //       schedule_principle,
+  //       schedule_interest,
+  //       schedule_totalpay,
+  //     })
+  //   }
+
+  //   // POST PROCESS
+  //   recalculcateDateM()
+  //   reculculateNClean()
+  //   reculculateFixOutstanding()
+  // }
+
   /* generateM12 */
   const generateM12 = (form: FormType) => {
     schedules.value = []
 
-    const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
-    const loan_principle = Number(form.loan_principle.replace(/,/g, "") || 0)
-    const loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+    // const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
+    // const loan_principle = Number(form.loan_principle.replace(/,/g, "") || 0)
+    // const loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
 
     for (let i = 0; i < form.loan_peroid; i++) {
+      const baseStart = new Date(formatDateForInput(form.loan_startdate))
 
-      // DATE
-      let startDate = new Date(formatDateForInput(form.loan_startdate))
-
-      let newStartDate = new Date(startDate)
+      const newStartDate = new Date(baseStart)
       newStartDate.setMonth(newStartDate.getMonth() + i)
 
-      let newEndDate = new Date(newStartDate)
-      newEndDate.setMonth(newStartDate.getMonth() + 1)
-      newEndDate.setDate(newEndDate.getDate() - 1) // 🔥 important (like jQuery)
+      let newEndDate: Date
 
-      let totalDays =
-        Math.round(
-          (newEndDate.getTime() - newStartDate.getTime()) /
-          (1000 * 60 * 60 * 24)
-        ) + 1
+      if (form.loan_first_paid_date) {
+        newEndDate = new Date(formatDateForInput(form.loan_first_paid_date))
+        newEndDate.setMonth(newEndDate.getMonth() + i)
+      } else {
+        newEndDate = new Date(baseStart) // ✅ fresh copy
+        newEndDate.setMonth(newEndDate.getMonth() + i + 1) // ✅ FIX HERE
+        newEndDate.setDate(newEndDate.getDate() - 1) // 🔥 important (like jQuery)
+      }
 
-      // LOGIC (M12)
-      const schedule_outstanding = loan_totalcash
+      let totalDays = Math.round(
+        (newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24)
+      )
 
-      const schedule_principle = 0 // 🔥 always 0
+      const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
+      const loan_principle = 0
+      let loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+      
+      let schedule_outstanding = loan_totalcash
+      let schedule_principle = 0
+      let schedule_interest = 0
+      let schedule_totalpay = 0
 
-      const schedule_interest =
-        fixDouble(loan_interest_rate / 100, 3) * loan_totalcash
+      if (schedule_outstanding > 0) {
+        schedule_principle = loan_principle // 🔥 always 0
+        schedule_interest =
+          fixDouble(loan_interest_rate / 100, 3) *
+          (loan_totalcash - loan_principle * i)
 
-      const schedule_totalpay =
-        schedule_interest + schedule_principle
+        schedule_totalpay = schedule_principle + schedule_interest
+      }
 
       // PUSH
       schedules.value.push({
@@ -209,17 +276,32 @@ export const useSchedule = () => {
       const outstanding = Number(current.schedule_outstanding || 0)
       const depreciation = Number(current.schedule_principle || 0)
 
-      const interestRate = Number(next.schedule_interest_rate || 0)
+      const interestRate = Number(current.schedule_interest_rate || 0)
 
-      // calculate next row
-      const nextOutstanding = outstanding - depreciation
-      const interest = nextOutstanding * (interestRate / 100)
-      const principle =
-        Number(next.schedule_totalpay || 0) - interest
+      // ✅ prevent negative
+      let nextOutstanding = outstanding - depreciation
+      if (nextOutstanding < 0) nextOutstanding = 0
 
+      let interest = 0
+      let principle = 0
+
+      if (outstanding <= 0 || depreciation <= 0) {
+        interest = 0
+        principle = 0
+      } else {
+        interest = nextOutstanding * (interestRate / 100)
+
+        const totalPay = Number(next.schedule_totalpay || 0)
+        principle = totalPay - interest
+
+        // ✅ prevent negative principle
+        if (principle < 0) principle = 0
+      }
+
+      // ✅ assign
       next.schedule_outstanding = nextOutstanding
-      next.schedule_principle = principle
       next.schedule_interest = interest
+      next.schedule_principle = principle
       next.schedule_totalpay = principle + interest
     }
 
@@ -229,35 +311,90 @@ export const useSchedule = () => {
   }
 
 
+  /* generateM13  original*/
+  // const generateM13 = (form: FormType) => {
+  //   schedules.value = []
+
+  //   const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
+  //   const loan_principle = Number(form.loan_principle.replace(/,/g, "") || 0)
+  //   const loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+
+  //   for (let i = 0; i < form.loan_peroid; i++) {
+  //     let startDate = new Date(formatDateForInput(form.loan_startdate))
+
+  //     let newStartDate = new Date(startDate)
+  //     newStartDate.setMonth(newStartDate.getMonth() + i)
+
+  //     let newEndDate = new Date(newStartDate)
+  //     newEndDate.setMonth(newStartDate.getMonth() + 1)
+  //     newEndDate.setDate(newEndDate.getDate() - 1)
+
+  //     const totalDays =
+  //       Math.round(
+  //         (newEndDate.getTime() - newStartDate.getTime()) /
+  //           (1000 * 60 * 60 * 24)
+  //       ) + 1
+
+  //     const interest =
+  //       loan_totalcash * fixDouble(loan_interest_rate / 100, 3)
+
+  //     const principle =
+  //       loan_principle - interest
+
+  //     schedules.value.push({
+  //       schedule_paymentnumber: i + 1,
+  //       schedule_startdate: newStartDate,
+  //       schedule_enddate: newEndDate,
+  //       schedule_totaldays: totalDays,
+  //       schedule_interest_rate: loan_interest_rate,
+  //       schedule_principle_date: newStartDate,
+  //       schedule_outstanding: loan_totalcash,
+  //       schedule_over_draft: 0,
+  //       schedule_principle: principle,
+  //       schedule_interest: interest,
+  //       schedule_totalpay: loan_principle,
+  //     })
+  //   }
+
+  //   recalculcateDateM()
+  //   reculculateCreatloanM13()
+  // }
+
   /* generateM13 */
   const generateM13 = (form: FormType) => {
     schedules.value = []
 
-    const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
-    const loan_principle = Number(form.loan_principle.replace(/,/g, "") || 0)
-    const loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+    // const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
+    // const loan_principle = Number(form.loan_principle.replace(/,/g, "") || 0)
+    // const loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
 
     for (let i = 0; i < form.loan_peroid; i++) {
-      let startDate = new Date(formatDateForInput(form.loan_startdate))
+      const baseStart = new Date(formatDateForInput(form.loan_startdate))
 
-      let newStartDate = new Date(startDate)
+      const newStartDate = new Date(baseStart)
       newStartDate.setMonth(newStartDate.getMonth() + i)
 
-      let newEndDate = new Date(newStartDate)
-      newEndDate.setMonth(newStartDate.getMonth() + 1)
-      newEndDate.setDate(newEndDate.getDate() - 1)
+      let newEndDate: Date
 
-      const totalDays =
-        Math.round(
-          (newEndDate.getTime() - newStartDate.getTime()) /
-            (1000 * 60 * 60 * 24)
-        ) + 1
+      if (form.loan_first_paid_date) {
+        newEndDate = new Date(formatDateForInput(form.loan_first_paid_date))
+        newEndDate.setMonth(newEndDate.getMonth() + i)
+      } else {
+        newEndDate = new Date(baseStart) // ✅ fresh copy
+        newEndDate.setMonth(newEndDate.getMonth() + i + 1) // ✅ FIX HERE
+        newEndDate.setDate(newEndDate.getDate() - 1) // 🔥 important (like jQuery)
+      }
 
-      const interest =
-        loan_totalcash * fixDouble(loan_interest_rate / 100, 3)
+      const totalDays = Math.round(
+        (newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24)
+      )
 
-      const principle =
-        loan_principle - interest
+      const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
+      const loan_principle = Number(form.loan_principle.replace(/,/g, "") || 0)
+      let loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+
+      const interest = loan_totalcash * fixDouble(loan_interest_rate / 100, 3)
+      const principle = loan_principle - interest
 
       schedules.value.push({
         schedule_paymentnumber: i + 1,

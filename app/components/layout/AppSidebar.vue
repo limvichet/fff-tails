@@ -95,20 +95,16 @@ const menuGroups = [
         icon: SettingsIcon,
         name: "Users & Permissions",
         subItems: [
-          { name: "Alerts", path: "/uielements/alerts", pro: false },
-          { name: "Avatars", path: "/uielements/avatars", pro: false },
-          { name: "Badge", path: "/uielements/badge", pro: false },
-          { name: "Buttons", path: "/uielements/buttons", pro: false },
-          { name: "Images", path: "/uielements/images", pro: false },
-          { name: "Videos", path: "/uielements/videos", pro: false },
+          { name: "Create", path: "/app/dashboard/user-permissionss/create", pro: false, icon: PencilIcon  },
+          { name: "Search", path: "/app/dashboard/user-permissionss", pro: false, icon: SearchIcon  },
         ],
       },
       {
         icon: UserCircleIcon,
         name: "Roles & Permission",
         subItems: [
-          { name: "Signin", path: "/auth/signin", pro: false },
-          { name: "Signup", path: "/auth/signup", pro: false },
+          { name: "Roles", path: "/app/dashboard/roless", pro: false, icon: SearchIcon  },
+          { name: "Permissions", path: "/app/dashboard/permissionss", pro: false, icon: SearchIcon  },
         ],
       },
       // ... Add other menu items here
@@ -197,7 +193,7 @@ const endTransition = (el) => {
         />
         <img
           v-else
-          src="/images/logo/logo-icon.svg"
+          src="/images/logo/logo.svg"
           alt="Logo"
           width="32"
           height="32"

@@ -9,6 +9,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
     return
   }
 
+  if (!to.matched.length) {
+    return navigateTo('/error')
+  }
+
+
   if (requiresAuth || guestOnly) {
     // Prevents re-fetching on every client-side navigation.
     if (!isAuthenticated.value) {

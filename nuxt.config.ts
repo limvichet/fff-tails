@@ -61,7 +61,7 @@ export default defineNuxtConfig({
   routeRules: {
     '/signin': { redirect: '/app/signin' },
     '/signup': { redirect: '/app/signup' },
-    // '/dashboard': { redirect: '/app/dashboard' },
+    '/dashboard': { redirect: '/app/dashboard' },
   },
   pwa: {
     registerType: 'autoUpdate',
