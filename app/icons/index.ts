@@ -48,6 +48,9 @@ import BarChartIcon from "./BarChartIcon.vue";
 import SearchIcon from "./SearchIcon.vue";
 import PencilIcon from "./PencilIcon.vue";
 import LoanIcon from "./LoanIcon.vue";
+import UserShildIcon from "./UserShieldIcon.vue";
+import UserLockIcon from "./UserLockIcon.vue";
+import UserSettingIcon from "./UserSettingIcon.vue";
 
 export {
   BellIcon,
@@ -100,4 +103,7 @@ export {
   SearchIcon,
   PencilIcon,
   LoanIcon,
+  UserShildIcon,
+  UserLockIcon,
+  UserSettingIcon
 };

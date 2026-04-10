@@ -23,6 +23,9 @@ import {
   PencilIcon,
   LoanIcon,
   SettingsIcon,
+  UserShildIcon,
+  UserSettingIcon,
+  UserLockIcon,
 } from "../../icons";
 import SidebarWidget from "./SidebarWidget.vue";
 import { useSidebar } from "@/composables/useSidebar";
@@ -84,15 +87,15 @@ const menuGroups = [
     title: "Administrative Tools",
     items: [
       {
-        icon: UserGroupIcon,
+        icon: UserShildIcon,
         name: "Employees",
         subItems: [
-          { name: "Create", path: "/app/dashboard/employeess/create", pro: false, icon: PencilIcon  },
+          { name: "Create", path: "/app/dashboard/employees/creates", pro: false, icon: PencilIcon  },
           { name: "Search", path: "/app/dashboard/employeess", pro: false, icon: SearchIcon  },
         ],
       },
       {
-        icon: SettingsIcon,
+        icon: UserSettingIcon,
         name: "Users & Permissions",
         subItems: [
           { name: "Create", path: "/app/dashboard/user-permissionss/create", pro: false, icon: PencilIcon  },
@@ -100,7 +103,7 @@ const menuGroups = [
         ],
       },
       {
-        icon: UserCircleIcon,
+        icon: UserLockIcon,
         name: "Roles & Permission",
         subItems: [
           { name: "Roles", path: "/app/dashboard/roless", pro: false, icon: SearchIcon  },
