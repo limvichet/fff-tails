@@ -121,6 +121,8 @@
 
   const customer = computed(() => data.value?.data ?? null)
 
+  console.log("Fetched customer:", customer.value)
+
   /* IMAGE HANDLER (Reusable) */
   const handleImageChange = (
     event: Event,
@@ -264,21 +266,6 @@
     window.open(url, '_blank', 'noopener,noreferrer')
   }
 
-  /* DATE FORMAT HELPER */
-  function formatDateForInput(date: string | null) {
-    if (!date) return ""
-
-    // already correct
-    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-      return date
-    }
-
-    // convert dd-MM-yyyy → yyyy-MM-dd
-    const [d, m, y] = date.split("-")
-
-    return `${y}-${m}-${d}`
-  }
-
   watch(customer, (c) => {
     if (!c) return
 
@@ -288,10 +275,10 @@
       // 1st customer — required fields
       cust_title_1: c.cust_title_1 ?? -1,
       cust_name_1: c.cust_name_1 ?? "",
-      cust_dob_1: formatDateForInput(c.cust_dob_1 ?? ""),
+      cust_dob_1: (c.cust_dob_1 ?? ""),
       cust_idcardnum_1: c.cust_idcardnum_1 ?? "",
       iden_id_1: c.iden_id_1 ?? -1,
-      cust_idcardnum_date_1: formatDateForInput(c.cust_idcardnum_date_1 ?? ""),
+      cust_idcardnum_date_1: (c.cust_idcardnum_date_1 ?? ""),
       idli_id_1: c.idli_id_1 ?? -1,
       occu_id_1: c.occu_id_1 ?? -1,
       cust_phone_1: c.cust_phone_1 ?? "",
@@ -299,10 +286,10 @@
       // 2nd customer — optional fields
       cust_title_2: c.cust_title_2 ?? -1,
       cust_name_2: c.cust_name_2 ?? "",
-      cust_dob_2: formatDateForInput(c.cust_dob_2 ?? ""),
+      cust_dob_2: (c.cust_dob_2 ?? ""),
       cust_idcardnum_2: c.cust_idcardnum_2 ?? "",
       iden_id_2: c.iden_id_2 ?? -1,
-      cust_idcardnum_date_2: formatDateForInput(c.cust_idcardnum_date_2 ?? ""),
+      cust_idcardnum_date_2: (c.cust_idcardnum_date_2 ?? ""),
       idli_id_2: c.idli_id_2 ?? -1,
       occu_id_2: c.occu_id_2 ?? -1,
       cust_phone_2: c.cust_phone_2 ?? "",

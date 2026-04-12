@@ -3,6 +3,12 @@ import { getCookie, createError } from "h3"
 type APIResponse = {
     employees: Array<{ id: number; label: string }>;
     roles: Array<{ id: number; label: string }>;
+    role_permissions: {
+        id: number;
+        name: string;
+        slug: string;
+        permissions: Array<{ id: number; name: string; slug: string }>;
+    }
 }
 
 

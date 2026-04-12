@@ -20,6 +20,11 @@ import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
 
 
 import { useSchedule } from "@/composables/useSchedule"
+import { formatDateForOutput } from '~/utils/date'
+
+import { fixDouble } from "@/utils/number"
+
+
 const { schedules, generateSchedule, reroundLoading, reroundDone, handleReround } = useSchedule()
 
 import { usePagination } from "@/composables/usePagination"
@@ -179,8 +184,8 @@ const submitForm = async () => {
   const payload = {
     loan_id: form.loan_id,
     schedule_paymentnumber: schedules.value.map(s => s.schedule_paymentnumber),
-    schedule_startdate: schedules.value.map(s => formatDateForOutput(s.schedule_startdate)),
-    schedule_enddate: schedules.value.map(s => formatDateForOutput(s.schedule_enddate)),
+    schedule_startdate: schedules.value.map(s => (s.schedule_startdate)),
+    schedule_enddate: schedules.value.map(s => (s.schedule_enddate)),
     schedule_totaldays: schedules.value.map(s => Number(s.schedule_totaldays || 0)),
     schedule_outstanding: schedules.value.map(s => Number(s.schedule_outstanding || 0)),
     schedule_over_draft: schedules.value.map(s => Number(s.schedule_over_draft || 0)),
@@ -294,7 +299,7 @@ watch(
             class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text"
             readonly />
           <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
-            type="text" v-model="form.loan_startdate" readonly />
+            type="text" :value="formatDateForOutput(new Date(form.loan_startdate))" readonly />
         </div>
         
         <!-- loan_first_paid_date -->
@@ -304,7 +309,7 @@ watch(
             class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" type="text"
             readonly />
           <input v-else class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700"
-            type="text" v-model="form.loan_first_paid_date" readonly />
+            type="text" :value="form.loan_first_paid_date ? formatDateForOutput(new Date(form.loan_first_paid_date)) : ''" readonly />
         </div>
 
         <!-- loan_enddate -->

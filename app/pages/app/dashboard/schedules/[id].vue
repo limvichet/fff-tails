@@ -15,6 +15,8 @@ import { ref, reactive, onMounted } from "vue"
 import { useRoute } from "vue-router"
 import ComponentCard from "@/components/common/ComponentCard.vue"
 import { useMessage } from "~/composables/useMessage"
+import { formatDateForOutput } from '~/utils/date'
+
 import { formatNumber } from "@/utils/number"
 
 const route = useRoute()
@@ -151,11 +153,11 @@ onMounted(fetchData)
                  <div>
                     <div>
                         <label class="label">Start Date</label>
-                        <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_startdate" readonly />
+                        <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="formatDateForOutput(new Date(loan.loan_startdate))" readonly />
                     </div>
                     <div>
                         <label class="label">First Paid Date</label>
-                        <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_first_paid_date" readonly />
+                        <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_first_paid_date ? formatDateForOutput(new Date(loan.loan_first_paid_date)) : ''" readonly />
                     </div>
                     <!-- <div>
                         <label class="label">End Date</label>
@@ -247,23 +249,23 @@ onMounted(fetchData)
                             </td>
 
                             <td class="px-3 py-2 text-right">
-                                {{ formatNumber(s.schedule_interest_rate) }}
+                                {{ (s.schedule_interest_rate) }}
                             </td>
 
                             <td class="px-3 py-2 text-right">
-                                {{ formatNumber(s.schedule_outstanding) }}
+                                {{ (s.schedule_outstanding) }}
                             </td>
 
                             <td class="px-3 py-2 text-right">
-                                {{ formatNumber(s.schedule_principle) }}
+                                {{ (s.schedule_principle) }}
                             </td>
 
                             <td class="px-3 py-2 text-right">
-                                {{ formatNumber(s.schedule_interest) }}
+                                {{ (s.schedule_interest) }}
                             </td>
 
                             <td class="px-3 py-2 text-right text-blue-600">
-                                {{ formatNumber(s.schedule_totalpay) }}
+                                {{ (s.schedule_totalpay) }}
                             </td>
                         </tr>
 

@@ -16,6 +16,7 @@ import ComponentCard from "@/components/common/ComponentCard.vue"
 import { ref, computed, onMounted, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useMessage } from "~/composables/useMessage"
+import { formatDateForOutput } from '~/utils/date'
 import { PencilIcon, TrashIcon} from "@/icons";
 
 const router = useRouter()
@@ -197,20 +198,7 @@ const deleteCustomer = async () => {
   }
 }
 
-/* DATE FORMAT HELPER */
-function formatDate(date: string | null) {
-  if (!date) return ""
 
-  // already correct
-  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-    return date
-  }
-
-  // convert dd-MM-yyyy → yyyy-MM-dd
-  const [d, m, y] = date.split("-")
-
-  return `${d}/${m}/${y}`
-}
 
 </script>
 
@@ -300,15 +288,15 @@ function formatDate(date: string | null) {
                   </td>
 
                   <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
-                    {{ formatDate(c.cust_dob_1) || "-" }}
+                    {{ c.cust_dob_1 ? formatDateForOutput(new Date(c.cust_dob_1)) : "-" }}
                   </td>
 
                   <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
-                    <span class="font-semibold">{{ c.createdby.employee.full_name }}</span> - {{ formatDate(c.created_at) }}
+                    <span class="font-semibold">{{ c.createdby.employee.full_name }}</span> - {{ formatDateForOutput(new Date(c.created_at)) }}
                   </td>
 
                   <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
-                    <span class="font-semibold">{{ c.updatedby.employee.full_name }}</span> - {{ formatDate(c.updated_at) }}
+                    <span class="font-semibold">{{ c.updatedby.employee.full_name }}</span> - {{ formatDateForOutput(new Date(c.updated_at)) }}
                   </td>
 
                   <td class="flex items-center justify-end gap-1 px-1 py-2">

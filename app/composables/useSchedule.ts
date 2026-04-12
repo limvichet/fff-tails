@@ -136,7 +136,7 @@ export const useSchedule = () => {
     }
 
     recalculcateDateM()
-     reculculateNClean()
+    reculculateNClean()
     reculculateFixOutstanding()
   }
 
@@ -395,6 +395,7 @@ export const useSchedule = () => {
 
       const interest = loan_totalcash * fixDouble(loan_interest_rate / 100, 3)
       const principle = loan_principle - interest
+      //const principle = loan_totalcash - loan_principle
 
       schedules.value.push({
         schedule_paymentnumber: i + 1,
@@ -431,10 +432,10 @@ export const useSchedule = () => {
       let end = new Date(item.schedule_enddate)
 
       // 🔥 FIX END DATE → MAX 31
-      if (end.getDate() >= 31) {
-        end.setDate(31)
-        item.schedule_enddate = new Date(end)
-      }
+      // if (end.getDate() >= 31) {
+      //   end.setDate(31)
+      //   item.schedule_enddate = new Date(end)
+      // }
 
       // RECALCULATE DAYS
       let totalDays =
@@ -455,7 +456,7 @@ export const useSchedule = () => {
 
       /* fix interest and total pay for M11 */
       if (outstanding > 0) {
-        if (totalDays >= 28) {
+        if (totalDays >= 28 && totalDays <= 31) {
           item.schedule_interest = rate * outstanding
         } else {
           item.schedule_interest = fixDouble(

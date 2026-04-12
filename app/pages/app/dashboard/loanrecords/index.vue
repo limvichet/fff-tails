@@ -1,10 +1,11 @@
 <script setup lang="ts">
-definePageMeta({
-  layout: "auth",
-  requiresAuth: true,
-  breadcrumb: { title: "Loans", subTitle: "Search" },
-  ssr: false
-})
+
+  definePageMeta({
+    layout: "auth",
+    requiresAuth: true,
+    breadcrumb: { title: "Loans", subTitle: "Search" },
+    ssr: false
+  })
 
   useHead({
     title: "Search loans",
@@ -16,6 +17,8 @@ import ComponentCard from "@/components/common/ComponentCard.vue"
 import { ref, computed, onMounted, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useMessage } from "~/composables/useMessage"
+import { formatDate,formatDateForOutput } from '~/utils/date'
+
 
 const router = useRouter()
 const { errorMsg, successMsg, success } = useMessage()
@@ -229,28 +232,28 @@ const deleteLoan = async () => {
 }
 
 /* DATE FORMAT HELPER */
-function formatDate(date: string | null) {
-  if (!date) return ""
+// function formatDate(date: string | null) {
+//   if (!date) return ""
 
-  // Case 1: already yyyy-MM-dd
-  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-    return date
-  }
+//   // Case 1: already yyyy-MM-dd
+//   if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+//     return date
+//   }
 
-  // Case 2: ISO or datetime (like 2026/03/25T03:04:59.000000Z)
-  const parsed = new Date(date)
-  if (!isNaN(parsed.getTime())) {
-    return parsed.toISOString().split("T")[0]
-  }
+//   // Case 2: ISO or datetime (like 2026/03/25T03:04:59.000000Z)
+//   const parsed = new Date(date)
+//   if (!isNaN(parsed.getTime())) {
+//     return parsed.toISOString().split("T")[0]
+//   }
 
-  // Case 3: dd-MM-yyyy
-  if (/^\d{2}-\d{2}-\d{4}$/.test(date)) {
-    const [d, m, y] = date.split("-")
-    return `${y}-${m}-${d}`
-  }
+//   // Case 3: dd-MM-yyyy
+//   if (/^\d{2}-\d{2}-\d{4}$/.test(date)) {
+//     const [d, m, y] = date.split("-")
+//     return `${y}-${m}-${d}`
+//   }
 
-  return ""
-}
+//   return ""
+// }
 
 </script>
 
@@ -362,8 +365,8 @@ function formatDate(date: string | null) {
                 </td>
 
                   <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
-                    <p class="font-semibold">{{ l.createdby.employee.full_name }} - {{ formatDate(l.created_at) }} </p>
-                    <p class="font-semibold">{{ l.updatedby.employee.full_name }} - {{ formatDate(l.updated_at) }} </p> 
+                    <p class="font-semibold">{{ l.createdby.employee.full_name }} - {{ formatDateForOutput(new Date(l.created_at)) }} </p>
+                    <p class="font-semibold">{{ l.updatedby.employee.full_name }} - {{ formatDateForOutput(new Date(l.updated_at)) }} </p> 
                   </td>
 
                   <!-- <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">

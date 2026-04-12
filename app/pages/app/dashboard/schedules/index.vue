@@ -213,11 +213,11 @@ const viewSchedule = (loanId: number) => {
                 </td>
 
                 <td class="px-2 py-1 text-sm">
-                  {{ s.loan_startdate }}
+                  {{formatDateForOutput(new Date(s.loan_startdate)) }}
                 </td>
 
                 <td class="px-2 py-1 text-sm">
-                  {{ s.loan_enddate }}
+                  {{ formatDateForOutput(new Date(s.loan_enddate)) }}
                 </td>
 
                 <td class="px-2 py-1 text-sm">

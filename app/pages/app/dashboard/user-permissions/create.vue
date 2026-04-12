@@ -19,9 +19,19 @@ const { successMsg, errorMsg, success } = useMessage()
 const errors = reactive<Record<string, string>>({})
 const loading = ref(false)
 
+type Permission = { id: number; name: string; slug: string };
+
+type RolePermission = {
+  id: number;
+  name: string;
+  slug: string;
+  permissions: Permission[];
+}
+
 type APIResponse = {
   employees: Record<string, string>;
   roles: Record<string, string>;
+  role_permissions: RolePermission[];
 }
 
 // 👉 form state
@@ -33,15 +43,12 @@ const form = reactive({
   active: true,
   identifier_token: "",
   permissions: {} as Record<string, number>,
-  
-  photo: null as File | null,
-  photo_src: null as string | null,
-  photo_check: false,
 })
 
 // 👉 metadata
 const employees = ref<{ id: number; label: string }[]>([])
 const roles = ref<{ id: number; label: string }[]>([])
+const rolePermissionsData = ref<RolePermission[]>([])
 
 // 👉 fetch metadata
 const fetchFormData = async () => {
@@ -57,6 +64,7 @@ const fetchFormData = async () => {
 
     employees.value = map(res.employees)
     roles.value = map(res.roles)
+    rolePermissionsData.value = res.role_permissions
   } catch (err) {
     errorMsg.value = "Failed to load form data"
   }
@@ -91,6 +99,29 @@ watch(() => form.password, () => validateField("password"))
 watch(() => form.emp_id, () => validateField("emp_id"))
 watch(() => form.role_id, () => validateField("role_id"))
 
+
+// 👉 Logic to auto-check permissions based on role
+watch(() => form.role_id, (newRoleId) => {
+  if (newRoleId === -1) return
+
+  // 1. Reset current permissions to 0
+  Object.keys(form.permissions).forEach(key => {
+    form.permissions[key] = 0
+  })
+
+  // 2. Find the selected role's permission list
+  const selectedRole = rolePermissionsData.value.find(r => r.id === newRoleId)
+
+  if (selectedRole) {
+    // 3. Set matching permissions to 1
+    selectedRole.permissions.forEach(p => {
+      // The slug from your API is 'view-customer', 
+      // which matches your PermissionTable keys
+      form.permissions[p.slug] = 1
+    })
+  }
+})
+
 const submitForm = async () => {
   loading.value = true
   errorMsg.value = null
@@ -119,14 +150,17 @@ const submitForm = async () => {
     fd.append("role_id", String(form.role_id))
     fd.append("email", form.email)
     fd.append("password", form.password)
+    fd.append("default_password", "")
     fd.append("active", form.active ? "1" : "0")
     fd.append("identifier_token", form.identifier_token || "")
 
-    if (form.photo && form.photo_check) {
-      fd.append("photo", form.photo)
-    }
-
-    await $fetch("/api/admin-secure/users", {
+    // 2. Append Permissions dynamically
+    // This loops through form.permissions and adds "view-customer": "1", etc.
+    Object.entries(form.permissions).forEach(([key, value]) => {
+      fd.append(key, String(value))
+    })
+// console.log("Payload to send:", Object.fromEntries(fd.entries()))    
+await $fetch("/api/admin-secure/user-permissions", {
       method: "POST",
       body: fd,
       headers: { Accept: "application/json" }
@@ -149,17 +183,7 @@ const submitForm = async () => {
   }
 }
 
-const onFileChange = (e: Event) => {
-  const target = e.target as HTMLInputElement
-  const file = target.files?.[0]
-  if (!file) return
 
-  form.photo = file
-  form.photo_check = true
-  const reader = new FileReader()
-  reader.onload = () => (form.photo_src = reader.result as string)
-  reader.readAsDataURL(file)
-}
 </script>
 
 <template>
@@ -225,16 +249,7 @@ const onFileChange = (e: Event) => {
           <label for="user_active" class="label !mb-0">Active Account</label>
         </div>
 
-        <div class="mt-4">
-          <label class="label">Profile Photo</label>
-          <input type="file" @change="onFileChange" class="input" />
-          <div v-if="form.photo_src" class="mt-2 relative group w-32">
-            <img :src="form.photo_src" class="w-32 h-32 object-cover rounded-lg border shadow-sm" />
-            <div class="absolute top-1 right-1">
-              <input type="checkbox" v-model="form.photo_check" class="w-4 h-4" />
-            </div>
-          </div>
-        </div>
+
       </ComponentCard>
 
     </div>
