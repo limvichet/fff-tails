@@ -2,161 +2,242 @@
 definePageMeta({
   layout: "auth",
   requiresAuth: true,
-  breadcrumb: { title: "User Permissions", subTitle: "Edit" }
 })
 
-import { z } from "zod"
-import { reactive, onMounted, watch, ref } from "vue"
+import { reactive, ref, onMounted, watch } from "vue"
 import ComponentCard from "@/components/common/ComponentCard.vue"
 import PermissionTable from "@/components/forms/PermissionTable.vue"
 
+const { success, errorMsg } = useMessage()
 const route = useRoute()
 const userId = route.params.id
 
-const { successMsg, errorMsg, success } = useMessage()
-const errors = reactive<Record<string, string>>({})
 const loading = ref(false)
+const isReady = ref(false)
 
-// Types
-type Permission = { id: number; name: string; slug: string };
-type RolePermission = { id: number; name: string; slug: string; permissions: Permission[]; }
-type APIResponse = {
-  employees: Record<string, string>;
-  roles: Record<string, string>;
-  role_permissions: RolePermission[];
+type Permission = { id: number; name: string; slug: string }
+
+type RolePermission = {
+  id: number
+  name: string
+  slug: string
+  permissions: Permission[]
 }
 
-// 👉 form state
+type APIResponse = {
+  employees: Record<string, string>
+  roles: Record<string, string>
+  role_permissions: RolePermission[]
+}
+
+// =============================
+// STATE
+// =============================
 const form = reactive({
   emp_id: -1,
   role_id: -1,
   email: "",
-  password: "", // Keep empty if not changing
+  password: "",
   active: true,
   identifier_token: "",
   permissions: {} as Record<string, number>,
 })
 
-// 👉 metadata
 const employees = ref<{ id: number; label: string }[]>([])
 const roles = ref<{ id: number; label: string }[]>([])
 const rolePermissionsData = ref<RolePermission[]>([])
+const user = ref<any>(null)
+const isHydrating = ref(true)
 
-// 👉 Fetch form metadata AND existing user data
-const initPage = async () => {
-  try {
-    // 1. Fetch Dropdown options and Role Permissions
-    const meta = await $fetch<APIResponse>("/api/admin-secure/user-permissions-form-data")
-    
-    const map = (obj: Record<string, string>) =>
-      Object.entries(obj).map(([id, label]) => ({
-        id: Number(id),
-        label: String(label)
-      }))
-
-    employees.value = map(meta.employees)
-    roles.value = map(meta.roles)
-    rolePermissionsData.value = meta.role_permissions
-
-    // 2. Fetch existing User record
-    const user = await $fetch<any>(`/api/admin-secure/user-permissions/${userId}`)
-    
-    // Populate form
-    form.emp_id = Number(user.emp_id)
-    form.role_id = Number(user.role_id)
-    form.email = user.email
-    form.active = Boolean(Number(user.active))
-    form.identifier_token = user.identifier_token || ""
-    
-    // Populate permissions from the user record
-    // We assume the user object contains keys like 'view-customer': 1
-    if (user.permissions) {
-       form.permissions = { ...user.permissions }
-    } else {
-       // fallback if permissions are flattened in the user object
-       Object.keys(form.permissions).forEach(key => {
-         if (user[key] !== undefined) form.permissions[key] = Number(user[key])
-       })
-    }
-
-  } catch (err) {
-    errorMsg.value = "Failed to load user data"
-  }
-}
-
-onMounted(initPage)
-
-/* VALIDATION ZOD */
-const schema = z.object({
-  emp_id: z.number().min(1, "Please select an employee"),
-  role_id: z.number().min(1, "Please select a role"),
-  email: z.string().email("Invalid email address").min(1, "Required"),
-  password: z.string().optional(), // Optional on edit
-  active: z.boolean(),
-  identifier_token: z.string().optional(),
-  permissions: z.record(z.string(), z.number()).optional()
+const allPermissions = computed(() => {
+  return rolePermissionsData.value.flatMap(r => r.permissions)
 })
 
-const validateField = (field: keyof typeof schema.shape) => {
+// =============================
+// INIT ALL PERMISSIONS (BASE)
+// =============================
+const initializePermissions = () => {
+  const all: Record<string, number> = {}
+
+  rolePermissionsData.value.forEach(role => {
+    role.permissions.forEach(p => {
+      all[p.slug] = 0
+    })
+  })
+
+  form.permissions = all
+}
+
+// =============================
+// LOAD FORM DATA
+// =============================
+const fetchFormData = async () => {
+  const res = await $fetch<APIResponse>(
+    "/api/admin-secure/user-permissions-form-data"
+  )
+
+  const map = (obj: Record<string, string>) =>
+    Object.entries(obj).map(([id, label]) => ({
+      id: Number(id),
+      label: String(label),
+    }))
+
+  employees.value = map(res.employees)
+  roles.value = map(res.roles)
+  rolePermissionsData.value = res.role_permissions
+
+  initializePermissions()
+}
+
+onMounted(fetchFormData)
+
+// =============================
+// LOAD USER
+// =============================
+const loadUser = async () => {
   try {
-    const part = schema.pick({ [field]: true } as any)
-    part.parse({ [field]: form[field as keyof typeof form] })
-    errors[field as string] = ""
-  } catch (err: any) {
-    errors[field as string] = err.errors?.[0]?.message || ""
+    loading.value = true
+
+    const res = await $fetch<any>(
+      `/api/admin-secure/user-permissions/${userId}`
+    )
+
+    user.value = res?.data?.user
+  } finally {
+    loading.value = false
   }
 }
 
-watch(() => form.email, () => validateField("email"))
-watch(() => form.emp_id, () => validateField("emp_id"))
-watch(() => form.role_id, () => validateField("role_id"))
+onMounted(loadUser)
 
+const resetPermissions = () => {
+  Object.keys(form.permissions).forEach(k => {
+    form.permissions[k] = 0
+  })
+}
+
+// =============================
+// ROLE CHANGE
+// =============================
+// watch(() => form.role_id, (id, oldId) => {
+//   // 🚫 block initial hydration
+//   if (isHydrating.value) return
+
+//   // 🚫 ignore invalid
+//   if (id === -1) return
+
+//   // 🚫 avoid same value re-trigger
+//   if (id === oldId) return
+
+//   resetPermissions()
+
+//   const role = rolePermissionsData.value.find(r => r.id === id)
+
+//   role?.permissions.forEach(p => {
+//     form.permissions[p.slug] = 1
+//   })
+// })
+
+
+// =============================
+// APPLY USER + ROLE PERMISSIONS (MAIN FIX)
+// =============================
+watch(
+  [user, rolePermissionsData],
+  ([u]) => {
+    if (!u || !rolePermissionsData.value.length) return
+
+    // 1. reset base structure
+    initializePermissions()
+
+    // 2. fill form fields
+    form.emp_id = Number(u.emp_id ?? -1)
+    form.role_id = Number(u.roles?.[0]?.id ?? -1)
+    form.email = u.email ?? ""
+    form.identifier_token = u.identifier_token ?? ""
+    form.active = u.active == 1
+    form.password = ""
+
+    // 3. apply ROLE permissions first
+    const role = rolePermissionsData.value.find(
+      r => r.id === form.role_id
+    )
+
+    role?.permissions.forEach(p => {
+      form.permissions[p.slug] = 1
+    })
+
+    // role permissions first
+    // applyRolePermissions(form.role_id)
+    resetPermissions()
+
+    // user override
+    u.permissions?.forEach((p: any) => {
+      form.permissions[p.slug] = 1
+    })
+
+    isHydrating.value = false
+    isReady.value = true
+  },
+  { immediate: true }
+)
+
+
+const applyRolePermissions = (roleId: number) => {
+  if (!rolePermissionsData.value.length) return
+  if (roleId === -1) return
+
+  // reset all permissions
+  Object.keys(form.permissions).forEach(k => {
+    form.permissions[k] = 0
+  })
+
+  // find role
+  const role = rolePermissionsData.value.find(r => r.id === roleId)
+
+  // apply role permissions
+  role?.permissions.forEach(p => {
+    form.permissions[p.slug] = 1
+  })
+}
+
+
+
+// =============================
+// SUBMIT
+// =============================
 const submitForm = async () => {
   loading.value = true
-  errorMsg.value = null
-  successMsg.value = null
-
-  const parsed = schema.safeParse(form)
-  if (!parsed.success) {
-    parsed.error.errors.forEach((e) => { errors[e.path[0] as string] = e.message })
-    errorMsg.value = "Please fix validation errors."
-    loading.value = false
-    return
-  }
+  errorMsg.value = ""
 
   try {
-    const fd = new FormData()
-    fd.append("_method", "PUT") // Laravel often requires this for spoofing PUT in FormData
-    fd.append("emp_id", String(form.emp_id))
-    fd.append("role_id", String(form.role_id))
-    fd.append("email", form.email)
-    if (form.password) fd.append("password", form.password)
-    fd.append("active", form.active ? "1" : "0")
-    fd.append("identifier_token", form.identifier_token || "")
-    fd.append("default_password", "")
-
-    Object.entries(form.permissions).forEach(([key, value]) => {
-      fd.append(key, String(value))
-    })
-
-    await $fetch(`/api/admin-secure/user-permissions/${userId}`, {
-      method: "POST", // Using POST + _method: PUT for FormData compatibility
-      body: fd,
-      headers: { Accept: "application/json" }
-    })
-
-    success("User updated successfully!")
-    await navigateTo("/app/dashboard/user-permissions")
-
-  } catch (err: any) {
-    if (err?.data?.errors) {
-      Object.entries(err.data.errors).forEach(([field, messages]) => {
-        errors[field] = (messages as string[])[0] || ""
-      })
-      errorMsg.value = "Backend validation failed."
-    } else {
-      errorMsg.value = err?.data?.message || "Error updating user"
+    const payload = {
+      emp_id: form.emp_id,
+      role_id: form.role_id,
+      email: form.email,
+      password: form.password,
+      default_password: "",
+      active: form.active ? "1" : "0",
+      identifier_token: form.identifier_token || "",
+      permissions: form.permissions,
     }
+
+    await $fetch(
+      `/api/admin-secure/user-permissions/${userId}`,
+      {
+        method: "PUT",
+        body: payload,
+      }
+    )
+
+    success("Updated successfully")
+
+    navigateTo(
+      `/app/dashboard/user-permissions/${userId}`
+    )
+  } catch (err: any) {
+    errorMsg.value =
+      err?.data?.message || "Error while saving"
   } finally {
     loading.value = false
   }
@@ -165,73 +246,71 @@ const submitForm = async () => {
 
 <template>
   <div class="max-w-4xl mx-auto p-4">
-    <div v-if="errorMsg" class="mb-3 p-2 rounded bg-red-500/20 text-red-300 text-sm">
+
+    <div v-if="errorMsg" class="mb-4 p-3 bg-red-100 text-red-600 rounded">
       {{ errorMsg }}
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <ComponentCard title="Account Credentials">
-        <div>
-          <label class="label">Employee Name*</label>
-          <select v-model.number="form.emp_id" class="input">
-            <option v-for="emp in employees" :key="emp.id" :value="emp.id">{{ emp.label }}</option>
-          </select>
-          <span class="text-red-500 text-xs">{{ errors.emp_id }}</span>
-        </div>
+    <div class="grid grid-cols-2 gap-6">
 
-        <div>
-          <label class="label">System Role*</label>
-          <select v-model.number="form.role_id" class="input">
-            <option v-for="role in roles" :key="role.id" :value="role.id">{{ role.label }}</option>
-          </select>
-          <span class="text-red-500 text-xs">{{ errors.role_id }}</span>
-        </div>
+      <ComponentCard title="Account">
+        <select v-model.number="form.emp_id" class="input">
+          <option :value="-1">Choose</option>
+          <option v-for="e in employees" :key="e.id" :value="e.id">
+            {{ e.label }}
+          </option>
+        </select>
 
-        <div>
-          <label class="label">Email Address*</label>
-          <input type="email" v-model="form.email" class="input" />
-          <span class="text-red-500 text-xs">{{ errors.email }}</span>
-        </div>
+        <select v-model.number="form.role_id" @change="applyRolePermissions(form.role_id)"
+          class="input mt-2">
+          <option :value="-1">Choose</option>
+          <option v-for="r in roles" :key="r.id" :value="r.id">
+            {{ r.label }}
+          </option>
+        </select>
 
-        <div>
-          <label class="label">New Password (leave blank to keep current)</label>
-          <input type="password" v-model="form.password" class="input" />
-        </div>
+        <input v-model="form.email" class="input mt-2" placeholder="Email" />
+        <input v-model="form.password" class="input mt-2" placeholder="Password" />
+
       </ComponentCard>
 
-      <ComponentCard title="Settings & Identity">
-        <div>
-          <label class="label">Identifier Token</label>
-          <input type="text" v-model="form.identifier_token" class="input" />
-        </div>
+      <ComponentCard title="Settings">
+        <input v-model="form.identifier_token" class="input" placeholder="Token" />
 
-        <div class="flex items-center gap-2 mt-6">
-          <input type="checkbox" id="user_active" v-model="form.active" class="w-4 h-4" />
-          <label for="user_active" class="label !mb-0">Active Account</label>
-        </div>
+        <label class="flex gap-2 mt-3">
+          <input type="checkbox" v-model="form.active" />
+          Active
+        </label>
       </ComponentCard>
+
     </div>
 
-    <div class="col-span-full mt-4">
-      <ComponentCard title="6. User Permissions">
-        <PermissionTable v-model="form.permissions" />
-      </ComponentCard>
-    </div>
+    <!-- ✅ IMPORTANT -->
+    <ComponentCard title="Permissions" class="mt-6">
+      <PermissionTable
+        v-model="form.permissions"
+        :data="allPermissions"
+      />
+    </ComponentCard>
 
-    <div class="mt-6 flex justify-end gap-3">
-      <button @click="navigateTo('/app/dashboard/user-permissions')" class="px-6 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg">Cancel</button>
-      <button @click="submitForm" :disabled="loading" class="px-6 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2">
-        <Icon v-if="loading" name="svg-spinners:180-ring-with-bg" />
-        {{ loading ? "Updating..." : "Update User" }}
+    <div class="mt-6 text-right">
+      <button @click="submitForm" class="btn-primary">
+        {{ loading ? "Saving..." : "Update" }}
       </button>
     </div>
+
   </div>
 </template>
 
 <style scoped>
-.label { display: block; margin-bottom: 4px; font-size: 14px; color: #555; font-weight: 500; }
-.dark .label { color: #ccc; }
-.input { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 8px 12px; background: transparent; }
-.dark .input { border-color: #444; color: white; }
-.text-red-500 { color: #ef4444; }
+.input {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px;
+}
+.error {
+  font-size: 12px;
+  color: red;
+}
 </style>

@@ -189,14 +189,14 @@ const endTransition = (el) => {
         <img
           v-if="isExpanded || isHovered || isMobileOpen"
           class="hidden dark:block"
-          src="/images/logo/logo-dark.svg"
+          src="/imgs/logo-dark.svg"
           alt="Logo"
           width="150"
           height="40"
         />
         <img
           v-else
-          src="/images/logo/logo.svg"
+          src="/imgs/logo.svg"
           alt="Logo"
           width="32"
           height="32"

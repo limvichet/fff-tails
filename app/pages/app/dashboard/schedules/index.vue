@@ -189,8 +189,8 @@ const viewSchedule = (loanId: number) => {
                 <th class="px-2 py-3 text-left text-sm">End</th>
                 <th class="px-2 py-3 text-left text-sm">Currency</th>
                 <th class="px-2 py-3 text-left text-sm">Total</th>
-                <th class="px-2 py-3 text-center text-sm">Status</th>
-                <th class="px-2 py-3 text-center text-sm">Actions</th>
+                <th class="px-2 py-3 text-left text-sm">Status</th>
+                <th class="px-2 py-3 text-left text-sm">Actions</th>
               </tr>
             </thead>
 
@@ -229,7 +229,7 @@ const viewSchedule = (loanId: number) => {
                 </td>
 
                 <!-- status -->
-                <td class="px-2 py-1 text-center">
+                <td class="px-2 py-1 text-left">
                   <span
                     :class="[
                       'px-2 py-1 rounded text-xs',
@@ -243,7 +243,7 @@ const viewSchedule = (loanId: number) => {
                 </td>
 
                 <!-- actions -->
-                <td class="px-2 py-1 text-center">
+                <td class="px-2 py-1 text-left">
                   <button
                     @click="viewSchedule(s.loan_id)"
                     class="px-2 py-1 bg-blue-600 text-white rounded text-xs"

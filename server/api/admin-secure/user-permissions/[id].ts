@@ -27,7 +27,11 @@ export default defineEventHandler(async (event): Promise<any> => {
       return await $fetch(url, {
         method: "PUT",
         body,
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }
       })
     }
 

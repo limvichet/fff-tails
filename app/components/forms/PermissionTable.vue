@@ -1,78 +1,231 @@
 <script setup lang="ts">
-// Defined as a model so the parent can access the state easily
-const model = defineModel<Record<string, number>>({ default: () => ({}) })
+import { computed, onMounted } from "vue"
 
-interface PermissionModule {
-  key: string;
-  label: string;
-  canView: boolean;
-  canCreate: boolean;
-  canEdit: boolean;
-  canDelete: boolean;
+// =============================
+// Props
+// =============================
+const props = defineProps<{
+  modelValue: Record<string, number>
+  data: { id: number; name: string; slug: string }[]
+}>()
+
+// =============================
+// Emit
+// =============================
+const emit = defineEmits(["update:modelValue"])
+
+// =============================
+// Update single permission
+// =============================
+const updatePermission = (key: string, value: number) => {
+  emit("update:modelValue", {
+    ...props.modelValue,
+    [key]: value
+  })
 }
 
-const modules = ref<PermissionModule[]>([
-  { key: 'customer', label: 'Customers', canView: true, canCreate: true, canEdit: true, canDelete: true },
-  { key: 'loan', label: 'Loans', canView: true, canCreate: true, canEdit: true, canDelete: true },
-  { key: 'schedule', label: 'Schedules', canView: true, canCreate: true, canEdit: true, canDelete: true },
-  { key: 'payment', label: 'Payments', canView: true, canCreate: true, canEdit: true, canDelete: true },
-  { key: 'administrative-tool', label: 'Administrative Tools', canView: true, canCreate: true, canEdit: true, canDelete: true },
-])
+// =============================
+// Toggle permission
+// =============================
+const toggle = (key: string) => {
+  const current = props.modelValue?.[key] ?? 0
+  updatePermission(key, current === 1 ? 0 : 1)
+}
 
-// Initialize keys in model if they don't exist
-onMounted(() => {
-  modules.value.forEach(m => {
-    if (model.value[`view-${m.key}`] === undefined) model.value[`view-${m.key}`] = 0
-    if (model.value[`create-${m.key}`] === undefined) model.value[`create-${m.key}`] = 0
-    if (model.value[`edit-${m.key}`] === undefined) model.value[`edit-${m.key}`] = 0
-    if (model.value[`delete-${m.key}`] === undefined) model.value[`delete-${m.key}`] = 0
-  })
+// =============================
+// Types
+// =============================
+type PermissionAction = "view" | "create" | "edit" | "delete"
+
+type ModuleActions = {
+  [K in PermissionAction]: boolean
+}
+
+watch(() => props.modelValue, () => {
+  emit('update:modelValue', props.modelValue)
 })
 
-const toggle = (key: string) => {
-  model.value[key] = model.value[key] === 1 ? 0 : 1
-}
+// =============================
+// Build modules from role data
+// =============================
+// const modules = computed(() => {
+//   const map: Record<string, { key: string; label: string; actions: ModuleActions }> = {}
+
+//   props.data?.forEach(p => {
+//       const [action, module] = p.slug.split("-")
+//       if (!module) return
+
+//       if (!map[module]) {
+//         map[module] = {
+//           key: module,
+//           label: module
+//             .replace(/-/g, " ")
+//             .replace(/\b\w/g, l => l.toUpperCase()),
+//           actions: {
+//             view: false,
+//             create: false,
+//             edit: false,
+//             delete: false
+//           }
+//         }
+//       }
+
+//       if (action && action in map[module].actions) {
+//         map[module].actions[action as PermissionAction] = true
+//       }
+//     })
+//     return Object.values(map)
+//   })
+const modules = computed(() => {
+  const map: Record<string, { key: string; label: string; actions: ModuleActions }> = {}
+
+  props.data?.forEach(p => {
+    const parts = p.slug.split("-")
+    const module = parts.slice(1).join("-") // support multi word
+
+    if (!module) return
+
+    if (!map[module]) {
+      map[module] = {
+        key: module,
+        label: module
+          .replace(/-/g, " ")
+          .replace(/\b\w/g, l => l.toUpperCase()),
+
+        // ✅ ALWAYS SHOW ALL
+        actions: {
+          view: true,
+          create: true,
+          edit: true,
+          delete: true
+        }
+      }
+    }
+  })
+
+  return Object.values(map)
+})
+
+
+// =============================
+// Init missing permissions on load
+// =============================
+onMounted(() => {
+  const updated = { ...props.modelValue }
+
+  modules.value.forEach((m: any) => {
+    if (m.actions.view && updated[`view-${m.key}`] === undefined)
+      updated[`view-${m.key}`] = 0
+
+    if (m.actions.create && updated[`create-${m.key}`] === undefined)
+      updated[`create-${m.key}`] = 0
+
+    if (m.actions.edit && updated[`edit-${m.key}`] === undefined)
+      updated[`edit-${m.key}`] = 0
+
+    if (m.actions.delete && updated[`delete-${m.key}`] === undefined)
+      updated[`delete-${m.key}`] = 0
+  })
+
+  emit("update:modelValue", updated)
+})
+
+import { watch } from "vue"
+
+watch(() => props.data, () => {
+  const updated = { ...props.modelValue } // ✅ define here
+
+  const actions = ["view", "create", "edit", "delete"]
+
+  props.data?.forEach(p => {
+    const parts = p.slug.split("-")
+    const module = parts.slice(1).join("-")
+
+    actions.forEach(action => {
+      const key = `${action}-${module}`
+
+      if (updated[key] === undefined) {
+        updated[key] = 0
+      }
+    })
+  })
+
+  emit("update:modelValue", updated)
+}, { immediate: true })
+
 </script>
 
 <template>
   <div class="overflow-x-auto mt-4 rounded-lg border border-gray-200 dark:border-gray-700">
-    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-400">
+    <table class="w-full text-sm">
+
+      <thead class="bg-gray-50 dark:bg-gray-800 text-xs uppercase">
         <tr>
-          <th class="px-4 py-3">Module Name</th>
-          <th class="px-4 py-3 text-center">Read</th>
+          <th class="px-4 py-3 text-left">Module</th>
+          <th class="px-4 py-3 text-center">View</th>
           <th class="px-4 py-3 text-center">Create</th>
-          <th class="px-4 py-3 text-center">Update</th>
+          <th class="px-4 py-3 text-center">Edit</th>
           <th class="px-4 py-3 text-center">Delete</th>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-        <tr v-for="m in modules" :key="m.key" class="bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800">
-          <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
+
+      <tbody>
+        <tr
+          v-for="m in modules"
+          :key="m.key"
+          class="border-t dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+        >
+          <td class="px-4 py-3 font-medium">
             {{ m.label }}
           </td>
-          
-          <td class="px-4 py-3 text-center">
-            <input type="checkbox" :checked="model[`view-${m.key}`] === 1" @change="toggle(`view-${m.key}`)"
-              class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" />
+
+          <!-- VIEW -->
+          <td class="text-center">
+            <input
+              v-if="m.actions.view"
+              type="checkbox"
+              :checked="props.modelValue[`view-${m.key}`] === 1"
+              @change="toggle(`view-${m.key}`)"
+              class="w-4 h-4"
+            />
           </td>
 
-          <td class="px-4 py-3 text-center">
-            <input type="checkbox" :checked="model[`create-${m.key}`] === 1" @change="toggle(`create-${m.key}`)"
-              class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" />
+          <!-- CREATE -->
+          <td class="text-center">
+            <input
+              v-if="m.actions.create"
+              type="checkbox"
+              :checked="props.modelValue[`create-${m.key}`] === 1"
+              @change="toggle(`create-${m.key}`)"
+              class="w-4 h-4"
+            />
           </td>
 
-          <td class="px-4 py-3 text-center">
-            <input type="checkbox" :checked="model[`edit-${m.key}`] === 1" @change="toggle(`edit-${m.key}`)"
-              class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" />
+          <!-- EDIT -->
+          <td class="text-center">
+            <input
+              v-if="m.actions.edit"
+              type="checkbox"
+              :checked="props.modelValue[`edit-${m.key}`] === 1"
+              @change="toggle(`edit-${m.key}`)"
+              class="w-4 h-4"
+            />
           </td>
 
-          <td class="px-4 py-3 text-center">
-            <input type="checkbox" :checked="model[`delete-${m.key}`] === 1" @change="toggle(`delete-${m.key}`)"
-              class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" />
+          <!-- DELETE -->
+          <td class="text-center">
+            <input
+              v-if="m.actions.delete"
+              type="checkbox"
+              :checked="props.modelValue[`delete-${m.key}`] === 1"
+              @change="toggle(`delete-${m.key}`)"
+              class="w-4 h-4"
+            />
           </td>
+
         </tr>
       </tbody>
+
     </table>
   </div>
 </template>

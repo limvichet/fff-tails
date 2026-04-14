@@ -17,15 +17,16 @@ const handler: EventHandler = async (event: H3Event) => {
   }
 
   try {
-const formData = await readFormData(event)
+    const body = await readBody(event)
 
     // ✅ Send POST request to Laravel
     const res = await $fetch(`${apiBaseUrl}/api/admin-secure/user-permissions`, {
       method: "POST",
-      body: formData,
+      body: body,
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/json",
+        "Content-Type": "application/json"
       },
     })
 

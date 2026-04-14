@@ -410,43 +410,43 @@ watch(
       <table class="min-w-full">
         <thead>
           <tr class="border-b border-gray-200 dark:border-gray-700">
-            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">#</td>
-            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">Start</td>
-            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">Endd</td>
-            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">Days</td>
-            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">Rate</td>
-            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">Outstanding</td>
-            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">OverDraft</td>
-            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">Principle</td>
-            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">Interest</td>
-            <td class="px-3 py-3 font-semibold text-blue-900 dark:text-gray-200">TotalPay</td>
+            <td class="px-3 py-3 font-semibold text-[14px] text-blue-900 dark:text-gray-200">#</td>
+            <td class="px-3 py-3 font-semibold text-[14px] text-blue-900 dark:text-gray-200">Start</td>
+            <td class="px-3 py-3 font-semibold text-[14px] text-blue-900 dark:text-gray-200">End</td>
+            <td class="px-3 py-3 font-semibold text-[14px] text-blue-900 dark:text-gray-200">Days</td>
+            <td class="px-3 py-3 font-semibold text-[14px] text-blue-900 dark:text-gray-200">Rate</td>
+            <td class="px-3 py-3 font-semibold text-[14px] text-blue-900 dark:text-gray-200">Outstanding</td>
+            <td class="px-3 py-3 font-semibold text-[14px] text-blue-900 dark:text-gray-200">OverDraft</td>
+            <td class="px-3 py-3 font-semibold text-[14px] text-blue-900 dark:text-gray-200">Principle</td>
+            <td class="px-3 py-3 font-semibold text-[14px] text-blue-900 dark:text-gray-200">Interest</td>
+            <td class="px-3 py-3 font-semibold text-[14px] text-blue-900 dark:text-gray-200">TotalPay</td>
           </tr>
         </thead>
         <tbody class="border-b divide-y divide-gray-200 dark:divide-gray-700">
           <tr v-for="(s, index) in paginatedSchedules" :key="index"
             class="hover:bg-blue-50 dark:hover:bg-white/5 transition">
-            <td class="px-3 py-2 font-medium text-gray-500">{{ s.schedule_paymentnumber }}</td>
-            <td class="px-3 py-2">{{ formatDateForOutput(s.schedule_startdate) }}</td>
-            <td class="px-3 py-2">{{ formatDateForOutput(s.schedule_enddate) }}</td>
-            <td class="px-3 py-2">{{ s.schedule_totaldays }}</td>
-            <td class="px-3 py-2">{{ Number(s.schedule_interest_rate || 0).toLocaleString(undefined, {
+            <td class="text-[14px] px-3 py-2 font-medium text-gray-500">{{ s.schedule_paymentnumber }}</td>
+            <td class="text-[14px] px-3 py-2">{{ formatDateForOutput(s.schedule_startdate) }}</td>
+            <td class="text-[14px] px-3 py-2">{{ formatDateForOutput(s.schedule_enddate) }}</td>
+            <td class="text-[14px] px-3 py-2">{{ s.schedule_totaldays }}</td>
+            <td class="text-[14px] px-3 py-2">{{ Number(s.schedule_interest_rate || 0).toLocaleString(undefined, {
               minimumFractionDigits: 2, maximumFractionDigits: 2
             }) }}</td>
-            <td class="px-3 py-2">{{ Number(s.schedule_outstanding || 0).toLocaleString(undefined, {
+            <td class="text-[14px] px-3 py-2">{{ Number(s.schedule_outstanding || 0).toLocaleString(undefined, {
               minimumFractionDigits: 2, maximumFractionDigits: 2
             }) }}</td>
-            <td class="px-3 py-2">{{ Number(s.schedule_over_draft || 0).toLocaleString(undefined, {
+            <td class="text-[14px] px-3 py-2">{{ Number(s.schedule_over_draft || 0).toLocaleString(undefined, {
               minimumFractionDigits: 2, maximumFractionDigits: 2
             }) }}</td>
-            <td class="px-3 py-2">{{ Number(s.schedule_principle || 0).toLocaleString(undefined, {
+            <td class="text-[14px] px-3 py-2">{{ Number(s.schedule_principle || 0).toLocaleString(undefined, {
               minimumFractionDigits:
                 2, maximumFractionDigits: 2
             }) }}</td>
-            <td class="px-3 py-2">{{ Number(s.schedule_interest || 0).toLocaleString(undefined, {
+            <td class="text-[14px] px-3 py-2">{{ Number(s.schedule_interest || 0).toLocaleString(undefined, {
               minimumFractionDigits:
                 2, maximumFractionDigits: 2
             }) }}</td>
-            <td class="px-3 py-2 text-right text-blue-600">{{ Number(s.schedule_totalpay || 0).toLocaleString(undefined,
+            <td class="text-[14px] px-3 py-2 text-left text-blue-600">{{ Number(s.schedule_totalpay || 0).toLocaleString(undefined,
               { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}</td>
           </tr>
         </tbody>
@@ -506,5 +506,6 @@ watch(
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 8px 12px;
+  font-size: 14px;
 }
 </style>

@@ -107,7 +107,7 @@ onMounted(() => {
               @mousedown.prevent="selectItem(c)"
               @mouseenter="highlightedIndex = index"
               :class="[
-                'px-3 py-1 cursor-pointer',
+                'px-3 py-1 cursor-pointer text-[14px]',
                 index === highlightedIndex ? 'bg-blue-500 text-white' : ''
               ]">
             {{ c.id }} - {{ c.label }}
@@ -132,6 +132,7 @@ width:100%;
 border:1px solid #ddd;
 border-radius:8px;
 padding:8px 12px;
+font-size: 13px;
 }
 
 
