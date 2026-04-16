@@ -237,11 +237,11 @@ onMounted(fetchData)
                             </td>
 
                             <td class="px-3 py-2">
-                                {{ s.schedule_startdate }}
+                                {{ formatDateForOutput(new Date(s.schedule_startdate)) }}
                             </td>
 
                             <td class="px-3 py-2">
-                                {{ s.schedule_enddate }}
+                                {{ formatDateForOutput(new Date(s.schedule_enddate)) }}
                             </td>
 
                             <td class="px-3 py-2 text-center">

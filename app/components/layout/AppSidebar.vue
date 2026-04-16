@@ -171,38 +171,29 @@ const endTransition = (el) => {
     @mouseenter="!isExpanded && (isHovered = true)"
     @mouseleave="isHovered = false"
   >
-    <div
-      :class="[
-        'py-8 flex',
-        !isExpanded && !isHovered ? 'lg:justify-center' : 'justify-start',
-      ]"
-    >
-      <router-link to="/">
-        <img
-          v-if="isExpanded || isHovered || isMobileOpen"
-          class="dark:hidden"
-          src="/imgs/logo.svg"
-          alt="Logo"
-          width="150"
-          height="40"
-        />
-        <img
-          v-if="isExpanded || isHovered || isMobileOpen"
-          class="hidden dark:block"
-          src="/imgs/logo-dark.svg"
-          alt="Logo"
-          width="150"
-          height="40"
-        />
-        <img
-          v-else
-          src="/imgs/logo.svg"
-          alt="Logo"
-          width="32"
-          height="32"
-        />
+
+
+    <div v-if="!isMobileOpen" :class="[
+      'flex py-6 mt-2', // or pt-3 / pt-4 (small spacing)
+      !isExpanded && !isHovered ? 'lg:justify-center' : 'justify-start',
+    ]">
+
+      <router-link v-if="!isMobileOpen" to="/">
+        <!-- Large logo -->
+        <img v-if="isExpanded || isHovered" class="dark:hidden" src="/imgs/logo.svg" alt="Logo" width="150"
+          height="40" />
+        <img v-if="isExpanded || isHovered" class="hidden dark:block" src="/imgs/logo-dark.svg" alt="Logo" width="150"
+          height="40" />
+
+        <!-- Small logo -->
+        <img v-if="!isExpanded && !isHovered" class="dark:hidden" src="/imgs/logo32.svg" alt="Logo" width="32"
+          height="32" />
+        <!-- <img v-if="!isExpanded && !isHovered" class="hidden dark:block" src="/imgs/logo-dark.svg" alt="Logo" width="32"
+          height="32" /> -->
       </router-link>
+
     </div>
+
     <div
       class="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar"
     >
@@ -213,11 +204,11 @@ const endTransition = (el) => {
               :class="[
                 'mb-4 text-xs uppercase flex leading-[20px] text-blue-900',
                 !isExpanded && !isHovered
-                  ? 'lg:justify-center'
-                  : 'justify-start',
+                  ? 'lg:justify-center pt-6'
+                  : 'justify-start pt-4',
               ]"
             >
-              <template v-if="isExpanded || isHovered || isMobileOpen">
+              <template v-if="isExpanded || isHovered || isMobileOpen"">
                 {{ menuGroup.title }}
               </template>
               <HorizontalDots v-else />
