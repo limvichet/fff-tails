@@ -1146,7 +1146,8 @@ const onFileDocChange2 = (e: Event) => {
   border-radius: 8px;
   padding: 8px 12px;
 }
-
+/* Fix date input */
+input[type="date"] { appearance: none; -webkit-appearance: none;}
 .text-red-500 {
   color: #f56565;
 }

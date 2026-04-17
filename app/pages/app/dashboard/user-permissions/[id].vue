@@ -309,6 +309,8 @@ const submitForm = async () => {
   border-radius: 8px;
   padding: 8px;
 }
+/* Fix date input */
+input[type="date"] { appearance: none; -webkit-appearance: none;}
 .error {
   font-size: 12px;
   color: red;

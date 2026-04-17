@@ -68,7 +68,6 @@ const menuGroups = [
         icon: TableIcon,
         name: "Payments",
         subItems: [
-          { name: "Create", path: "/app/dashboard/payments/create", pro: false, icon: PencilIcon  },
           { name: "Search", path: "/app/dashboard/payments", pro: false, icon: SearchIcon  },
         ],
       },
@@ -76,8 +75,8 @@ const menuGroups = [
         icon: PieChartIcon,
         name: "Reports",
         subItems: [
-          { name: "Create", path: "/app/dashboard/payments/create", pro: false, icon: PencilIcon  },
-          { name: "Search", path: "/app/dashboard/payments", pro: false, icon: SearchIcon  },
+          { name: "Create", path: "/app/dashboard/s/create", pro: false, icon: PencilIcon  },
+          { name: "Search", path: "/app/dashboard/s", pro: false, icon: SearchIcon  },
         ],
       },
 
@@ -90,8 +89,8 @@ const menuGroups = [
         icon: UserShildIcon,
         name: "Employees",
         subItems: [
-          { name: "Create", path: "/app/dashboard/employees/creates", pro: false, icon: PencilIcon  },
-          { name: "Search", path: "/app/dashboard/employeess", pro: false, icon: SearchIcon  },
+          { name: "Create", path: "/app/dashboard/employeess/creates", pro: false, icon: PencilIcon  },
+          { name: "Search", path: "/app/dashboard/employeesss", pro: false, icon: SearchIcon  },
         ],
       },
       {

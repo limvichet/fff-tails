@@ -508,4 +508,6 @@ watch(
   padding: 8px 12px;
   font-size: 14px;
 }
+/* Fix date input */
+input[type="date"] { appearance: none; -webkit-appearance: none;}
 </style>

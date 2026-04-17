@@ -323,4 +323,6 @@ onMounted(fetchData)
   border-radius: 6px;
   padding: 6px 10px;
 }
+/* Fix date input */
+input[type="date"] { appearance: none; -webkit-appearance: none;}
 </style>

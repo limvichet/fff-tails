@@ -46,6 +46,10 @@ type Schedule = {
   loan_check_status: number
   cust_name_1: string
   cust_name_2: string
+  created_by: string
+  created_at: string
+  updated_by: string
+  updated_at: string
 }
 
 type ScheduleResponses = {
@@ -206,6 +210,8 @@ if (banks.value.length > 0) {
                 <th class="px-2 py-3 text-left text-sm">End</th>
                 <th class="px-2 py-3 text-left text-sm">Curr</th>
                 <th class="px-2 py-3 text-left text-sm">Total</th>
+                <th class="px-2 py-3 text-left text-sm">Created</th>
+                <th class="px-2 py-3 text-left text-sm">Updated</th>
                 <th class="px-2 py-3 text-left text-sm">Status</th>
                 <th class="px-2 py-3 text-left text-sm">Actions</th>
               </tr>
@@ -239,6 +245,14 @@ if (banks.value.length > 0) {
 
                 <td class="px-2 py-1 text-sm">
                   {{ s.loan_totalcash }}
+                </td>
+
+                <td class="px-2 py-1 text-sm">
+                  {{s.created_by}} - {{ formatDateForOutput(new Date(s.created_at)) }}
+                </td>
+
+                <td class="px-2 py-1 text-sm">
+                  {{s.updated_by}} - {{ formatDateForOutput(new Date(s.updated_at)) }}
                 </td>
 
                 <!-- status -->
@@ -317,23 +331,23 @@ if (banks.value.length > 0) {
           
           <section>
             <h3 class="text-xs font-uppercase tracking-wider text-blue-800 mb-3 uppercase">Information</h3>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-50 dark:bg-gray-800/50 p-4 rounded-lg">
+            <div class="grid grid-cols-5 gap-1 bg-slate-50 dark:bg-gray-800/50 p-4 rounded-lg">
               <div>
                 <label class="block text-xs font-medium text-slate-500 mb-1">Customer</label>
                 <input v-model="form.chequeschedule_cust_name_1" readonly
-                  class="w-full bg-transparent border-none text-[14px] text-slate-700 dark:text-gray-200 focus:ring-0 p-0" />
+                  class="min-w-full bg-transparent border-none text-[14px] text-slate-700 dark:text-gray-200 focus:ring-0 p-0" />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-500 mb-1">Loan</label>
                 <input v-model="form.chequeschedule_loan_id" readonly 
-                  class="w-full bg-transparent border-none text-[14px] text-slate-700 dark:text-gray-200 focus:ring-0 p-0" />
+                  class="min-w-full bg-transparent border-none text-[14px] text-slate-700 dark:text-gray-200 focus:ring-0 p-0" />
               </div>
               <div>
                 <label class="block text-xs font-medium text-slate-500 mb-1">Period</label>
                 <input v-model="form.chequeschedule_loan_peroid" readonly
-                  class="w-full bg-transparent border-none text-[14px] text-slate-700 dark:text-gray-200 focus:ring-0 p-0" />
+                  class="min-w-full bg-transparent border-none text-[14px] text-slate-700 dark:text-gray-200 focus:ring-0 p-0" />
               </div>
-              <div>
+              <div class="col-span-2">
                 <label class="block text-xs font-medium text-slate-500 mb-1">Banks</label>
                 <select v-model="form.chequeschedule_bank_id" 
                   class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all">
@@ -347,7 +361,7 @@ if (banks.value.length > 0) {
           <section>
             <h3 class="text-xs font-uppercase tracking-wider text-blue-800 mb-3 uppercase">Cheques</h3>
             <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-              <table class="w-full text-sm text-left">
+              <table class="min-w-full text-sm text-left">
                 <thead class="bg-slate-50 dark:bg-gray-800 text-slate-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
                   <tr>
                     <th class="px-4 py-3 font-semibold">#</th>

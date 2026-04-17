@@ -17,7 +17,7 @@ import ComponentCard from "@/components/common/ComponentCard.vue"
 import { ref, computed, onMounted, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useMessage } from "~/composables/useMessage"
-import { formatDate,formatDateForOutput } from '~/utils/date'
+import { formatDateForOutput } from '~/utils/date'
 
 
 const router = useRouter()
@@ -377,7 +377,7 @@ const deleteLoan = async () => {
                 <td class="px-1 py-1 text-sm text-gray-700">
                   <div class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-6">
                     <NuxtLink
-                      :to="`/app/dashboard/schedules/prints/${l.id}/print-schedule`"
+                      :to="`/app/dashboard/schedules/prints/${l.id}/print-sched`"
                       target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >

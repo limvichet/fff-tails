@@ -99,7 +99,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> =
 
   try {
     const res = await $fetch<ApiResponse>(
-      `${apiBaseUrl}/api/admin-secure/schedules/${id}/print-schedule`, {
+      `${apiBaseUrl}/api/admin-secure/schedules/${id}/print-sched`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

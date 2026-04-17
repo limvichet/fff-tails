@@ -1,35 +1,40 @@
 import { getCookie, getQuery, createError, type H3Event } from "h3"
 
-type Schedule = {
-    id:                     number;
-    loan_id:                number;
-    loan_startdate:     string;
-    loan_enddate:       string;
-    currency_en:            string;
-    loan_totalcash:         string;
-    loan_peroid:            string;
-    loan_check_status:      number;
-    cust_name_1:            string;
-    cust_name_2:            string;
-    created_by: string
-    created_at: string
-    updated_by: string
-    updated_at: string
+type ApiResponse = {
+  success: boolean
+  data: PaymentResponses
 }
-
-type ScheduleResponses = {
+type PaymentResponses = {
   current_page: number
   data: Schedule[]
   per_page: number
   total: number
   last_page: number
-  [key: string]: any // for extra fields like links, from, to, etc.
+  [key: string]: any
 }
 
-type ApiResponse = {
-  success: boolean
-  data: ScheduleResponses
+type Schedule = {
+    loan_id: number;
+    loan_startdate: string
+    loan_enddate: string
+    currency_en: string
+    loan_totalcash: string
+    loan_peroid: string
+    loantype_short: string
+    loan_check_status: string
+    cust_name_1: string
+    cust_name_2?: string
+    created_by: string
+    created_at: string
+    updated_by: string
+    updated_at: string
+    schedule_principle_payment_tt: string;
+    schedule_principle_tt: string;
+    schedule_totalpay_tt: string;
+    schedule_totalcashin_tt: string;
+    schedule_lessmoney_tt: string;
 }
+
 
 export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> => {
   const { apiBaseUrl } = useRuntimeConfig(event)
@@ -47,7 +52,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> =
 
   try {
 
-    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/schedules`, {
+    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/payments`, {
       method: "GET",
       query: {
         page: query.page || 1,

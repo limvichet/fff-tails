@@ -297,6 +297,8 @@ const updateForm = async () => {
 <style scoped>
 .label { display: block; margin-bottom: 4px; font-size: 14px; color: #555; font-weight: 500; }
 .input { width: 100%; border: 1px solid #ddd; border-radius: 6px; padding: 6px 10px; background: transparent; }
+/* Fix date input */
+input[type="date"] { appearance: none; -webkit-appearance: none;}
 .dark .label { color: #ccc; }
 .dark .input { border-color: #444; }
 </style>
