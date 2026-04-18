@@ -212,70 +212,61 @@ export const useChequeSchedule = () => {
   // CALCULATE TOTALS
   const initialized = ref(false)
   const calculateTotals = () => {
-  let lastTo = 0
-  const maxPay = period.value
+    let lastTo = 0
+    const maxPay = period.value
 
-  form.cheques.forEach((row, index) => {
-    // ✅ LOCK RULE
-    row.locked = index === 2 || index === 3
+    form.cheques.forEach((row, index) => {
+      // ✅ LOCK RULE
+      row.locked = index === 2 || index === 3
 
-    // ✅ STEP 1: set FROM
-    if (index === 0) row.from = 1
-    else if (index === 3) row.from = 1
-    else row.from = lastTo + 1
+      // ✅ STEP 1: set FROM
+      if (index === 0) row.from = 1
+      else if (index === 3) row.from = 1
+      else row.from = lastTo + 1
 
-    // ✅ STEP 2: normalize TO
-    let to = Number(row.to) || 0
+      // ✅ STEP 2: normalize TO
+      let to = Number(row.to) || 0
 
-    // ✅ SPECIAL RULE: row 4 always goes to max
-    if (index === 3) {
-      to = maxPay
-    }
-
-
-    // if empty → skip but keep flow safe
-    if (!to) {
-      row.total = ""
-      return
-    }
-
-    // ✅ enforce range
-    to = Math.max(to, row.from)   // prevent to < from
-    to = Math.min(to, maxPay)     // prevent to > maxPay
-
-    // // FIX: prevent to < from
-    // if (to < row.from) {
-    //   to = row.from
-    // }
-
-    // // FIX: prevent overflow
-    // if (to > maxPay) {
-    //   to = maxPay
-    // }
-
-    // assign back AFTER validation
-    row.to = to
-
-    // ✅ STEP 3: calculate total
-    let sum = 0
-
-    for (let i = row.from; i <= to; i++) {
-      const found = schedules.value.find(
-        s => s.schedule_paymentnumber === i
-      )
-      if (found) {
-        sum += Number(found.schedule_totalpay)
+      // ✅ SPECIAL RULE: row 4 always goes to max
+      if (index === 3) {
+        to = maxPay
       }
-    }
 
-    row.total = sum.toFixed(2)
 
-    // ✅ STEP 4: update lastTo safely
-    lastTo = to
-  })
+      // if empty → skip but keep flow safe
+      if (!to) {
+        row.total = ""
+        return
+      }
 
-  initialized.value = true
-}
+      // ✅ enforce range
+      to = Math.max(to, row.from)   // prevent to < from
+      to = Math.min(to, maxPay)     // prevent to > maxPay
+
+
+      // assign back AFTER validation
+      row.to = to
+
+      // ✅ STEP 3: calculate total
+      let sum = 0
+
+      for (let i = row.from; i <= to; i++) {
+        const found = schedules.value.find(
+          s => s.schedule_paymentnumber === i
+        )
+        if (found) {
+          sum += Number(found.schedule_totalpay)
+        }
+      }
+
+      row.total = sum.toFixed(2)
+
+      // ✅ STEP 4: update lastTo safely
+      lastTo = to
+    })
+
+    initialized.value = true
+  }
 
   // =========================
   // SUBMIT (SAVE ONLY)

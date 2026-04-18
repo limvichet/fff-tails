@@ -360,35 +360,35 @@ if (banks.value.length > 0) {
 
           <section>
             <h3 class="text-xs font-uppercase tracking-wider text-blue-800 mb-3 uppercase">Cheques</h3>
-            <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-              <table class="min-w-full text-sm text-left">
+            <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-x-auto">
+              <table class="min-w-[300px] w-full custom-scrollbar text-sm">
                 <thead class="bg-slate-50 dark:bg-gray-800 text-slate-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
                   <tr>
-                    <th class="px-4 py-3 font-semibold">#</th>
-                    <th class="px-4 py-3 font-semibold">Cheque Number</th>
-                    <th class="px-4 py-3 font-semibold text-center">From</th>
-                    <th class="px-4 py-3 font-semibold text-center">To</th>
-                    <th class="px-4 py-3 font-semibold text-right">Total</th>
+                    <th class="px-2 py-3 font-semibold">#</th>
+                    <th class="px-2 py-3 font-semibold text-left">Cheque#</th>
+                    <th class="px-2 py-3 font-semibold text-left">From</th>
+                    <th class="px-2 py-3 font-semibold text-left">To</th>
+                    <th class="px-2 py-3 font-semibold text-left">Total</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
                   <tr v-for="(c, i) in (form.cheques || [])" :key="i" :class="c.locked ? 'read-only:bg-slate-50 read-only:text-slate-500 read-only:cursor-not-allowed' : 'hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors'">
-                    <td class="px-4 py-2 font-medium text-slate-400">{{ c.cheque_order }}</td>
-                    <td class="px-4 py-2">
+                    <td class="px-2 py-2 font-medium text-slate-400">{{ c.cheque_order }}</td>
+                    <td class="px-2 py-2">
                       <input v-model="c.cheque_number" type="number" 
-                        class="w-full border-gray-200 dark:border-gray-700 dark:bg-gray-900 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" />
+                        class="w-full text-left border-gray-200 dark:border-gray-700 dark:bg-gray-900 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" />
                     </td>
-                    <td class="px-4 py-2">
-                      <input v-model.number="c.from" type="number" @input="calculateTotals"
-                        class="w-24 mx-auto block text-center border-gray-200 dark:border-gray-700 dark:bg-gray-900 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 outline-none" />
+                    <td class="px-2 py-2">
+                      <input v-model.number="c.from" type="number" @keyup.enter="calculateTotals" @blur="calculateTotals"
+                        class="w-full text-left border-gray-200 dark:border-gray-700 dark:bg-gray-900 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 outline-none" />
                     </td>
-                    <td class="px-4 py-2">
-                      <input v-model.number="c.to" type="number" @input="calculateTotals" 
-                        class="w-24 mx-auto block text-center border-gray-200 dark:border-gray-700 dark:bg-gray-900 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 outline-none" />
+                    <td class="px-2 py-2">
+                      <input v-model.number="c.to" type="number" @keyup.enter="calculateTotals" @blur="calculateTotals"
+                        class="w-full text-left border-gray-200 dark:border-gray-700 dark:bg-gray-900 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 outline-none" />
                     </td>
-                    <td class="px-4 py-2">
+                    <td class="px-2 py-2">
                       <input v-model="c.total" readonly 
-                        class="w-full text-right text-blue-600 dark:text-blue-400 bg-transparent border-none outline-none cursor-default" />
+                        class="w-full text-left text-blue-600 dark:text-blue-400 bg-transparent border-none outline-none cursor-default" />
                     </td>
                   </tr>
                 </tbody>
@@ -426,13 +426,13 @@ if (banks.value.length > 0) {
   color: #555;
 }
 
-.input {
+/* .input {
   width: 100%;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 14px;
-}
+} */
 
 .text-red-500 {
   color: #f56565;
