@@ -1,6 +1,7 @@
 import { ref, reactive } from "vue"
 import { useCustomToast } from '~/composables/useCustomToast';
 const { showToast } = useCustomToast();
+import { formatNumber } from "@/utils/number"
 
 
 type Schedule = {
@@ -259,7 +260,11 @@ export const useChequeSchedule = () => {
         }
       }
 
-      row.total = sum.toFixed(2)
+      // row.total = sum.toFixed(2)
+      row.total = new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(sum)
 
       // ✅ STEP 4: update lastTo safely
       lastTo = to
@@ -283,7 +288,7 @@ export const useChequeSchedule = () => {
           cheque_number: c.cheque_number,
           schedule_paymentnumber_from: c.from,
           schedule_paymentnumber_to: c.to,
-          schedule_totalpay: c.total
+          schedule_totalpay: Number(c.total.replace(/,/g, "") || 0)
         }))
       }
 

@@ -249,23 +249,23 @@ onMounted(fetchData)
                             </td>
 
                             <td class="px-3 py-2 text-right">
-                                {{ (s.schedule_interest_rate) }}
+                                {{ formatNumber(Number(s.schedule_interest_rate || 0)) }}
                             </td>
 
                             <td class="px-3 py-2 text-right">
-                                {{ (s.schedule_outstanding) }}
+                                {{ formatNumber(Number(s.schedule_outstanding || 0)) }}
                             </td>
 
                             <td class="px-3 py-2 text-right">
-                                {{ (s.schedule_principle) }}
+                                {{ formatNumber(Number(s.schedule_principle || 0)) }}
                             </td>
 
                             <td class="px-3 py-2 text-right">
-                                {{ (s.schedule_interest) }}
+                                {{ formatNumber(Number(s.schedule_interest || 0)) }}
                             </td>
 
                             <td class="px-3 py-2 text-right text-blue-600">
-                                {{ (s.schedule_totalpay) }}
+                                {{ formatNumber(Number(s.schedule_totalpay || 0)) }}
                             </td>
                         </tr>
 

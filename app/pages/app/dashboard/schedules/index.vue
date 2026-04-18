@@ -386,9 +386,9 @@ if (banks.value.length > 0) {
                       <input v-model.number="c.to" type="number" @keyup.enter="calculateTotals" @blur="calculateTotals"
                         class="w-full text-left border-gray-200 dark:border-gray-700 dark:bg-gray-900 rounded-md px-3 py-1.5 focus:ring-2 focus:ring-blue-500 outline-none" />
                     </td>
-                    <td class="px-2 py-2">
-                      <input v-model="c.total" readonly 
-                        class="w-full text-left text-blue-600 dark:text-blue-400 bg-transparent border-none outline-none cursor-default" />
+                    <td class="px-2 py-2"> {{ (c.total) }}
+                      <!-- <input v-model="c.total" readonly 
+                        class="w-full text-left text-blue-600 dark:text-blue-400 bg-transparent border-none outline-none cursor-default" /> -->
                     </td>
                   </tr>
                 </tbody>
