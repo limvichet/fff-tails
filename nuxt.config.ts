@@ -44,10 +44,12 @@ export default defineNuxtConfig({
       public: { siteUrl: process.env.NUXT_PUBLIC_SITE_URL }
     },
   },
+  //ssr: true,
   nitro: {
     prerender: {
       failOnError: false,
-    }
+    },
+    //preset: 'node-server'
   },
   ogImage: {
     enabled: true,
