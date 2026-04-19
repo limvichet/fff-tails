@@ -964,8 +964,7 @@ console.log(overdraft)
       12: () => generateM12(form),
       13: () => generateM13(form),
       14: () => generateM14(form),
-
-      // 31: () => generateM31(form),
+      31: () => generateM31(form),
       // 32: () => generateW32(form),
       // 33: () => generateD33(form),
       // 14: () => {
@@ -986,9 +985,9 @@ console.log(overdraft)
   const reroundMap: Record<number, () => void> = {
     11: reroundDownM,
     12: reroundDownM,
-    13: reroundDownF,
+    13: reroundDownM,
     14: reroundDownM,
-    // 31: reroundDownF,
+    31: reroundDownM,
     // 33: reroundDownF,
   }
   const handleReround = (form: FormType) => {
