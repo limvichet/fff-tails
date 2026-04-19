@@ -38,7 +38,7 @@ const perPage = 10
 // ----------------------
 // API (ONLY SOURCE OF DATA)
 // ----------------------
-const { data, pending, error, refresh } = await useAsyncData(
+const { data, pending, error, refresh } = await useLazyAsyncData(
   "customers",
   () =>
     $fetch<any>("/api/admin-secure/customers", {
@@ -48,7 +48,6 @@ const { data, pending, error, refresh } = await useAsyncData(
       },
     }),
   {
-    lazy: true,
     server: false,
     watch: [page, searchQuery],
   }

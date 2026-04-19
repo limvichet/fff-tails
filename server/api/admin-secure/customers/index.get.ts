@@ -56,7 +56,8 @@ type ApiResponse = {
   data: CustomerResponses
 }
 
-export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> => {
+// export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> => {
+export default defineEventHandler(async (event) => {
   const { apiBaseUrl } = useRuntimeConfig(event)
 
   const token = getCookie(event, "token")
