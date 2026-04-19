@@ -85,10 +85,10 @@ export default defineEventHandler(async (event) => {
 
     const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/customers`, {
       method: "GET",
-      query: {
+     // query: {
         //page: 1,
        // param,
-      },
+      //},
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/json",
