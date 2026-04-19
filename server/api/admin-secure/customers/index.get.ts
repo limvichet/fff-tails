@@ -1,4 +1,4 @@
-import { getCookie, getQuery, createError, type H3Event } from "h3"
+import { getCookie, getQuery, createError } from "h3"
 
 type Employee = {
   id: number;
@@ -69,16 +69,16 @@ export default defineEventHandler(async (event) => {
   }
 
   // Get query params (?page=1&keyword=abc)
-  const query = getQuery(event)
+  //const query = getQuery(event)
 
   try {
 
     const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/customers`, {
       method: "GET",
-      query: {
-        page: query.page || 1,
-        param: query.param || undefined,
-      },
+      // query: {
+      //   page: query.page || 1,
+      //   param: query.param || undefined,
+      // },
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/json",
