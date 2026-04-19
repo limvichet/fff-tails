@@ -86,7 +86,7 @@ export default defineEventHandler(async (event) => {
     const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/customers`, {
       method: "GET",
       query: {
-        page,
+        //page: 1,
         param,
       },
       headers: {
