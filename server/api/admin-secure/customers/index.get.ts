@@ -87,7 +87,7 @@ export default defineEventHandler(async (event) => {
       method: "GET",
       query: {
         //page: 1,
-        param,
+       // param,
       },
       headers: {
         Authorization: `Bearer ${token}`,
