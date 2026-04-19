@@ -249,6 +249,74 @@ export const useSchedule = () => {
   }
 
 
+  const generateM14 = (form: FormType) => {
+    schedules.value = []
+
+    const loan_period = form.loan_peroid
+    const loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+    const overdraft = Number(form.loan_over_draft.replace(/,/g, "") || 0)
+console.log(overdraft)
+    for (let i = 0; i < loan_period; i++) {
+      const baseStart = new Date(formatDateForInput(form.loan_startdate))
+
+      const newStartDate = new Date(baseStart)
+      newStartDate.setMonth(newStartDate.getMonth() + i)
+
+      let newEndDate: Date
+
+      if (form.loan_first_paid_date) {
+        newEndDate = new Date(formatDateForInput(form.loan_first_paid_date))
+        newEndDate.setMonth(newEndDate.getMonth() + i)
+      } else {
+        newEndDate = new Date(baseStart) // ✅ fresh copy
+        newEndDate.setMonth(newEndDate.getMonth() + i + 1) // ✅ FIX HERE
+        newEndDate.setDate(newEndDate.getDate() - 1) // 🔥 important (like jQuery)
+      }
+
+
+      // END DATE (end of month period)
+      // const newEndDate = new Date(newStartDate)
+      // newEndDate.setMonth(newEndDate.getMonth() + 1)
+      // newEndDate.setDate(newEndDate.getDate() - 1)
+
+      // TOTAL DAYS
+      const totalDays =
+        Math.round(
+          (newEndDate.getTime() - newStartDate.getTime()) /
+            (1000 * 60 * 60 * 24)
+        ) + 1
+
+      // VALUES
+      const schedule_outstanding = 0
+      const schedule_over_draft = 0
+      const schedule_principle = 0
+
+      // 🔥 Interest based on overdraft
+      const schedule_interest =
+        fixDouble((overdraft * loan_interest_rate) / 100, 2)
+
+      const schedule_totalpay = schedule_interest
+
+      schedules.value.push({
+        schedule_paymentnumber: i + 1,
+        schedule_startdate: newStartDate,
+        schedule_enddate: newEndDate,
+        schedule_totaldays: totalDays,
+        schedule_interest_rate: loan_interest_rate,
+        schedule_outstanding,
+        schedule_over_draft: overdraft,
+        schedule_principle,
+        schedule_interest,
+        schedule_totalpay,
+      })
+    }
+
+    recalculcateDateM()
+    //reculculateNClean()
+    reculculateFixOutstandingM14()
+  }
+
+
   /* generateM31 */
   const generateM31 = (form: FormType) => {
     schedules.value = []
@@ -695,6 +763,31 @@ export const useSchedule = () => {
     }
   }
 
+  /* if last record adjust outstanding fix it */
+  const reculculateFixOutstandingM14 = () => {
+
+    const lastRow = schedules.value.at(-1)
+    if (!lastRow) return
+
+    const interestRate = Number(lastRow.schedule_interest_rate || 0)
+    const overdraft = Number(lastRow.schedule_over_draft || 0)
+    const principle = Number(lastRow.schedule_principle || 0)
+
+    if (overdraft > principle) {
+      // lastRow.schedule_principle = overdraft
+
+      lastRow.schedule_interest = fixDouble(
+        overdraft * (interestRate / 100),
+        2
+      )
+
+      lastRow.schedule_totalpay = fixDouble(
+        overdraft + (overdraft * (interestRate / 100)),
+        2
+      )
+    }
+  }
+
 
 
   /* reroundDownM original */
@@ -870,16 +963,18 @@ export const useSchedule = () => {
       11: () => generateM11(form),
       12: () => generateM12(form),
       13: () => generateM13(form),
-      31: () => generateM31(form),
-      32: () => generateW32(form),
-      33: () => generateD33(form),
-      14: () => {
-        if (Number(form.loan_over_draft) === 0) {
-          alert("Loanrecord has no over draft")
-        } else {
-          generateM11(form)
-        }
-      },
+      14: () => generateM14(form),
+
+      // 31: () => generateM31(form),
+      // 32: () => generateW32(form),
+      // 33: () => generateD33(form),
+      // 14: () => {
+      //   if (Number(form.loan_over_draft) === 0) {
+      //     alert("Loanrecord has no over draft")
+      //   } else {
+      //     generateM11(form)
+      //   }
+      // },
     }
 
     const generator = generators[Number(form.loantype_id)]
@@ -893,8 +988,8 @@ export const useSchedule = () => {
     12: reroundDownM,
     13: reroundDownF,
     14: reroundDownM,
-    31: reroundDownF,
-    33: reroundDownF,
+    // 31: reroundDownF,
+    // 33: reroundDownF,
   }
   const handleReround = (form: FormType) => {
     try {

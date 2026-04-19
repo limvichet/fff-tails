@@ -31,10 +31,14 @@ const schedules = ref<Schedule[]>([])
 import { usePagination } from "@/composables/usePagination"
 const {
   currentPage,
+  perPage,
   totalPages,
-  paginatedData: paginatedSchedules,
+  pageInfo,
   nextPage,
-  prevPage
+  prevPage,
+  getIndex,
+  totalRecords,
+  paginatedData: paginatedSchedules,
 } = usePagination(schedules, 10)
 
 // --------------------
@@ -233,7 +237,7 @@ onMounted(fetchData)
                         <tr v-for="(s, i) in paginatedSchedules" :key="i"
                             class="hover:bg-blue-50 dark:hover:bg-white/5 transition">
                             <td class="px-3 py-2 font-medium text-gray-500">
-                                {{ Number(i) + 1 }}
+                                {{ getIndex(i) }}
                             </td>
 
                             <td class="px-3 py-2">
@@ -291,7 +295,7 @@ onMounted(fetchData)
         </button>
 
         <span class="text-sm">
-          Page {{ currentPage }} / {{ totalPages }}
+          Page {{ currentPage }} / {{ totalPages }}  | Total Records: {{ totalRecords }}
         </span>
 
         <button @click="nextPage" :disabled="currentPage === totalPages"

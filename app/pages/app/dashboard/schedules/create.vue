@@ -57,7 +57,7 @@ type Loanrecord = {
   loan_interest_rate: string;
   loan_peroid: number | null;
   loantype_id: number | null;
-  loan_over_draft?: string;
+  loan_over_draft: string | null;
   customer: Customer;
   currency: Currency | null;
   loantype: Loantype | null;
@@ -456,9 +456,9 @@ watch(
     <div v-if="form.loan_id > 0" class="flex justify-between items-center mt-4">
 
       <!-- LEFT: Pagination -->
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1">
         <button @click="prevPage" :disabled="currentPage === 1"
-          class="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50">
+          class="px-2 py-1 bg-blue-500 text-white rounded disabled:opacity-50">
           Prev
         </button>
 
@@ -467,21 +467,21 @@ watch(
         </span>
 
         <button @click="nextPage" :disabled="currentPage === totalPages"
-          class="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50">
+          class="px-2 py-1 bg-blue-500 text-white rounded disabled:opacity-50">
           Next
         </button>
       </div>
 
       <!-- RIGHT: Actions -->
-      <div class="flex gap-2">
+      <div class="flex gap-1">
         <button @click="handleReround(form)" :disabled="reroundLoading || reroundDone"
-          class="px-6 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500">
-  {{ reroundLoading ? "Calculating..." : reroundDone ? "Reround Done" : "Reround Down" }}
+          class="px-3 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500">
+          {{ reroundLoading ? "Calculating..." : reroundDone ? "Done" : "Reround" }}
         </button>
 
         <button @click="submitForm" :disabled="loading"
-          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-          {{ loading ? "Saving..." : "Create Schedule" }}
+          class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+          {{ loading ? "Saving..." : "Create" }}
         </button>
       </div>
 
