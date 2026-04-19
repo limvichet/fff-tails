@@ -99,7 +99,10 @@ const lastPageValue = ref(1)
 
 
 // Fetch Customers
-const fetchCustomers = async () => {
+const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms))
+
+const fetchCustomers = async (retry = 0) => {
   loading.value = true
   errorMsg.value = null
 
@@ -112,23 +115,50 @@ const fetchCustomers = async () => {
           page: page.value,
           param: searchQuery.value || undefined,
         },
+        timeout: 10000, // optional safety (10s)
       }
     )
 
-    customers.value = Array.isArray(res.data.data) ? res.data.data : []
+    customers.value = Array.isArray(res.data.data)
+      ? res.data.data
+      : []
+
     total.value = res.data.total ?? 0
     lastPageValue.value = res.data.last_page ?? 1
+
+    return res
   } catch (err: any) {
-    errorMsg.value = err?.statusMessage || "Failed to fetch customers"
+    console.error(`Fetch failed (attempt ${retry + 1})`, err)
+
+    // retry logic (max 3 attempts)
+    if (retry < 2) {
+      await sleep(1000 * (retry + 1)) // 1s, 2s delay
+      return fetchCustomers(retry + 1)
+    }
+
+    errorMsg.value =
+      err?.statusMessage ||
+      err?.message ||
+      "Failed to fetch customers"
+
     customers.value = []
     total.value = 0
     lastPageValue.value = 1
+
+    throw err
   } finally {
     loading.value = false
   }
 }
 
-onMounted(fetchCustomers)
+onMounted(async () => {
+  loading.value = true
+  try {
+    await fetchCustomers()
+  } finally {
+    loading.value = false
+  }
+})
 
 // Computed
 const paginated = computed(() => customers.value)
