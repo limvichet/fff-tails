@@ -69,29 +69,22 @@ export default defineEventHandler(async (event) => {
   }
 
   // Get query params (?page=1&keyword=abc)
-  const query = getQuery(event)
+  const q = getQuery(event)
 
-  const page =
-    query.page && !isNaN(Number(query.page))
-      ? Number(query.page)
-      : 1
-
-  const param =
-    typeof query.param === "string" && query.param.trim()
-      ? query.param
-      : undefined
+  const query = {
+    page: Number(q.page) > 0 ? Number(q.page) : 1,
+    ...(q.param ? { param: String(q.param).trim() } : {}),
+  }
       
   try {
 
     const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/customers`, {
       method: "GET",
-     // query: {
-        //page: 1,
-       // param,
-      //},
+      query,
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/json",
+        "Content-Type": "application/json",
       },
     })
 
