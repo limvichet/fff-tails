@@ -3,93 +3,167 @@ definePageMeta({
   layout: "auth",
   requiresAuth: true,
   breadcrumb: { title: "Customers", subTitle: "Search" },
-  ssr: false,
+  ssr: false
 })
 
-useHead({
-  title: "Search customers",
-  meta: [{ name: "customers", content: "search customers" }],
-})
+  useHead({
+    title: "Search customers",
+    meta: [{ name: "customers", content: "search customers" }],
+  })
 
 import ComponentCard from "@/components/common/ComponentCard.vue"
-import { ref, computed, watch } from "vue"
+
+import { ref, computed, onMounted, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useMessage } from "~/composables/useMessage"
-import { formatDateForOutput } from "~/utils/date"
-import { PencilIcon, TrashIcon } from "@/icons"
+import { formatDateForOutput } from '~/utils/date'
+import { PencilIcon, TrashIcon} from "@/icons";
 
 const router = useRouter()
-const { errorMsg, success } = useMessage()
-
-// ----------------------
-// Modal
-// ----------------------
+const { errorMsg, successMsg, success } = useMessage()
 const isDeleteModal = ref(false)
 const selectedCustomerId = ref<number | null>(null)
 
-// ----------------------
-// Search & Pagination
-// ----------------------
+successMsg.value = null
+errorMsg.value = null
+
+// type
+type Employee = {
+  id: number;
+  surname: string;
+  first_name: string;
+  full_name: string;
+}
+
+type Createdby = {
+  id: number;
+  emp_id: number;
+  employee: Employee;
+}
+
+type Updatedby = {
+  id: number;
+  emp_id: number;
+  employee: Employee;
+}
+
+type Nametitle = {
+  id: number;
+  nametitle_kh: string;
+}
+
+type Customer = {
+  id:           number;
+  cust_title_1?: number;
+  nametitle1?: Nametitle;
+  cust_name_1:  string;
+  cust_dob_1:   null | string;
+  cust_phone_1: string;
+  cust_title_2?: number;
+  nametitle2?: Nametitle;
+  cust_name_2:  string;
+  created_by: number;
+  created_at: string;
+  createdby: Createdby;
+  updated_by: string;
+  updated_at: string;
+  updatedby: Updatedby;
+}
+
+type CustomerResponses = {
+  current_page: number
+  data: Customer[]
+  per_page: number
+  total: number
+  last_page: number
+  [key: string]: any // for extra fields like links, from, to, etc.
+}
+
+type ApiResponse = {
+  success: boolean
+  data: CustomerResponses
+}
+
+
+// State
+const customers = ref<Customer[]>([])
+const loading = ref(false)
+
 const searchInput = ref("")
 const searchQuery = ref("")
+
 const page = ref(1)
 const perPage = 10
+const total = ref(0)
+const lastPageValue = ref(1)
 
-// ----------------------
-// API (ONLY SOURCE OF DATA)
-// ----------------------
-const { data, pending, error, refresh } = await useAsyncData(
-  "customers",
-  () =>
-    $fetch<any>("/api/admin-secure/customers", {
-      query: {
-        page: page.value,
-        param: searchQuery.value || undefined,
-      },
-    }),
-  {
-    lazy: true,
-    server: false,
-    watch: [page, searchQuery],
+
+// Fetch Customers
+const fetchCustomers = async () => {
+  loading.value = true
+  errorMsg.value = null
+
+  try {
+    const res = await $fetch<ApiResponse>(
+      "/api/admin-secure/customers",
+      {
+        method: "GET",
+        query: {
+          page: page.value,
+          param: searchQuery.value || undefined,
+        },
+      }
+    )
+
+    customers.value = Array.isArray(res.data.data) ? res.data.data : []
+    total.value = res.data.total ?? 0
+    lastPageValue.value = res.data.last_page ?? 1
+  } catch (err: any) {
+    errorMsg.value = err?.statusMessage || "Failed to fetch customers"
+    customers.value = []
+    total.value = 0
+    lastPageValue.value = 1
+  } finally {
+    loading.value = false
   }
-)
+}
 
-// ----------------------
-// Derived state (NO duplication)
-// ----------------------
-const customers = computed(() => data.value?.data?.data ?? [])
-const total = computed(() => data.value?.data?.total ?? 0)
-const lastPageValue = computed(() => data.value?.data?.last_page ?? 1)
+onMounted(async () => {
+  await fetchCustomers()
+})
+
+// Computed
 const paginated = computed(() => customers.value)
 
-// ----------------------
-// Search debounce
-// ----------------------
-let debounce: any
+// Search (debounce)
+let debounceTimeout: ReturnType<typeof setTimeout> | null = null
 
 watch(searchInput, (val) => {
-  clearTimeout(debounce)
+  if (debounceTimeout) clearTimeout(debounceTimeout)
 
-  debounce = setTimeout(() => {
+  debounceTimeout = setTimeout(() => {
     searchQuery.value = val
     page.value = 1
+    fetchCustomers()
   }, 400)
 })
 
-// ----------------------
 // Pagination
-// ----------------------
 const prevPage = () => {
-  if (page.value > 1) page.value--
+  if (page.value > 1) {
+    page.value--
+    fetchCustomers()
+  }
 }
 
 const nextPage = () => {
-  if (page.value < lastPageValue.value) page.value++
+  if (page.value < lastPageValue.value) {
+    page.value++
+    fetchCustomers()
+  }
 }
 
-// ----------------------
-// Actions
-// ----------------------
+// Edit
 const editCustomer = (id: number) => {
   router.push(`/app/dashboard/customers/${id}`)
 }
@@ -104,16 +178,12 @@ const closeModal = () => {
   selectedCustomerId.value = null
 }
 
-// ESC close modal
-if (process.client) {
+onMounted(() => {
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeModal()
   })
-}
+})
 
-// ----------------------
-// Delete
-// ----------------------
 const deleteCustomer = async () => {
   if (!selectedCustomerId.value) return
 
@@ -123,13 +193,17 @@ const deleteCustomer = async () => {
     })
 
     closeModal()
-    refresh() // reload data
+    fetchCustomers()
     success("Customer deleted successfully!")
   } catch (err) {
     errorMsg.value = "Delete failed"
   }
 }
+
+
+
 </script>
+
 <template>
   <div class="grid grid-cols-1">
 
@@ -155,21 +229,32 @@ const deleteCustomer = async () => {
         <div v-if="errorMsg" class="mb-3 p-2 rounded bg-red-500/20 text-red-300 text-sm">
           {{ errorMsg }}
         </div>
+        <div v-if="successMsg" class="mb-3 p-2 rounded bg-emerald-500/20 text-emerald-300 text-sm">
+          {{ successMsg }}
+        </div>
 
         <!-- Loading -->
-      <div v-if="pending" class="text-center py-6 text-gray-400">
-        Loading...
-      </div>
-
-      <div v-else-if="error" class="text-center py-6 text-red-400">
-        Failed to load data
-      </div>
+        <div v-if="loading" class="text-center text-gray-400 py-6">
+          Loading...
+        </div>
 
         <!-- Table -->
         <div v-else
           class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
           <div class="max-w-full overflow-x-auto custom-scrollbar"> 
             <table class="min-w-full">
+              <!-- <thead>
+                <tr class="border-b border-gray-200 dark:border-gray-700">
+                  <th class="px-4 py-2 text-sm font-semibold text-left w-[5%]">#</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[15%] w-[30%]">Name1</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[15%] w-[30%]">Name2</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[15%]">Phone1</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[0%] hidden sm:table-cell">DOB</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[0%] hidden sm:table-cell">Created At</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[0%] hidden sm:table-cell">Updated At</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-center sm:w-[25%] w-[20%]">Actions</th>
+                </tr>
+              </thead> -->
               <thead>
                 <tr class="border-b border-gray-200 dark:border-gray-700">
                   <th class="px-4 py-2 text-sm font-semibold text-left w-[5%]">#</th>
