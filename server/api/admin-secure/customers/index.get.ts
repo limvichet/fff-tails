@@ -70,12 +70,17 @@ export default defineEventHandler(async (event) => {
 
   // Get query params (?page=1&keyword=abc)
   const query = getQuery(event)
-  const page = Number(query.page) > 0 ? Number(query.page) : 1
+
+  const page =
+    query.page && !isNaN(Number(query.page))
+      ? Number(query.page)
+      : 1
+
   const param =
-    typeof query.param === "string" && query.param.trim() !== ""
+    typeof query.param === "string" && query.param.trim()
       ? query.param
       : undefined
-
+      
   try {
 
     const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/customers`, {

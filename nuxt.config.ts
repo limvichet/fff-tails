@@ -32,18 +32,24 @@ export default defineNuxtConfig({
       ]
     }
   },
-  $development: {
+  // $development: {
     runtimeConfig: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
-      public: { siteUrl: process.env.NUXT_PUBLIC_SITE_URL }
+      public: { 
+        siteUrl: process.env.NUXT_PUBLIC_SITE_URL,
+        apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL
+      }
     },
-  },
-  $production: {
-    runtimeConfig: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
-      public: { siteUrl: process.env.NUXT_PUBLIC_SITE_URL }
-    },
-  },
+  // },
+  // $production: {
+  //   runtimeConfig: {
+  //     apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
+  //     public: { 
+  //       siteUrl: process.env.NUXT_PUBLIC_SITE_URL,
+  //       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL 
+  //     }
+  //   },
+  // },
   //ssr: true,
   nitro: {
     prerender: {
