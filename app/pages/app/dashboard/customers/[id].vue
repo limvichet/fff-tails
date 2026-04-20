@@ -121,7 +121,7 @@
 
   const customer = computed(() => data.value?.data ?? null)
 
-  console.log("Fetched customer:", customer.value)
+  // console.log("Fetched customer:", customer.value)
 
   /* IMAGE HANDLER (Reusable) */
   const handleImageChange = (

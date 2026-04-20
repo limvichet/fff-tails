@@ -376,6 +376,7 @@ const deleteLoan = async () => {
                 <!-- contacts -->
                 <td class="px-1 py-1 text-sm text-gray-700">
                   <div class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-6">
+
                     <NuxtLink
                       :to="`/app/dashboard/schedules/prints/${l.id}/print-sched`"
                       target="_blank"
@@ -383,42 +384,37 @@ const deleteLoan = async () => {
                     >
                       Sched
                     </NuxtLink>
-                    <button
-                      class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
-                    >
-                       ReceipCash
-                    </button>
-                    <button
-                      class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
-                    >
-                       Contract
-                    </button>
-                    <button
+
+                    <!-- <button
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        ATM
-                    </button>
-                    
-                    <button
+                    </button> -->
+
+                    <!-- <button
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        LandLayout
-                    </button>
-                    <button
+                    </button> -->
+
+                    <!-- <button
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        Sched2
-                    </button>
-                                        <button
+                    </button> -->
+
+                    <!-- <button
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        ReceipCash2
-                    </button>
-                    <button
+                    </button> -->
+
+                    <!-- <button
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        Contract2
-                    </button>
+                    </button> -->
+                    
                   </div>
                 </td>
 

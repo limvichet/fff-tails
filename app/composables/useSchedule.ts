@@ -255,7 +255,7 @@ export const useSchedule = () => {
     const loan_period = form.loan_peroid
     const loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
     const overdraft = Number(form.loan_over_draft.replace(/,/g, "") || 0)
-console.log(overdraft)
+
     for (let i = 0; i < loan_period; i++) {
       const baseStart = new Date(formatDateForInput(form.loan_startdate))
 
@@ -383,7 +383,7 @@ console.log(overdraft)
 
     // POST PROCESS (same as yours)
     recalculcateDateM()
-    reculculateNClean()
+    //reculculateNClean()
     reculculateFixOutstanding()
   }
 
@@ -526,8 +526,8 @@ console.log(overdraft)
     }
 
     // POST PROCESS
-    reculculateNClean()
-    reculculateFixOutstanding()
+    //reculculateNClean()
+    //reculculateFixOutstanding()
   }
 
 
@@ -595,7 +595,7 @@ console.log(overdraft)
     }
 
     // POST PROCESS
-    reculculateNClean()
+    // reculculateNClean()
     reculculateFixOutstanding()
   }
 
@@ -966,8 +966,9 @@ console.log(overdraft)
       13: () => generateM13(form),
       14: () => generateM14(form),
       31: () => generateM31(form),
+      33: () => generateD33(form),
+      34: () => generateD34(form),
       // 32: () => generateW32(form),
-      // 33: () => generateD33(form),
       // 14: () => {
       //   if (Number(form.loan_over_draft) === 0) {
       //     alert("Loanrecord has no over draft")
@@ -989,7 +990,6 @@ console.log(overdraft)
     13: reroundDownM,
     14: reroundDownM,
     31: reroundDownM,
-    // 33: reroundDownF,
   }
   const handleReround = (form: FormType) => {
     try {

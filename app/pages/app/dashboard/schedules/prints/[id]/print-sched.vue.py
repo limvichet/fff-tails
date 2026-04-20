@@ -213,7 +213,7 @@ const waitImageLoad = () => {
         <img ref="logoRef" src="/imgs/logo-48.png" class="logo" />
         <div class="header-text">
           <div class="title">{{ capital?.organization }}</div>
-          <div class="subtitle">{{ capital?.title_pay }}</div>
+          <div class="subtitle">កាលវិភាគសងប្រាក់</div>
         </div>
       </div>
 
@@ -236,16 +236,16 @@ const waitImageLoad = () => {
     </div>
 
     <!-- CUSTOMER -->
-    <table class="table mt">
+    <table class="table">
       <tr>
         <td class="label">អតិថិជន</td>
         <td>
           {{ loanrecord?.customer?.nametitle1?.nametitle_kh }}
           {{ loanrecord?.customer?.cust_name_1 }}
         </td>
-        <td v-if="loanrecord?.customer?.cust_name_2">
-          {{ loanrecord?.customer?.nametitle2?.nametitle_kh }}
-          {{ loanrecord?.customer?.cust_name_2 }}
+        <td>
+          {{ loanrecord?.customer?.nametitle2?.nametitle_kh || " "}}
+          {{ loanrecord?.customer?.cust_name_2 || " "}}
         </td>
       </tr>
 
@@ -263,7 +263,7 @@ const waitImageLoad = () => {
     </table>
 
     <!-- SCHEDULE -->
-    <table class="table border mt">
+    <table class="table mt">
       <thead>
         <tr class="bold left">
           <td>ល.រ</td>
@@ -281,10 +281,10 @@ const waitImageLoad = () => {
 
       <tbody>
         <tr v-for="s in schedules" :key="s.id">
-          <td>{{ s.schedule_paymentnumber }}</td>
+          <td class="center">{{ s.schedule_paymentnumber }}</td>
           <td>{{ formatDate(s.schedule_principle_date) }}</td>
           <td>{{ formatMonthYear(s.schedule_principle_date) }}</td>
-          <td>{{ s.schedule_outstanding }}</td>
+          <td>{{ s.schedule_outstanding || 0 }}</td>
           <td>{{ s.schedule_principle }}</td>
           <td>{{ s.schedule_interest }}</td>
           <td>{{ s.schedule_totalpay }}</td>
@@ -296,7 +296,7 @@ const waitImageLoad = () => {
 
       <tfoot>
         <tr class="bold">
-          <td colspan="4" class="center">សរុប</td>
+          <td colspan="4" class="center bold">សរុប</td>
           <td>{{ formatNumber(sumSchedule) }}</td>
           <td colspan="5"></td>
         </tr>
@@ -304,7 +304,7 @@ const waitImageLoad = () => {
     </table>
 
     <!-- NOTE -->
-    <div class="row mt">
+    <div class="row mt note">
       <div class="col-2">កំណត់សម្គាល់</div>
       <div class="col-10">
         {{ loanrecord?.loan_note || '........................' }}
@@ -312,7 +312,7 @@ const waitImageLoad = () => {
     </div>
 
     <!-- SIGN DATE -->
-    <div class="center mt">
+    <div class="center l-space mt">
       <div>{{ invoice?.datesignChhankitek }}</div>
       <div>{{ invoice?.datesignSoriyakitek }}</div>
     </div>
@@ -320,17 +320,23 @@ const waitImageLoad = () => {
     <!-- SIGNATURE -->
     <div class="row center mt">
       <div class="col-3">
+        <div>ស្នាមម្រាមដៃ</div>
         <div>សាក្សី</div>
+        <div class="v-space"></div>
         <div class="sign">....................</div>
       </div>
 
       <div class="col-3">
+        <div>ស្នាមម្រាមដៃ</div>
         <div>អ្នកធានា</div>
+        <div class="v-space"></div>
         <div class="sign">{{ loanrecord?.guarantor?.cust_name_1 || '........' }}</div>
       </div>
 
       <div class="col-3">
+        <div>ស្នាមម្រាមដៃ</div>
         <div>អ្នកខ្ចីប្រាក់</div>
+        <div class="v-space"></div>
         <div class="sign">
           {{ loanrecord?.customer?.cust_name_1 }}
           {{ loanrecord?.customer?.cust_name_2 }}
@@ -338,7 +344,9 @@ const waitImageLoad = () => {
       </div>
 
       <div class="col-3">
+        <div>ស្នាមម្រាមដៃ</div>
         <div>ម្ចាស់ប្រាក់</div>
+        <div class="v-space"></div>
         <div class="sign">{{ capital?.name }}</div>
       </div>
     </div>
@@ -346,9 +354,8 @@ const waitImageLoad = () => {
   </div>
 </template>
 
-
 <style scoped>
-
+/* 1. FONTS & BASE */
 @font-face {
   font-family: 'Siemreap';
   src: url('/fonts/Siemreap.ttf') format('truetype');
@@ -356,108 +363,109 @@ const waitImageLoad = () => {
   font-style: normal;
 }
 
+* {
+  box-sizing: border-box;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
 
 body {
   font-family: "Siemreap", Arial, sans-serif;
-  font-size: 11px;
+  font-size: 9pt;
+  margin: 0;
+  padding: 0;
 }
 
+/* 2. SCREEN PREVIEW */
 .page {
-  width: 100%;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 15mm 10mm;
+  margin: 20px auto;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* Layout */
-.row {
-  display: flex;
-  margin-bottom: 10px;
+/* 3. PRINT CONFIGURATION */
+@page {
+  size: A4;
+  /* Defining margins here means the .page padding in print should be 0 */
+  margin: 20mm 12.5mm 25mm 12.5mm; 
+
+  @bottom-right {
+    content: counter(page) " / " counter(pages);
+    font-family: "Siemreap", sans-serif;
+    font-size: 8pt;
+  }
 }
 
-.col-2 { width: 20%; }
-.col-3 { width: 25%; }
-.col-4 { width: 33.33%; }
-.col-8 { width: 66.66%; }
-.col-10 { width: 80%; }
+@media print {
+  html, body {
+    width: 210mm;
+    background: #fff;
+  }
 
-/* Header */
-.header-left {
-  display: flex;
-  align-items: center;
+  .page {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important; /* Let @page handle the margins */
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Typography for Print */
+  body {
+    font-size: 11pt;
+    line-height: 1.4;
+    color: #000;
+  }
 }
 
-.logo {
-  width: 60px;
-  height: 60px;
-}
-
-.header-text {
-  margin-left: 10px;
-}
-
-.title {
-  font-weight: bold;
-}
-
-.subtitle {
-  font-weight: bold;
-}
-
-/* Table */
+/* 4. TABLE STYLES */
 .table {
   width: 100%;
   border-collapse: collapse;
 }
 
 .table td {
-  padding: 5px 0;
-}
-
-.table tr {
- border-bottom:1px #ddd solid;
-}
-
-/* Utility */
-.right {
-  text-align: right;
-}
-
-.letf {
-  text-align: left;
-}
-
-.center {
-  text-align: center;
-}
-
-.bold {
-  font-weight: bold;
-}
-
-.mt {
-  margin-top: 15px;
-}
-
-.sign {
-  margin-top: 20px;
-}
-
-/* Print */
-@page {
-  size: A4;
-  margin: 15mm;
+  padding: 6px 2px;
+  vertical-align: top;
+  border-bottom: 1px solid #ddd;
 }
 
 @media print {
-  * {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+  tfoot, .note, .table tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
-
-  html, body {
-    width: 210mm;
-  }
-
-  .page {
-    width: 100%;
+  .table thead {
+    display: table-header-group;
   }
 }
+
+/* 5. LAYOUT UTILITIES */
+.row { display: flex; margin-bottom: 10px; }
+.col-2 { width: 20%; }
+.col-3 { width: 25%; }
+.col-4 { width: 33.33%; }
+.col-8 { width: 66.66%; }
+.col-10 { width: 80%; }
+
+.header-left { display: flex; align-items: center; }
+.logo { width: 60px; height: 60px; object-fit: contain; }
+.header-text { margin-left: 10px; }
+.title, .subtitle { font-weight: bold; }
+
+.right { text-align: right; }
+.center { text-align: center; }
+.bold { font-weight: bold; }
+.mt { margin-top: 15px; }
+.sign { margin-top: 30px; }
+.v-space { height: 80px; }
+.l-space { padding-left: 260px; }
 </style>

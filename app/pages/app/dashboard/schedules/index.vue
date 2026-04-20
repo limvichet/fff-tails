@@ -427,13 +427,12 @@ if (banks.value.length > 0) {
   color: #555;
 }
 
-/* .input {
+.input {
   width: 100%;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 8px 12px;
-  font-size: 14px;
-} */
+}
 
 .text-red-500 {
   color: #f56565;
