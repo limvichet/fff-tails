@@ -896,11 +896,20 @@
 
 
 <style scoped>
-.label { display: block; margin-bottom: 4px; font-size: 14px; color: #555; }
-.dark .label { color: #ccc; }
-.input { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 8px 12px; }
+.label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: #555;
+}
+
+.input {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
 /* Fix date input */
 input[type="date"] { appearance: none; -webkit-appearance: none;}
-.text-red-500 { color: #f56565; }
-.text-sm { font-size: 12px; }
 </style>

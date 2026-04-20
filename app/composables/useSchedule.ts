@@ -382,6 +382,7 @@ console.log(overdraft)
     }
 
     // POST PROCESS (same as yours)
+    recalculcateDateM()
     reculculateNClean()
     reculculateFixOutstanding()
   }

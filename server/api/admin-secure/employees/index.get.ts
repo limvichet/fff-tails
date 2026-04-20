@@ -66,14 +66,24 @@ export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> =
   // Get query params (?page=1&keyword=abc)
   const query = getQuery(event)
 
+  const page =
+    query.page && !isNaN(Number(query.page))
+      ? Number(query.page)
+      : 1
+
+  const param =
+    typeof query.param === "string" && query.param.trim()
+      ? query.param
+      : ""
+
   try {
 
-    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/employees`, {
+    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/employees?page=${page}&param=${param}`, {
       method: "GET",
-      query: {
-        page: query.page || 1,
-        param: query.param || undefined,
-      },
+      // query: {
+      //   page: query.page || 1,
+      //   param: query.param || undefined,
+      // },
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/json",

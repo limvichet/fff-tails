@@ -301,6 +301,7 @@ if (banks.value.length > 0) {
 
         <span class="text-sm">
           Page {{ page }} / {{ lastPageValue }}
+          Total Records: <b>{{ total }}</b>
         </span>
 
         <button @click="nextPage" :disabled="page === lastPageValue"

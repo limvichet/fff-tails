@@ -284,7 +284,7 @@ const deleteLoan = async () => {
           v-model="searchInput"
           type="text"
           placeholder="Search records..."
-          class="input !pl-9"
+          class="input !pl-9 text-sm"
         />
       </div>
 
@@ -486,8 +486,9 @@ const deleteLoan = async () => {
           Prev
         </button>
 
-        <span class="text-sm text-blue-400">
+        <span class="text-sm">
           Page {{ page }} / {{ lastPageValue }}
+          Total Records: <b>{{ total }}</b>
         </span>
 
         <button
@@ -526,4 +527,6 @@ const deleteLoan = async () => {
 .text-sm {
   font-size: 12px;
 }
+input[type="date"] { appearance: none; -webkit-appearance: none;}
+
 </style>

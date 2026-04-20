@@ -147,7 +147,7 @@ const deleteCustomer = async () => {
           </svg>
 
           <!-- Search Input -->
-          <input v-model="searchInput" type="text" placeholder="Search records..." class="input !pl-9" />
+          <input v-model="searchInput" type="text" placeholder="Search records..." class="input !pl-9 text-sm" />
         </div>
 
         <!-- Messages -->
@@ -185,7 +185,7 @@ const deleteCustomer = async () => {
               <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                 <tr v-for="(c, i) in paginated" :key="c.id"
                   class="border-t border-gray-100 dark:border-gray-800 hover:bg-blue-300/20 transition">
-                  <td class="px-4 py-2 text-sm text-gray-400">
+                  <td class="px-4 py-2 text-sm text-gray-700">
                     {{ (page - 1) * perPage + i + 1 }}
                   </td>
 
@@ -199,19 +199,19 @@ const deleteCustomer = async () => {
                     {{ c.nametitle2?.nametitle_kh }} {{ c.cust_name_2 }}
                   </td>
 
-                  <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
+                  <td class="px-1 py-2 text-sm text-gray-700 hidden sm:table-cell">
                     {{ c.cust_phone_1 }}
                   </td>
 
-                  <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
+                  <td class="px-1 py-2 text-sm text-gray-700 hidden sm:table-cell">
                     {{ c.cust_dob_1 ? formatDateForOutput(new Date(c.cust_dob_1)) : "-" }}
                   </td>
 
-                  <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
+                  <td class="px-1 py-2 text-sm text-gray-700 hidden sm:table-cell">
                     <span class="font-semibold">{{ c.createdby.employee.full_name }}</span> - {{ formatDateForOutput(new Date(c.created_at)) }}
                   </td>
 
-                  <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
+                  <td class="px-1 py-2 text-sm text-gray-700 hidden sm:table-cell">
                     <span class="font-semibold">{{ c.updatedby.employee.full_name }}</span> - {{ formatDateForOutput(new Date(c.updated_at)) }}
                   </td>
 
@@ -256,8 +256,9 @@ const deleteCustomer = async () => {
             Prev
           </button>
 
-          <span class="text-sm text-blue-400">
+          <span class="text-sm">
             Page {{ page }} / {{ lastPageValue }}
+             Total Records: <b>{{ total }}</b>
           </span>
 
           <button @click="nextPage" :disabled="page === lastPageValue"

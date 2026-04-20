@@ -138,16 +138,16 @@ onMounted(fetchData)
 
                 <!-- col 1 -->
                 <div>
-                    <div>
+                    <div class="py-2">
                         <label class="label">Customer</label>
                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.customer.cust_name_1" readonly />
                     </div>
-                    <div>
+                    <div class="py-2">
                         <label class="label">Spouse</label>
                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.customer.cust_name_2" readonly />
                     </div>
 
-                    <div>
+                    <div class="py-2">
                         <label class="label">Loan ID</label>
                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.id" readonly />
                     </div>
@@ -155,11 +155,11 @@ onMounted(fetchData)
 
                 <!-- col 2 -->
                  <div>
-                    <div>
+                    <div class="py-2">
                         <label class="label">Start Date</label>
                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="formatDateForOutput(new Date(loan.loan_startdate))" readonly />
                     </div>
-                    <div>
+                    <div class="py-2">
                         <label class="label">First Paid Date</label>
                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_first_paid_date ? formatDateForOutput(new Date(loan.loan_first_paid_date)) : ''" readonly />
                     </div>
@@ -167,7 +167,7 @@ onMounted(fetchData)
                         <label class="label">End Date</label>
                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_enddate" readonly />
                     </div> -->
-                    <div>
+                    <div class="py-2">
                         <label class="label">Currency</label>
                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.currency.currency_en" readonly />
                     </div>
@@ -175,15 +175,15 @@ onMounted(fetchData)
 
                  <!-- col 3 -->
                  <div>
-                     <div>
+                     <div class="py-2">
                          <label class="label">Total Cash</label>
                          <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_totalcash" readonly />
                      </div>
-                     <div>
+                     <div class="py-2">
                          <label class="label">Principle</label>
                          <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_principle" readonly />
                      </div>
-                     <div>
+                     <div class="py-2">
                          <label class="label">Interest Rate</label>
                          <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_interest_rate" readonly />
                      </div>
@@ -191,15 +191,15 @@ onMounted(fetchData)
 
                  <!-- col 4 -->
                  <div>
-                     <div>
+                     <div class="py-2">
                          <label class="label">Period</label>
                          <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_peroid" readonly />
                      </div>
-                     <div>
+                     <div class="py-2">
                          <label class="label">Loan Type</label>
                          <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loantype.loantype_detail" readonly />
                      </div>
-                     <div>
+                     <div class="py-2">
                          <label class="label">Over Draft</label>
                          <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_over_draft" readonly />
                      </div>
@@ -318,14 +318,16 @@ onMounted(fetchData)
 <style scoped>
 .label {
   display: block;
-  font-size: 13px;
   margin-bottom: 4px;
+  font-size: 14px;
+  color: #333;
 }
 .input {
   width: 100%;
   border: 1px solid #ddd;
-  border-radius: 6px;
-  padding: 6px 10px;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
 }
 /* Fix date input */
 input[type="date"] { appearance: none; -webkit-appearance: none;}

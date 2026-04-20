@@ -85,12 +85,9 @@ export default defineEventHandler(async (event) => {
 
     const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/customers?page=${page}&param=${param}`, {
       method: "GET",
-      // query: {
-      //   page,
-      //   param,
-      // },
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
         Accept: "application/json",
       },
     })
