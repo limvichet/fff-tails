@@ -377,29 +377,29 @@ const deleteLoan = async () => {
                 <td class="px-1 py-1 text-sm text-gray-700">
                   <div class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-6">
 
-                    <NuxtLink
+                    <button
                       :to="`/app/dashboard/schedules/prints/${l.id}/print-sched`"
                       target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                       Sched
-                    </NuxtLink>
+                    </button>
 
-                    <NuxtLink
+                    <button
                       :to="`/app/dashboard/loanrecords/prints/${l.id}/print-atm`"
                       target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        ATM
-                    </NuxtLink>
+                    </button>
 
-                    <NuxtLink
+                    <button
                       :to="`/app/dashboard/loanrecords/prints/${l.id}/print-landlayout`"
                       target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        Land
-                    </NuxtLink>
+                    </button>
 
                     <!-- <button
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"

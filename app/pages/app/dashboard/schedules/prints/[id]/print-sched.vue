@@ -210,47 +210,50 @@ const waitImageLoad = () => {
 
       <div class="col-4">
         <table class="table border">
-          <tr>
-            <td>&nbsp; លេខសម្គាល់កម្ចី</td>
-            <td class="right">{{ pad(loanrecord?.id || 0) }}</td>
-          </tr>
-          <tr>
-            <td>&nbsp; លេខអតិថិជន</td>
-            <td class="right">{{ pad(loanrecord?.customer?.id || 0) }}</td>
-          </tr>
-          <tr>
-            <td>&nbsp; អត្រាកាប្រាក់%</td>
-            <td class="right">{{ loanrecord?.loan_interest_rate }}</td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>&nbsp; លេខសម្គាល់កម្ចី</td>
+              <td class="right">{{ pad(loanrecord?.id || 0) }}</td>
+            </tr>
+            <tr>
+              <td>&nbsp; លេខអតិថិជន</td>
+              <td class="right">{{ pad(loanrecord?.customer?.id || 0) }}</td>
+            </tr>
+            <tr>
+              <td>&nbsp; អត្រាកាប្រាក់%</td>
+              <td class="right">{{ loanrecord?.loan_interest_rate }}</td>
+            </tr>
+          </tbody>
         </table>
       </div>
     </div>
 
     <!-- CUSTOMER -->
     <table>
-      <tr>
-        <td class="label">អតិថិជន</td>
-        <td>
-          {{ loanrecord?.customer?.nametitle1?.nametitle_kh }}
-          {{ loanrecord?.customer?.cust_name_1 }}
-        </td>
-        <td>
-          {{ loanrecord?.customer?.nametitle2?.nametitle_kh || " "}}
-          {{ loanrecord?.customer?.cust_name_2 || " "}}
-        </td>
-      </tr>
-
-      <tr>
-        <td class="label">សរុបទឹកប្រាក់</td>
-        <td>
-          {{ loanrecord?.loan_totalcash }}
-          {{ loanrecord?.currency?.currency_kh }}
-        </td>
-        <td>
-          រយៈពេលខ្ចី {{ loanrecord?.loan_peroid }}
-          {{ loanrecord?.loantype?.loantype_shortcut }}
-        </td>
-      </tr>
+      <tbody>
+        <tr>
+          <td class="label">អតិថិជន</td>
+          <td>
+            {{ loanrecord?.customer?.nametitle1?.nametitle_kh }}
+            {{ loanrecord?.customer?.cust_name_1 }}
+          </td>
+          <td>
+            {{ loanrecord?.customer?.nametitle2?.nametitle_kh || " "}}
+            {{ loanrecord?.customer?.cust_name_2 || " "}}
+          </td>
+        </tr>
+        <tr>
+          <td class="label">សរុបទឹកប្រាក់</td>
+          <td>
+            {{ loanrecord?.loan_totalcash }}
+            {{ loanrecord?.currency?.currency_kh }}
+          </td>
+          <td>
+            រយៈពេលខ្ចី {{ loanrecord?.loan_peroid }}
+            {{ loanrecord?.loantype?.loantype_shortcut }}
+          </td>
+        </tr>
+      </tbody>
     </table>
 
     <!-- SCHEDULE -->
