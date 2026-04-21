@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800;900&family=Kantumruy+Pro:wght@500;600;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Siemreap&family=Moul&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap')
 layer(base);
 
@@ -171,7 +170,7 @@ layer(base);
 @theme inline {
     /* custom fonts */
   --font-sans-en: "Roboto";
-  --font-sans-kh: "Siemreap";
+  --font-sans-kh: "Notosan";
   --font-sans-kh-moul: "Moul";
   --font-sans-serif: var(--font-sans-en), var(--font-sans-kh), system-ui, sans-serif;
 }

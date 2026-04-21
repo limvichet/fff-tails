@@ -7,6 +7,7 @@ definePageMeta({
 
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { formatNumber, numUnicode } from "~/utils/number"
 
 
 type PrintSchedule = {
@@ -123,6 +124,7 @@ type ApiResponse = {
 }
 
 
+
 // ---------------- REFS ----------------
 const route = useRoute()
 const id = route.params.id as string
@@ -152,7 +154,7 @@ const fetchData = async () => {
 onMounted(async () => {
   await fetchData()
   await waitImageLoad()   // ✅ wait image
-  window.print()
+  // window.print()
 })
 
 // ---------------- HELPERS ----------------
@@ -168,9 +170,8 @@ const formatMonthYear = (d: string) => {
   return `${date.getMonth() + 1}-${date.getFullYear()}`
 }
 
-const formatNumber = (n: number) => {
-  return new Intl.NumberFormat().format(n)
-}
+
+
 
 
 const logoRef = ref<HTMLImageElement | null>(null)
@@ -199,26 +200,26 @@ const waitImageLoad = () => {
     
     <!-- HEADER -->
     <div class="row">
-      <div class="col-8 header-left">
+      <header class="col-8 header-left">
         <img ref="logoRef" src="/imgs/logo-48.png" class="logo" />
         <div class="header-text">
           <div class="title">{{ capital?.organization }}</div>
           <div class="subtitle">កាលវិភាគសងប្រាក់</div>
         </div>
-      </div>
+      </header>
 
       <div class="col-4">
         <table class="table border">
           <tr>
-            <td>លេខសម្គាល់កម្ចី</td>
+            <td>&nbsp; លេខសម្គាល់កម្ចី</td>
             <td class="right">{{ pad(loanrecord?.id || 0) }}</td>
           </tr>
           <tr>
-            <td>លេខអតិថិជន</td>
+            <td>&nbsp; លេខអតិថិជន</td>
             <td class="right">{{ pad(loanrecord?.customer?.id || 0) }}</td>
           </tr>
           <tr>
-            <td>អត្រាកាប្រាក់%</td>
+            <td>&nbsp; អត្រាកាប្រាក់%</td>
             <td class="right">{{ loanrecord?.loan_interest_rate }}</td>
           </tr>
         </table>
@@ -226,7 +227,7 @@ const waitImageLoad = () => {
     </div>
 
     <!-- CUSTOMER -->
-    <table class="table">
+    <table>
       <tr>
         <td class="label">អតិថិជន</td>
         <td>
@@ -255,17 +256,17 @@ const waitImageLoad = () => {
     <!-- SCHEDULE -->
     <table class="table mt">
       <thead>
-        <tr class="bold left">
-          <td>ល.រ</td>
-          <td>ថ្ងៃខែឆ្នាំ</td>
-          <td>ទូទាត់ខែ</td>
-          <td>ប្រាក់ដើម</td>
-          <td>រំលោះដើម</td>
-          <td>ការប្រាក់</td>
-          <td>សរុប</td>
-          <td>ប្រាក់បើកបាន</td>
-          <td>ប្រាក់បង់</td>
-          <td>ប្រាក់សល់</td>
+        <tr>
+          <th>ល.រ</th>
+          <th>ថ្ងៃខែឆ្នាំ</th>
+          <th>ទូទាត់ខែ</th>
+          <th>ប្រាក់ដើម</th>
+          <th>រំលោះដើម</th>
+          <th>ការប្រាក់</th>
+          <th>សរុប</th>
+          <th>ប្រាក់បើកបាន</th>
+          <th>ប្រាក់បង់</th>
+          <th>ប្រាក់សល់</th>
         </tr>
       </thead>
 
@@ -276,7 +277,7 @@ const waitImageLoad = () => {
           <td>{{ formatMonthYear(s.schedule_principle_date) }}</td>
           <td>{{ s.schedule_outstanding || 0 }}</td>
           <td>{{ s.schedule_principle }}</td>
-          <td>{{ s.schedule_interest }}</td>
+          <td>{{ formatNumber(Number(s.schedule_interest)) }}</td>
           <td>{{ s.schedule_totalpay }}</td>
           <td>{{ s.schedule_totalcashin }}</td>
           <td>{{ s.schedule_paidcash }}</td>
@@ -286,60 +287,57 @@ const waitImageLoad = () => {
 
       <tfoot>
         <tr class="bold">
-          <td colspan="4" class="center bold">សរុប</td>
-          <td>{{ formatNumber(sumSchedule) }}</td>
-          <td colspan="5"></td>
+          <td colspan="3" class="center bold">សរុប</td>
+          <td colspan="7">{{ formatNumber(sumSchedule) }}</td>
         </tr>
       </tfoot>
     </table>
 
-    <!-- NOTE -->
-    <div class="row mt note">
-      <div class="col-2">កំណត់សម្គាល់</div>
-      <div class="col-10">
-        {{ loanrecord?.loan_note || '........................' }}
-      </div>
-    </div>
-
-    <!-- SIGN DATE -->
-    <div class="center l-space mt">
-      <div>{{ invoice?.datesignChhankitek }}</div>
-      <div>{{ invoice?.datesignSoriyakitek }}</div>
-    </div>
-
-    <!-- SIGNATURE -->
-    <div class="row center mt">
-      <div class="col-3">
-        <div>ស្នាមម្រាមដៃ</div>
-        <div>សាក្សី</div>
-        <div class="v-space"></div>
-        <div class="sign">....................</div>
-      </div>
-
-      <div class="col-3">
-        <div>ស្នាមម្រាមដៃ</div>
-        <div>អ្នកធានា</div>
-        <div class="v-space"></div>
-        <div class="sign">{{ loanrecord?.guarantor?.cust_name_1 || '........' }}</div>
-      </div>
-
-      <div class="col-3">
-        <div>ស្នាមម្រាមដៃ</div>
-        <div>អ្នកខ្ចីប្រាក់</div>
-        <div class="v-space"></div>
-        <div class="sign">
-          {{ loanrecord?.customer?.cust_name_1 }}
-          {{ loanrecord?.customer?.cust_name_2 }}
+    
+      <!-- NOTE -->
+      <div class="row mt note">
+        <div class="col-2">កំណត់សម្គាល់</div>
+        <div class="col-10">
+          {{ loanrecord?.loan_note || '........................' }}
         </div>
       </div>
-
-      <div class="col-3">
-        <div>ស្នាមម្រាមដៃ</div>
-        <div>ម្ចាស់ប្រាក់</div>
-        <div class="v-space"></div>
-        <div class="sign">{{ capital?.name }}</div>
+    <footer>
+      <!-- SIGN DATE -->
+      <div class="center l-space mt">
+        <div>{{ invoice?.datesignChhankitek }}</div>
+        <div>{{ invoice?.datesignSoriyakitek }}</div>
       </div>
-    </div>
+      <!-- SIGNATURE -->
+      <div class="row center mt">
+        <div class="col-3">
+          <div>ស្នាមម្រាមដៃ</div>
+          <div>សាក្សី</div>
+          <div class="v-space"></div>
+          <div class="sign">....................</div>
+        </div>
+        <div class="col-3">
+          <div>ស្នាមម្រាមដៃ</div>
+          <div>អ្នកធានា</div>
+          <div class="v-space"></div>
+          <div class="sign">{{ loanrecord?.guarantor?.cust_name_1 || '........' }}</div>
+        </div>
+        <div class="col-3">
+          <div>ស្នាមម្រាមដៃ</div>
+          <div>អ្នកខ្ចីប្រាក់</div>
+          <div class="v-space"></div>
+          <div class="sign">
+            {{ loanrecord?.customer?.cust_name_1 }}
+            {{ loanrecord?.customer?.cust_name_2 }}
+          </div>
+        </div>
+        <div class="col-3">
+          <div>ស្នាមម្រាមដៃ</div>
+          <div>ម្ចាស់ប្រាក់</div>
+          <div class="v-space"></div>
+          <div class="sign">{{ capital?.name }}</div>
+        </div>
+      </div>
+    </footer>
 
   </div>
 </template>
@@ -347,8 +345,8 @@ const waitImageLoad = () => {
 <style scoped>
 /* 1. FONTS & BASE */
 @font-face {
-  font-family: 'Siemreap';
-  src: url('/fonts/Siemreap.ttf') format('truetype');
+  font-family: 'Notosan';
+  src: url('/fonts/NotoSansKhmer.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -360,8 +358,8 @@ const waitImageLoad = () => {
 }
 
 body {
-  font-family: "Siemreap", Arial, sans-serif;
-  font-size: 9pt;
+  font-family: "Notosan", Arial, sans-serif;
+  font-size: 12pt;
   margin: 0;
   padding: 0;
 }
@@ -369,8 +367,7 @@ body {
 /* 2. SCREEN PREVIEW */
 .page {
   width: 210mm;
-  min-height: 297mm;
-  padding: 15mm 10mm;
+  padding: 15mm;
   margin: 20px auto;
   background: white;
   border: 1px solid #ddd;
@@ -380,14 +377,13 @@ body {
 /* 3. PRINT CONFIGURATION */
 @page {
   size: A4;
-  /* Defining margins here means the .page padding in print should be 0 */
-  margin: 20mm 12.5mm 25mm 12.5mm; 
+  margin: 15mm; 
 
-  @bottom-right {
+  /* @bottom-right {
     content: counter(page) " / " counter(pages);
-    font-family: "Siemreap", sans-serif;
+    font-family: "Notosan", sans-serif;
     font-size: 8pt;
-  }
+  } */
 }
 
 @media print {
@@ -397,7 +393,8 @@ body {
   }
 
   .page {
-    width: 100% !important;
+    width: auto;
+    height: auto;
     margin: 0 !important;
     padding: 0 !important; /* Let @page handle the margins */
     border: none !important;
@@ -411,25 +408,27 @@ body {
   /* Typography for Print */
   body {
     font-size: 11pt;
-    line-height: 1.4;
+    line-height: 1.2;
     color: #000;
   }
 }
 
 /* 4. TABLE STYLES */
-.table {
+table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.table td {
-  padding: 6px 2px;
+table td, table th {
+  padding: 5px 3px;
+  text-align: left;
+  font-size: 11pt;
   vertical-align: top;
   border-bottom: 1px solid #ddd;
 }
 
 @media print {
-  tfoot, .note, .table tr {
+  footer, tfoot, .note, .table tr {
     page-break-inside: avoid;
     break-inside: avoid;
   }
@@ -453,9 +452,8 @@ body {
 
 .right { text-align: right; }
 .center { text-align: center; }
-.bold { font-weight: bold; }
 .mt { margin-top: 15px; }
 .sign { margin-top: 30px; }
-.v-space { height: 80px; }
+.v-space { height: 90px; }
 .l-space { padding-left: 260px; }
 </style>

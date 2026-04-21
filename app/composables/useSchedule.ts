@@ -704,6 +704,48 @@ export const useSchedule = () => {
     })
   }
 
+ /* if last record adjust principle fix it */
+  const reculculateNClean = () => {
+    schedules.value.forEach((item, index) => {
+      const outstanding = Number(item.schedule_outstanding || 0)
+      const principle = Number(item.schedule_principle || 0)
+      const rate = Number(item.schedule_interest_rate || 0) / 100
+      const totalDays = Number(item.schedule_totaldays || 0)
+
+      /* fix interest and total pay for M11 */
+      if (outstanding > 0) {
+        if (totalDays >= 28 && totalDays <= 31) {
+          item.schedule_interest = rate * outstanding
+        } else {
+          item.schedule_interest = fixDouble(
+            (rate / 30) * outstanding * totalDays,
+            3
+          )
+        }
+        item.schedule_totalpay = item.schedule_interest + principle
+      }
+
+      /* fix last record */
+      if (outstanding <= principle) {
+        try {
+          // adjust principle
+          item.schedule_principle = outstanding
+
+          // recalc total pay
+          item.schedule_totalpay =
+            Number(item.schedule_principle || 0) +
+            Number(item.schedule_interest || 0)
+
+          // stop at last item (optional, same as your jQuery)
+          if (index === schedules.value.length - 1) return
+        } catch (err) {
+          console.error(err)
+        }
+      }
+
+    })
+  }
+
 
   /* if last record adjust principle fix it */
   const reculculateNCleanM31 = () => {

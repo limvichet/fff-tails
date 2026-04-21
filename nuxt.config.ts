@@ -28,7 +28,11 @@ export default defineNuxtConfig({
         {
           rel: 'apple-touch-icon',
           href: '/icons/icon-192.png'
-        }
+        },
+        // {
+        //   rel: 'stylesheet',
+        //   href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;700&display=swap'
+        // }
       ]
     }
   },
@@ -96,5 +100,4 @@ export default defineNuxtConfig({
       ]
     }
   },
-
 })

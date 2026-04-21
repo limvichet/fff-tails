@@ -8,6 +8,7 @@ definePageMeta({
 
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import { numUnicode } from "~/utils/number"
 
 type ApiResponse = {
   success: boolean
@@ -100,55 +101,7 @@ function formatYear(date: string) {
 }
 
 
-/* convert num to num unicode */
-function numUnicode(value: string | number): string {
-  if (value === null || value === undefined) return ""
 
-  const map: Record<string, string> = {
-    "0": "០",
-    "1": "១",
-    "2": "២",
-    "3": "៣",
-    "4": "៤",
-    "5": "៥",
-    "6": "៦",
-    "7": "៧",
-    "8": "៨",
-    "9": "៩"
-  }
-
-  return value
-    .toString()
-    .split("")
-    .map(char => map[char] ?? char) // keep , . etc
-    .join("")
-}
-
-
-/* convert num to khmer month */
-function khMonth(month: number | string): string {
-  const months = [
-    "",        // index 0 (not used)
-    "មករា",
-    "កុម្ភៈ",
-    "មីនា",
-    "មេសា",
-    "ឧសភា",
-    "មិថុនា",
-    "កក្កដា",
-    "សីហា",
-    "កញ្ញា",
-    "តុលា",
-    "វិច្ឆិកា",
-    "ធ្នូ"
-  ]
-
-  const m = Number(month)
-
-  if (!m || m < 1 || m > 12) return ""
-
-  return months[m] ?? ""
-}
 
 </script>
 
@@ -166,57 +119,60 @@ function khMonth(month: number | string): string {
     <main class="mt">
       <p class="inden">
         {{ loanrecord!.customer.nametitle1.type }}ឈ្មោះ
-        <strong>{{ loanrecord!.customer.cust_name_1 }}</strong>
+        &nbsp; <strong>{{ loanrecord!.customer.cust_name_1 }}</strong> &nbsp; 
         កើតនៅថ្ងៃទី{{ numUnicode(formatDay(loanrecord!.customer.cust_dob_1)) }}
         ខែ{{ khMonth(formatMonth(loanrecord!.customer.cust_dob_1)) }}
         ឆ្នាំ{{ numUnicode(formatYear(loanrecord!.customer.cust_dob_1)) }}
-        អាសយដ្ឋាន {{ loanrecord!.customer.cust_address }}។
+        អាសយដ្ឋាន {{ loanrecord!.customer.cust_address }}
       </p>
 
-      <h2 class="center mt bold">យល់ព្រម</h2>
+      <!-- TITLE -->
+      <h2 class="center mt">យល់ព្រម</h2>
 
-      <p>
+      <p class="inden justify">
         <strong>១-</strong>
         ប្រគល់កាត ATM លេខ
         <span v-if="!loanrecord?.customer?.cust_atm_num">............................</span>
         <span v-else>{{ loanrecord?.customer?.cust_atm_num }}</span>
 
         ទៅលោកស្រី <strong>{{ capital?.name }}</strong>
-        នៅភូមិ {{ capital?.village }}
+        សព្វថ្ងៃរស់នៅភូមិ{{ capital?.village }}
         សង្កាត់ {{ capital?.commune }}
         ក្រុង {{ capital?.district }}
         ខេត្ត {{ capital?.province }}។
+        ប្រើប្រាស់សម្រាប់ដកការប្រាក់ រំលោះប្រាក់ដើមប្រចាំខែ រហូតចប់តាមកាលវិភាគសងប្រាក់។
       </p>
 
-      <p><strong>២-</strong> ស្នើសុំរបាយការណ៍គណនីតាមការស្នើសុំ។</p>
+      <p class="inden justify"><strong>២-</strong> ស្នើសុំធនាគារព្រីនរបាយការណ៍គណនីក្នុងករណីមានការស្នើសុំពីលោកស្រី {{ capital?.name }}</p>
 
-      <p><strong>៣-</strong> ផ្អាកការប្រើប្រាស់ APP ធនាគារ ក្នុងអំឡុងពេលសងប្រាក់។</p>
+      <p class="inden justify"><strong>៣-</strong> ផ្ដាច់ការប្រើប្រាស់ប្រព័ន្ធធនាគារតាម APPទូរស័ព្ទដែ ឬប្រព័ន្ធយូនីធីជាដើមក្នុងកំឡុងពេល​ការទូទាត់តាម កាលវិភាគនៅមិនទាន់បានបញ្ចប់នៅឡើយ(ដើម្បីជៀសវាងការមិនទុកចិត្តគ្នាលើការដកប្រាក់)។</p>
 
-      <p><strong>៤-</strong> មិនបើកកាត ATM ថ្មីដោយមិនពិភាក្សា។</p>
+      <p class="inden justify"><strong>៤-</strong> មិនបើកកាត ATM ថ្មី ឬបិទគណនីធនាគារ ដោយមិនបានពិភាក្សាជាមួយលោកស្រី
+                {{ capital?.name }}ជាមុនឡើយ។</p>
 
-      <p class="mt">
-        ខ្ញុំបាទ/នាងខ្ញុំសូមធានាថាកាត ATM នេះជាកម្មសិទ្ធិរបស់ខ្ញុំ។
+      <p class="inden justify">
+        ខ្ញុំបាទ/នាងខ្ញុំ សូមធានាថាកាត   ATM  នេះជាកម្មសិទ្ធិរបស់ខ្ញុំបាទ/នាងខ្ញុំប្រាកដមែន។ ការប្រគល់កាត ATM ធ្វើឡើងដោយគ្មានការបង្ខិតបង្ខំពីជនណាម្នាក់ឡើយ។
       </p>
 
-      <p>
-        ខ្ញុំបាទ/នាងខ្ញុំសូមផ្ដិតស្នាមមេដៃស្ដាំទុកជាភស្តុតាង។
+      <p class="inden justify">
+        ខ្ញុំបាទ/នាងខ្ញុំសូមផ្ដិតស្នាមមេដៃស្ដាំទុកជាភ័ស្ដុតាង។
       </p>
 
     </main>
 
     <!-- FOOTER -->
-    <footer class="mt">
+    <footer>
 
-      <div class="row">
-        <div class="col-6">
-          <p>{{ invoice?.datesignChhankitek }}</p>
-          <p>{{ invoice?.datesignSoriyakitek }}</p>
-        </div>
+      <div class="center mt" >
+        <p>{{ invoice?.datesignChhankitek }}</p>
+        <p>{{ invoice?.datesignSoriyakitek }}</p>
       </div>
+      
 
       <div class="mt center">
-        <h3>ស្នាមម្រាមដៃ</h3>
-        <p class="bold">{{ loanrecord.customer?.cust_name_1 }}</p>
+        <span><strong>ស្នាមម្រាមដៃ</strong></span>
+        <div class="v-space"></div>
+        <span><strong>{{ loanrecord.customer?.cust_name_1 }}</strong></span>
       </div>
 
     </footer>
@@ -232,18 +188,23 @@ function khMonth(month: number | string): string {
 
 <style scoped>
 
+/* =======================
+   1. FONTS
+======================= */
 @font-face {
-  font-family: 'Siemreap';
-  src: url('/fonts/Siemreap.ttf') format('truetype');
+  font-family: 'Notosan';
+  src: url('/fonts/NotoSansKhmer.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
+
 @font-face {
   font-family: 'Muol';
   src: url('/fonts/KhmerOSmuollight.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
+
 @font-face {
   font-family: 'tacteng';
   src: url('/fonts/TACTENG.ttf') format('truetype');
@@ -251,66 +212,105 @@ function khMonth(month: number | string): string {
   font-style: normal;
 }
 
+/* =======================
+   2. GLOBAL RESET
+======================= */
 * {
   box-sizing: border-box;
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
 }
 
-/* h1 {
-  line-height: 1.6;
-} */
-
-h1, .muol {
-  font-family: "Muol", Arial, sans-serif !important;
-  font-size: 13pt !important;
-  margin-top: 6px;
-}
-h2 {
-  font-family: "Muol", Arial, sans-serif !important;
-  font-size: 12pt !important;
-  margin-bottom: 6px;
+html, body {
+  margin: 0;
+  padding: 0;
 }
 
-.tacteng {
-  font-family: "tacteng", Arial, sans-serif !important;
-  font-size: 16pt !important;
-  line-height: 1.4 !important;
+/* =======================
+   3. BASE TYPOGRAPHY
+======================= */
+body {
+  font-family: "Notosan", "Noto Sans Khmer", Arial, sans-serif;
+  font-size: 12pt;
+  line-height: 1.4;
+  color: #000;
+}
+
+strong {
+  font-weight: 700;
 }
 
 p {
-  line-height: 1.8 !important;
+  line-height: 1.6;
 }
+
+/* =======================
+   4. PAGE LAYOUT (SCREEN)
+======================= */
+.page {
+  width: 210mm;
+  min-height: auto;
+  padding: 15mm;
+  margin: 20px auto;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+/* =======================
+   5. UTILITIES
+======================= */
+.row { display: flex; margin-bottom: 10px; }
+.col-6 { width: 50%; }
+
+.center { text-align: center; }
+.bold { font-weight: 700; }
+.mt { margin-top: 15px; }
+.justify { text-align: justify; }
 
 .inden {
   text-indent: 50px;
 }
 
+.v-space { height: 100px; }
+.l-space { padding-left: 260px; }
 
-/* 2. SCREEN PREVIEW */
-.page {
-  width: 210mm;
-  min-height: 297mm;
-  padding: 15mm 15mm;
-  margin: 20px auto;
-  background: white;
-  border: 1px solid #ddd;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  font-family: "Siemreap", Arial, sans-serif;
-  font-size: 12pt;
-  line-height: 1.4;
+/* =======================
+   6. HEADINGS / SPECIAL FONTS
+======================= */
+h1, .muol {
+  font-family: "Muol", Arial, sans-serif !important;
+  font-size: 13pt;
+  margin-top: 6px;
 }
 
-/* 3. PRINT */
+h2 {
+  font-family: "Muol", Arial, sans-serif !important;
+  font-size: 12pt;
+  margin-bottom: 6px;
+}
+
+.tacteng {
+  font-family: "tacteng", Arial, sans-serif !important;
+  font-size: 16pt;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* =======================
+   7. PRINT SETTINGS (IMPORTANT FIX)
+======================= */
 @page {
   size: A4;
-  margin: 20mm 12.5mm 25mm 12.5mm;
+  margin: 12mm 17.5mm;
 }
 
 @media print {
   html, body {
+    margin: 0 !important;
+    padding: 0 !important;
     width: 210mm;
-    background: #fff;
   }
 
   .page {
@@ -319,6 +319,11 @@ p {
     padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
+
+    /* IMPORTANT: prevents blank page */
+    overflow: hidden;
+    page-break-after: avoid;
+    break-after: avoid;
   }
 
   .no-print {
@@ -332,11 +337,4 @@ p {
   }
 }
 
-/* 4. UTILITIES */
-.row { display: flex; margin-bottom: 10px; }
-.col-6 { width: 50%; }
-
-.center { text-align: center; }
-.bold { font-weight: bold; }
-.mt { margin-top: 15px; }
 </style>

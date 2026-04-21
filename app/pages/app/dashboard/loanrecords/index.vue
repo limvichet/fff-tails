@@ -364,7 +364,7 @@ const deleteLoan = async () => {
                   {{ l.loan_totalcash }}
                 </td>
 
-                  <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
+                  <td class="px-1 py-2 text-sm text-gray-400">
                     <p class="font-semibold">{{ l.createdby.employee.full_name }} - {{ formatDateForOutput(new Date(l.created_at)) }} </p>
                     <p class="font-semibold">{{ l.updatedby.employee.full_name }} - {{ formatDateForOutput(new Date(l.updated_at)) }} </p> 
                   </td>
@@ -393,11 +393,13 @@ const deleteLoan = async () => {
                        ATM
                     </NuxtLink>
 
-                    <!-- <button
+                    <NuxtLink
+                      :to="`/app/dashboard/loanrecords/prints/${l.id}/print-landlayout`"
+                      target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
-                       LandLayout
-                    </button> -->
+                       Land
+                    </NuxtLink>
 
                     <!-- <button
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
