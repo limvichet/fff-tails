@@ -303,7 +303,7 @@ export const useSchedule = () => {
         schedule_enddate: newEndDate,
         schedule_totaldays: totalDays,
         schedule_interest_rate: loan_interest_rate,
-        schedule_outstanding,
+        schedule_outstanding: overdraft,
         schedule_over_draft: overdraft,
         schedule_principle,
         schedule_interest,
@@ -312,8 +312,9 @@ export const useSchedule = () => {
     }
 
     recalculcateDateM()
-    //reculculateNClean()
-    reculculateFixOutstandingM14()
+    reculculate_over_draft_m14()
+    reculculateNClean()
+    reculculateFixOutstanding()
   }
 
 
@@ -383,8 +384,8 @@ export const useSchedule = () => {
 
     // POST PROCESS (same as yours)
     recalculcateDateM()
-    //reculculateNClean()
-    reculculateFixOutstanding()
+    reculculateNClean()
+    //reculculateFixOutstanding()
   }
 
 
@@ -695,6 +696,14 @@ export const useSchedule = () => {
     })
   }
 
+    const reculculate_over_draft_m14 = () => {
+    schedules.value.forEach((item, index) => {
+      if (index > 0) {
+        item.schedule_over_draft = 0
+      }
+    })
+  }
+
 
   /* if last record adjust principle fix it */
   const reculculateNClean = () => {
@@ -737,6 +746,7 @@ export const useSchedule = () => {
 
     })
   }
+
 
 
   /* if last record adjust outstanding fix it */

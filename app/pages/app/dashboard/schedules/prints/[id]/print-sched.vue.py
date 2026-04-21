@@ -9,8 +9,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 
-
-
 type PrintSchedule = {
     capital:                Capital;
     loanrecord:             Loanrecord;
@@ -137,22 +135,14 @@ const sumSchedule = computed(() => dd.value?.sum_schedule_principle ?? 0)
 const invoice = computed(() => dd.value?.invoice ?? null)
 
 const loading = ref(false)
+
 // ---------------- FETCH DATA ----------------
 const fetchData = async () => {
   loading.value = true
 
   try {
-
-
     const { data } = await $fetch<ApiResponse>(`/api/admin-secure/schedules/${id}/print-sched`)
-    
-
-      console.log("API RESPONSE:", data ?? null )
-
     dd.value = data
-
-
-
   } finally {
     loading.value = false
   }

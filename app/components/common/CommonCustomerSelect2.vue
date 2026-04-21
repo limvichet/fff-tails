@@ -16,13 +16,28 @@ const search = ref("")
 const isOpen = ref(false)
 const highlightedIndex = ref(0)
 
+// const filtered = computed(() => {
+//   if (!search.value) return props.options
+//   const term = search.value.toLowerCase()
+//   return props.options.filter((c: any) =>
+//     String(c.id).includes(term) ||
+//     c.label.toLowerCase().includes(term)
+//   )
+// })
+
 const filtered = computed(() => {
-  if (!search.value) return props.options
-  const term = search.value.toLowerCase()
-  return props.options.filter((c: any) =>
-    String(c.id).includes(term) ||
-    c.label.toLowerCase().includes(term)
-  )
+  let list = props.options
+
+  if (search.value) {
+    const term = search.value.toLowerCase()
+    list = list.filter((c: any) =>
+      String(c.id).includes(term) ||
+      c.label.toLowerCase().includes(term)
+    )
+  }
+
+  // ✅ sort DESC
+  return [...list].sort((a, b) => b.id - a.id)
 })
 
 function selectItem(c: any) {
@@ -101,7 +116,7 @@ onMounted(() => {
 
         <!-- Dropdown -->
         <ul v-if="isOpen && filtered.length"
-          class="absolute z-10 w-full bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700">
+          class="absolute z-10 w-full bg-white border rounded text-black dark:bg-gray-800 dark:text-white dark:border-gray-700 max-h-60 overflow-y-auto">
           <li v-for="(c, index) in filtered"
               :key="c.id"
               @mousedown.prevent="selectItem(c)"

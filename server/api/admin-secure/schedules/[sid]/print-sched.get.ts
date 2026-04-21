@@ -1,5 +1,16 @@
 import { getCookie, createError, type H3Event } from "h3"
 
+type ApiResponse = {
+  success: boolean
+  data: PrintSchedule
+}
+type PrintSchedule = {
+  capital: Capital,
+  loanrecord: LoanRecord
+  schedules: Schedule[]
+  sum_schedule_principle: number
+  invoice: Invoice
+}
 type Capital = {
     organization: string,
     title_pay: string,
@@ -17,13 +28,7 @@ type Capital = {
     phone2: string
 }
 
-type PrintSchedule = {
-  capital: Capital,
-  loanrecord: LoanRecord
-  schedules: Schedule[]
-  sum_schedule_principle: number
-  invoice: Invoice
-}
+
 
 type LoanRecord = {
   id: number
@@ -78,11 +83,6 @@ type Invoice = {
   datesignSoriyakitek: string
 }
 
-type ApiResponse = {
-  success: boolean
-  data: PrintSchedule
-}
-
 export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> => {
   const { apiBaseUrl } = useRuntimeConfig(event)
 
@@ -95,11 +95,11 @@ export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> =
     })
   }
 
-  const id = event.context.params?.id
+  const sid = event.context.params?.sid
 
   try {
     const res = await $fetch<ApiResponse>(
-      `${apiBaseUrl}/api/admin-secure/schedules/${id}/print-sched`, {
+      `${apiBaseUrl}/api/admin-secure/schedules/${sid}/print-sched`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

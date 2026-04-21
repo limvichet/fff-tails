@@ -385,11 +385,13 @@ const deleteLoan = async () => {
                       Sched
                     </NuxtLink>
 
-                    <!-- <button
+                    <NuxtLink
+                      :to="`/app/dashboard/loanrecords/prints/${l.id}/print-atm`"
+                      target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        ATM
-                    </button> -->
+                    </NuxtLink>
 
                     <!-- <button
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
