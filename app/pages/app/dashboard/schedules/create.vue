@@ -474,10 +474,10 @@ watch(
 
       <!-- RIGHT: Actions -->
       <div class="flex gap-1">
-        <button @click="handleReround(form)" :disabled="reroundLoading || reroundDone"
+        <!-- <button @click="handleReround(form)" :disabled="reroundLoading || reroundDone"
           class="px-3 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500">
           {{ reroundLoading ? "Calculating..." : reroundDone ? "Done" : "Reround" }}
-        </button>
+        </button> -->
 
         <button @click="submitForm" :disabled="loading"
           class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
