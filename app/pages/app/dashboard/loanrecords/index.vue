@@ -233,29 +233,12 @@ const deleteLoan = async () => {
   }
 }
 
-/* DATE FORMAT HELPER */
-// function formatDate(date: string | null) {
-//   if (!date) return ""
+const isMobile = ref(false)
 
-//   // Case 1: already yyyy-MM-dd
-//   if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-//     return date
-//   }
+onMounted(() => {
+  isMobile.value = /Mobi|Android|iPhone/i.test(navigator.userAgent)
+})
 
-//   // Case 2: ISO or datetime (like 2026/03/25T03:04:59.000000Z)
-//   const parsed = new Date(date)
-//   if (!isNaN(parsed.getTime())) {
-//     return parsed.toISOString().split("T")[0]
-//   }
-
-//   // Case 3: dd-MM-yyyy
-//   if (/^\d{2}-\d{2}-\d{4}$/.test(date)) {
-//     const [d, m, y] = date.split("-")
-//     return `${y}-${m}-${d}`
-//   }
-
-//   return ""
-// }
 
 </script>
 
@@ -379,13 +362,13 @@ const deleteLoan = async () => {
                 <td class="px-1 py-1 text-sm text-gray-700">
                   <div v-if="l.count_schedule > 0" class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-6">
 
-                    <NuxtLink
-                      :to="`/app/dashboard/schedules/prints/${l.id}/print-sched`"
-                      target="_blank"
+                    <a
+                      :href="`/app/dashboard/schedules/prints/${l.id}/print-sched`"
+                      target="_blank" rel="noopener"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                       Sched
-                    </NuxtLink>
+                    </a>
 
                     <!-- <NuxtLink
                       :to="`/app/dashboard/loanrecords/prints/${l.id}/print-atm`"
@@ -393,40 +376,40 @@ const deleteLoan = async () => {
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        ATM
-                    </NuxtLink>
+                    </NuxtLink> -->
 
-                    <NuxtLink
+                    <!-- <NuxtLink
                       :to="`/app/dashboard/loanrecords/prints/${l.id}/print-landlayout`"
                       target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        Land
-                    </NuxtLink>
+                    </NuxtLink> -->
 
-                    <NuxtLink
+                    <!-- <NuxtLink
                       :to="`/app/dashboard/schedules/prints/${l.id}/print-sched2`"
                       target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        Sched2
-                    </NuxtLink>
+                    </NuxtLink> -->
 
-                    <NuxtLink
+                    <!-- <NuxtLink
                       :to="`/app/dashboard/loanrecords/prints/${l.id}/print-receipt2`"
                       target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        Receip2
-                    </NuxtLink>
+                    </NuxtLink> -->
 
-                    <NuxtLink
+                    <!-- <NuxtLink
                       :to="`/app/dashboard/loanrecords/prints/${l.id}/print-contract2`"
                       target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        Contract2
-                    </NuxtLink>
-                     -->
+                    </NuxtLink> -->
+                    
                   </div>
                 </td>
 
