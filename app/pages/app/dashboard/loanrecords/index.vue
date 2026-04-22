@@ -359,7 +359,7 @@ onMounted(() => {
                   </td> -->
 
                 <!-- contacts -->
-                <td class="px-1 py-1 text-sm text-gray-700">
+                <td v-if="isMobile" class="px-1 py-1 text-sm text-gray-700">
                   <div v-if="l.count_schedule > 0" class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-6">
 
                     <a

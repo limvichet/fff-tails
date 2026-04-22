@@ -143,7 +143,7 @@ const fetchData = async () => {
   loading.value = true
 
   try {
-    const { data } = await $fetch<ApiResponse>(`/api/admin-secure/schedules/${id}/print-sched`)
+    const { data } = await $fetch<ApiResponse>(`/api/admin-secure/schedules/${id}/print-sched`,{credentials: 'include'})
     dd.value = data
   } finally {
     loading.value = false
@@ -196,7 +196,12 @@ const waitImageLoad = () => {
 </script>
 
 <template>
-  <div class="page" v-if="dd">
+
+  <div v-if="loading">Loading...</div>
+  <div v-else-if="!dd">No Data (API failed)</div>
+
+
+  <div class="page" v-else>
     
     
     <!-- HEADER -->
