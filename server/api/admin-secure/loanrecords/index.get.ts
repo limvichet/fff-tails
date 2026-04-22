@@ -60,6 +60,7 @@ type Loarnrecord = {
     updated_by: string;
     updated_at: string;
     updatedby: Updatedby;
+    count_schedule: number;
 }
 
 type LoarnrecordResponses = {

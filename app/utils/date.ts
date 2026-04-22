@@ -1,3 +1,6 @@
+import { numUnicode } from "~/utils/number"
+
+
 export function formatDateForInput(date: string | null): string {
   if (!date) return ""
 
@@ -22,21 +25,6 @@ export function formatDateForOutput(date: Date): string {
   return `${d}/${m}/${y}`
 }
 
-/* for view or show*/
-// export function formatDate(date: string | null) {
-//   if (!date) return ""
-
-//   // already correct
-//   if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-//     return date
-//   }
-
-//   // convert dd-MM-yyyy → yyyy-MM-dd
-//   const [d, m, y] = date.split("-")
-
-//   return `${d}/${m}/${y}`
-// }
-
 /* DATE FORMAT HELPER */
 export function formatDate(date: string | null) {
   if (!date) return ""
@@ -60,4 +48,41 @@ export function formatDate(date: string | null) {
   }
 
   return ""
+}
+
+export function formatFullDate(dateInput: string) {
+  if (!dateInput) return ""
+
+  // accept "12/01/2026" or ISO "2026-01-12"
+  let date: Date
+
+  if (dateInput.includes("/")) {
+    // format: dd/mm/yyyy
+    const [d, m, y] = dateInput.split("/")
+    date = new Date(`${y}-${m}-${d}`)
+  } else {
+    date = new Date(dateInput)
+  }
+
+  const day = numUnicode(date.getDate())
+  const year = numUnicode(date.getFullYear())
+
+  const monthsKh = [
+    "មករា",
+    "កុម្ភៈ",
+    "មីនា",
+    "មេសា",
+    "ឧសភា",
+    "មិថុនា",
+    "កក្កដា",
+    "សីហា",
+    "កញ្ញា",
+    "តុលា",
+    "វិច្ឆិកា",
+    "ធ្នូ"
+  ]
+
+  const month = monthsKh[date.getMonth()]
+
+  return `ថ្ងៃទី${day} ខែ${month} ឆ្នាំ${year}`
 }

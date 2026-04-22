@@ -167,7 +167,7 @@ const formatDate = (d: string) => {
 
 const formatMonthYear = (d: string) => {
   const date = new Date(d)
-  return `${date.getMonth() + 1}-${date.getFullYear()}`
+  return `${date.getMonth() + 1}/${date.getFullYear()}`
 }
 
 
@@ -198,36 +198,39 @@ const waitImageLoad = () => {
 <template>
   <div class="page" v-if="dd">
     
+    
     <!-- HEADER -->
-    <div class="row">
-      <header class="col-8 header-left">
+    <header class="row">
+
+      <div class="col-8 row end">
         <img ref="logoRef" src="/imgs/logo-48.png" class="logo" />
-        <div class="header-text">
-          <div class="title">{{ capital?.organization }}</div>
-          <div class="subtitle">កាលវិភាគសងប្រាក់</div>
+        <div class="pl">
+          <h3><strong>{{ capital?.organization }}</strong></h3>
+          <h3>កាលវិភាគសងប្រាក់</h3>
         </div>
-      </header>
+      </div>
 
       <div class="col-4">
         <table class="table border">
           <tbody>
             <tr>
               <td>&nbsp; លេខសម្គាល់កម្ចី</td>
-              <td class="right">{{ pad(loanrecord?.id || 0) }}</td>
+              <td class="right">{{ pad(loanrecord?.id || 0) }} &nbsp;</td>
             </tr>
             <tr>
               <td>&nbsp; លេខអតិថិជន</td>
-              <td class="right">{{ pad(loanrecord?.customer?.id || 0) }}</td>
+              <td class="right">{{ pad(loanrecord?.customer?.id || 0) }} &nbsp;</td>
             </tr>
             <tr>
               <td>&nbsp; អត្រាកាប្រាក់%</td>
-              <td class="right">{{ loanrecord?.loan_interest_rate }}</td>
+              <td class="right">{{ loanrecord?.loan_interest_rate }} &nbsp;</td>
             </tr>
           </tbody>
         </table>
       </div>
-    </div>
+    </header>
 
+    <main>
     <!-- CUSTOMER -->
     <table>
       <tbody>
@@ -245,7 +248,7 @@ const waitImageLoad = () => {
         <tr>
           <td class="label">សរុបទឹកប្រាក់</td>
           <td>
-            {{ loanrecord?.loan_totalcash }}
+            {{ formatNumber(Number(loanrecord?.loan_totalcash || 0)) }}
             {{ loanrecord?.currency?.currency_kh }}
           </td>
           <td>
@@ -278,13 +281,13 @@ const waitImageLoad = () => {
           <td class="center">{{ s.schedule_paymentnumber }}</td>
           <td>{{ formatDate(s.schedule_principle_date) }}</td>
           <td>{{ formatMonthYear(s.schedule_principle_date) }}</td>
-          <td>{{ s.schedule_outstanding || 0 }}</td>
-          <td>{{ s.schedule_principle }}</td>
+          <td>{{ formatNumber(Number(s.schedule_outstanding || 0)) }}</td>
+          <td>{{ formatNumber(Number(s.schedule_principle || 0)) }}</td>
           <td>{{ formatNumber(Number(s.schedule_interest)) }}</td>
-          <td>{{ s.schedule_totalpay }}</td>
-          <td>{{ s.schedule_totalcashin }}</td>
-          <td>{{ s.schedule_paidcash }}</td>
-          <td>{{ s.schedule_lessmoney }}</td>
+          <td>{{ formatNumber(Number(s.schedule_totalpay || 0)) }}</td>
+          <td>{{ formatNumber(Number(s.schedule_totalcashin || 0)) }}</td>
+          <td>{{ formatNumber(Number(s.schedule_paidcash || 0)) }}</td>
+          <td>{{ formatNumber(Number(s.schedule_lessmoney || 0))}}</td>
         </tr>
       </tbody>
 
@@ -304,6 +307,10 @@ const waitImageLoad = () => {
           {{ loanrecord?.loan_note || '........................' }}
         </div>
       </div>
+
+    </main>
+
+
     <footer>
       <!-- SIGN DATE -->
       <div class="center l-space mt">
@@ -337,7 +344,7 @@ const waitImageLoad = () => {
           <div>ស្នាមម្រាមដៃ</div>
           <div>ម្ចាស់ប្រាក់</div>
           <div class="v-space"></div>
-          <div class="sign">{{ capital?.name }}</div>
+          <div class="mt">{{ capital?.name }}</div>
         </div>
       </div>
     </footer>
@@ -362,7 +369,7 @@ const waitImageLoad = () => {
 
 body {
   font-family: "Notosan", Arial, sans-serif;
-  font-size: 12pt;
+  font-size: 11pt;
   margin: 0;
   padding: 0;
 }
@@ -370,11 +377,57 @@ body {
 /* 2. SCREEN PREVIEW */
 .page {
   width: 210mm;
+  min-height: 260mm;
   padding: 15mm;
-  margin: 20px auto;
+  margin: 16px auto;
   background: white;
   border: 1px solid #ddd;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* 5. LAYOUT UTILITIES */
+.row { display: flex; align-items: center;}
+.start {align-items: start !important;}
+.end {align-items: end !important;}
+.between {justify-content: space-between;}
+.right { text-align: right; }
+.center { text-align: center; }
+.mb { margin-bottom: 10px; }
+.mt { margin-top: 10px; }
+.ml { margin-left: 10px; }
+.mr { margin-right: 10px; }
+.pl {padding-left: 5px;}
+.v-space { height: 90px; }
+.l-space { padding-left: 260px; }
+strong { font-weight: 700;}
+
+.col-2 { width: 20%; }
+.col-3 { width: 25%; }
+.col-4 { width: 33.33%; }
+.col-8 { width: 66.66%; }
+.col-10 { width: 80%; }
+
+.logo { width: 60px; height: 60px; opacity: .9; object-fit: contain; }
+
+h1, h2 {font-family: "Muol", Arial, sans-serif !important;}
+h3 {font-family: "Notosan", Arial, sans-serif !important;}
+h1 { font-size: 13pt; font-weight: 700;}
+h2 { font-size: 12pt; font-weight: 700;}
+h3 { font-size: 11pt; font-weight: 700;}
+
+
+/* 4. TABLE STYLES */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table td, table th {
+  padding: 5px 3px;
+  text-align: left;
+  font-size: 11pt;
+  vertical-align: top;
+  border-bottom: 1px solid #ddd;
 }
 
 /* 3. PRINT CONFIGURATION */
@@ -416,19 +469,6 @@ body {
   }
 }
 
-/* 4. TABLE STYLES */
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-table td, table th {
-  padding: 5px 3px;
-  text-align: left;
-  font-size: 11pt;
-  vertical-align: top;
-  border-bottom: 1px solid #ddd;
-}
 
 @media print {
   footer, tfoot, .note, .table tr {
@@ -440,23 +480,5 @@ table td, table th {
   }
 }
 
-/* 5. LAYOUT UTILITIES */
-.row { display: flex; margin-bottom: 10px; }
-.col-2 { width: 20%; }
-.col-3 { width: 25%; }
-.col-4 { width: 33.33%; }
-.col-8 { width: 66.66%; }
-.col-10 { width: 80%; }
 
-.header-left { display: flex; align-items: center; }
-.logo { width: 60px; height: 60px; object-fit: contain; }
-.header-text { margin-left: 10px; }
-.title, .subtitle { font-weight: bold; }
-
-.right { text-align: right; }
-.center { text-align: center; }
-.mt { margin-top: 15px; }
-.sign { margin-top: 30px; }
-.v-space { height: 90px; }
-.l-space { padding-left: 260px; }
 </style>

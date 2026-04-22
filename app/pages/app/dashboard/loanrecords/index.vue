@@ -18,6 +18,7 @@ import { ref, computed, onMounted, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useMessage } from "~/composables/useMessage"
 import { formatDateForOutput } from '~/utils/date'
+import { formatNumber } from '~/utils/number'
 
 
 const router = useRouter()
@@ -87,6 +88,7 @@ type LoanRecord = {
     updated_by: string;
     updated_at: string;
     updatedby: Updatedby;
+    count_schedule: number
 }
 type LoanrecordResponses = {
   current_page: number
@@ -357,11 +359,11 @@ const deleteLoan = async () => {
                 </td> -->
 
                 <td class="px-1 py-1 text-sm text-gray-700">
-                  {{ l.loan_newcash }}
+                  {{ formatNumber(Number(l.loan_newcash || 0)) }}
                 </td>
 
                 <td class="px-1 py-1 text-sm text-gray-700">
-                  {{ l.loan_totalcash }}
+                  {{ formatNumber(Number(l.loan_totalcash || 0)) }}
                 </td>
 
                   <td class="px-1 py-2 text-sm text-gray-400">
@@ -375,50 +377,56 @@ const deleteLoan = async () => {
 
                 <!-- contacts -->
                 <td class="px-1 py-1 text-sm text-gray-700">
-                  <div class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-6">
+                  <div v-if="l.count_schedule > 0" class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-6">
 
-                    <button
+                    <NuxtLink
                       :to="`/app/dashboard/schedules/prints/${l.id}/print-sched`"
                       target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                       Sched
-                    </button>
+                    </NuxtLink>
 
-                    <button
+                    <!-- <NuxtLink
                       :to="`/app/dashboard/loanrecords/prints/${l.id}/print-atm`"
                       target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        ATM
-                    </button>
+                    </NuxtLink>
 
-                    <button
+                    <NuxtLink
                       :to="`/app/dashboard/loanrecords/prints/${l.id}/print-landlayout`"
                       target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        Land
-                    </button>
+                    </NuxtLink>
 
-                    <!-- <button
+                    <NuxtLink
+                      :to="`/app/dashboard/schedules/prints/${l.id}/print-sched2`"
+                      target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        Sched2
-                    </button> -->
+                    </NuxtLink>
 
-                    <!-- <button
+                    <NuxtLink
+                      :to="`/app/dashboard/loanrecords/prints/${l.id}/print-receipt2`"
+                      target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
-                       ReceipCash2
-                    </button> -->
+                       Receip2
+                    </NuxtLink>
 
-                    <!-- <button
+                    <NuxtLink
+                      :to="`/app/dashboard/loanrecords/prints/${l.id}/print-contract2`"
+                      target="_blank"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        Contract2
-                    </button> -->
-                    
+                    </NuxtLink>
+                     -->
                   </div>
                 </td>
 
