@@ -388,6 +388,7 @@ body {
   background: white;
   border: 1px solid #ddd;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  color: #000;
 }
 
 /* 5. LAYOUT UTILITIES */
@@ -447,6 +448,13 @@ table td, table th {
   } */
 }
 
+@media (prefers-color-scheme: dark) {
+  .page {
+    background: black;
+    color: white;
+  }
+}
+
 @media print {
   html, body {
     width: 210mm;
@@ -460,6 +468,8 @@ table td, table th {
     padding: 0 !important; /* Let @page handle the margins */
     border: none !important;
     box-shadow: none !important;
+    background: white;
+    color: #000;
   }
 
   .no-print {
