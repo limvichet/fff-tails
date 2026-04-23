@@ -213,7 +213,7 @@ const deleteCustomer = async () => {
         <!-- Search -->
         <div class="relative">
           <!-- Icon -->
-          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-700" fill="none" stroke="currentColor"
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" fill="none" stroke="currentColor"
             stroke-width="2" viewBox="0 0 24 24">
             <path 
               stroke-linecap="round" 
@@ -234,7 +234,7 @@ const deleteCustomer = async () => {
         </div>
 
         <!-- Loading -->
-        <div v-if="loading" class="text-center text-gray-700 py-6">
+        <div v-if="loading" class="text-center py-6">
           Loading...
         </div>
 
@@ -271,7 +271,7 @@ const deleteCustomer = async () => {
               <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                 <tr v-for="(c, i) in paginated" :key="c.id"
                   class="border-t border-gray-100 dark:border-gray-800 hover:bg-blue-300/20 transition">
-                  <td class="px-4 py-2 text-sm text-gray-700">
+                  <td class="px-4 py-2 text-sm">
                     {{ (page - 1) * perPage + i + 1 }}
                   </td>
 
@@ -285,19 +285,19 @@ const deleteCustomer = async () => {
                     {{ c.nametitle2?.nametitle_kh }} {{ c.cust_name_2 }}
                   </td>
 
-                  <td class="px-1 py-2 text-sm text-gray-700 hidden sm:table-cell">
+                  <td class="px-1 py-2 text-sm hidden sm:table-cell">
                     {{ c.cust_phone_1 }}
                   </td>
 
-                  <td class="px-1 py-2 text-sm text-gray-700 hidden sm:table-cell">
+                  <td class="px-1 py-2 text-sm hidden sm:table-cell">
                     {{ c.cust_dob_1 ? formatDateForOutput(new Date(c.cust_dob_1)) : "-" }}
                   </td>
 
-                  <td class="px-1 py-2 text-sm text-gray-700 hidden sm:table-cell">
+                  <td class="px-1 py-2 text-sm hidden sm:table-cell">
                     <span class="font-semibold">{{ c.createdby.employee.full_name }}</span> - {{ formatDateForOutput(new Date(c.created_at)) }}
                   </td>
 
-                  <td class="px-1 py-2 text-sm text-gray-700 hidden sm:table-cell">
+                  <td class="px-1 py-2 text-sm hidden sm:table-cell">
                     <span class="font-semibold">{{ c.updatedby.employee.full_name }}</span> - {{ formatDateForOutput(new Date(c.updated_at)) }}
                   </td>
 
@@ -326,7 +326,7 @@ const deleteCustomer = async () => {
                 </tr>
 
                 <tr v-if="paginated.length === 0">
-                  <td colspan="5" class="text-center py-6 text-gray-700">
+                  <td colspan="5" class="text-center py-6">
                     No customers found.
                   </td>
                 </tr>
@@ -368,7 +368,7 @@ const deleteCustomer = async () => {
         class="no-scrollbar relative w-full max-w-[400px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-6">
         <!-- close btn -->
         <button @click="closeModal"
-          class="transition-color absolute right-5 top-5 z-999 flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-gray-700 hover:bg-blue-200 hover:text-blue-600 dark:bg-gray-700 dark:bg-white/[0.05] dark:text-gray-700 dark:hover:bg-white/[0.07] dark:hover:text-gray-300">
+          class="transition-color absolute right-5 top-5 z-999 flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 hover:bg-blue-200 hover:text-blue-600 dark:bg-gray-700 dark:bg-white/[0.05] dark dark:hover:bg-white/[0.07] dark:hover:text-gray-300">
           <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none"
             xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd"
@@ -388,7 +388,7 @@ const deleteCustomer = async () => {
         <form class="flex flex-col">
           <div class="flex items-center gap-3 mt-6 lg:justify-end">
             <button @click="closeModal" type="button"
-              class="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-blue-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-700 dark:hover:bg-white/[0.03] sm:w-auto">
+              class="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-blue-50 dark:border-gray-700 dark:bg-gray-800 dark dark:hover:bg-white/[0.03] sm:w-auto">
               Cancel
             </button>
             <button @click="deleteCustomer" type="button"

@@ -338,18 +338,18 @@ onMounted(() => {
                   {{ l.loan_lastcash }}
                 </td> -->
 
-                <td class="px-1 py-1 text-sm text-gray-900">
+                <td class="px-1 py-1 text-sm">
                   {{ formatNumber(Number(l.loan_newcash || 0)) }}
                 </td>
 
-                <td class="px-1 py-1 text-sm text-gray-900">
+                <td class="px-1 py-1 text-sm">
                   {{ formatNumber(Number(l.loan_totalcash || 0)) }}
                 </td>
 
-                  <td class="px-1 py-2 text-sm text-gray-900">
+                  <td class="px-1 py-2 text-sm">
                     <span>{{ l.createdby.employee.full_name }} - {{ formatDateForOutput(new Date(l.created_at)) }} </span>
                   </td>
-                  <td class="px-1 py-2 text-sm text-gray-900">
+                  <td class="px-1 py-2 text-sm">
                     <span>{{ l.updatedby.employee.full_name }} - {{ formatDateForOutput(new Date(l.updated_at)) }} </span> 
                   </td>
 
@@ -358,7 +358,7 @@ onMounted(() => {
                   </td> -->
 
                 <!-- contacts -->
-                <td class="px-1 py-1 text-sm text-gray-900">
+                <td class="px-1 py-1 text-sm">
                   <div v-if="l.count_schedule > 0" class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-6">
 
                     <a
