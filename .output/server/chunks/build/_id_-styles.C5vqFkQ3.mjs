@@ -1,0 +1,8 @@
+const _id__vue_vue_type_style_index_0_scoped_3f6dcd51_lang = ".label[data-v-3f6dcd51]{color:#555;display:block;font-size:14px;font-weight:500;margin-bottom:4px}.input[data-v-3f6dcd51]{background:transparent;border:1px solid #ddd;border-radius:6px;padding:6px 10px;width:100%}input[type=date][data-v-3f6dcd51]{-moz-appearance:none;appearance:none;-webkit-appearance:none}.dark .label[data-v-3f6dcd51]{color:#ccc}.dark .input[data-v-3f6dcd51]{border-color:#444}";
+
+const _id_Styles_C5vqFkQ3 = [
+  _id__vue_vue_type_style_index_0_scoped_3f6dcd51_lang
+];
+
+export { _id_Styles_C5vqFkQ3 as default };
+//# sourceMappingURL=_id_-styles.C5vqFkQ3.mjs.map

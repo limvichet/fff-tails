@@ -1,0 +1,48 @@
+function fixDouble(value, n) {
+  const power = Math.pow(10, n);
+  return Math.floor(value * power) / power;
+}
+const formatNumber = (val) => {
+  const num = parseFloat(val);
+  return isNaN(num) ? "0.00" : num.toLocaleString(void 0, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+const numUnicode = (value) => {
+  if (value === null || value === void 0) return "";
+  const map = {
+    "0": "០",
+    "1": "១",
+    "2": "២",
+    "3": "៣",
+    "4": "៤",
+    "5": "៥",
+    "6": "៦",
+    "7": "៧",
+    "8": "៨",
+    "9": "៩"
+  };
+  return value.toString().split("").map((char) => map[char] ?? char).join("");
+};
+const khMonth = (month) => {
+  const months = [
+    "",
+    // index 0 (not used)
+    "មករា",
+    "កុម្ភៈ",
+    "មីនា",
+    "មេសា",
+    "ឧសភា",
+    "មិថុនា",
+    "កក្កដា",
+    "សីហា",
+    "កញ្ញា",
+    "តុលា",
+    "វិច្ឆិកា",
+    "ធ្នូ"
+  ];
+  const m = Number(month);
+  if (!m || m < 1 || m > 12) return "";
+  return months[m] ?? "";
+};
+
+export { fixDouble as a, formatNumber as f, khMonth as k, numUnicode as n };
+//# sourceMappingURL=number-BUJwr6QZ.mjs.map
