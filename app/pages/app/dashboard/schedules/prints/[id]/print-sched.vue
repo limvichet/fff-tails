@@ -1,9 +1,15 @@
 <script setup lang="ts">
-definePageMeta({
-  layout: "print",
-  requiresAuth: false,
-  ssr: false
-})
+
+  definePageMeta({
+    layout: "print",
+    requiresAuth: false,
+    ssr: false
+  })
+
+  useHead({
+    title: "Preview schedule",
+    meta: [{ name: "Schedule", content: "preview schedule" }],
+  })
 
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
@@ -197,12 +203,11 @@ const waitImageLoad = () => {
 
 <template>
 
-  <div v-if="loading"><p>Preparing Document ...</p></div>
+  <div v-if="loading" class="loading"><p>Preparing Document ...</p></div>
   <div v-else-if="!dd">No Data ...</div>
 
 
   <div class="page" v-else>
-    
     
     <!-- HEADER -->
     <header class="row">
@@ -265,7 +270,7 @@ const waitImageLoad = () => {
     </table>
 
     <!-- SCHEDULE -->
-    <table class="table mt">
+    <table class="mt">
       <thead>
         <tr>
           <th>ល.រ</th>

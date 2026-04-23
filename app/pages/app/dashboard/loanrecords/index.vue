@@ -297,17 +297,14 @@ onMounted(() => {
             <thead>
               <tr class="border-b border-gray-200 dark:border-gray-700">
                 <th class="px-2 py-3 text-left text-sm w-[2%]">#</th>
-                <th class="px-1 py-3 text-left text-sm w-[3%]">ID</th>
-                <!-- <th class="px-2 py-3 text-left text-sm w-[2%]">CustID</th> -->
                 <th class="px-1 py-3 text-left text-sm w-[3%]">Loan</th>
                 <th class="px-1 py-3 text-left text-sm w-[15%]">Customer</th>
-                <!-- <th class="px-1 py-3 text-left text-sm w-[10%]">Last Cash</th> -->
-                <th class="px-1 py-3 text-left text-sm w-[10%]">New</th>
-                <th class="px-1 py-3 text-left text-sm w-[10%]">Total</th>
-                <th class="px-1 py-3 text-left text-sm w-[12%]">Created/Updated</th>
-                <!-- <th class="px-2 py-2 text-left text-sm w-[9%]">Updated</th> -->
-                <th class="px-1 py-3 text-center text-sm w-[20%]">Contracts</th>
-                <th class="px-1 py-3 text-center text-sm w-[15%]">Actions</th>
+                <th class="px-1 py-3 text-left text-sm w-[12%]">New</th>
+                <th class="px-1 py-3 text-left text-sm w-[13%]">Total</th>
+                <th class="px-1 py-3 text-left text-sm w-[7%]">Created</th>
+                <th class="px-1 py-3 text-left text-sm w-[7%]">Updated</th>
+                <th class="px-5 py-3 text-left text-sm w-[22%]">Contracts</th>
+                <th class="px-5 py-3 text-left text-sm w-[20%]">Actions</th>
               </tr>
             </thead>
 
@@ -322,18 +319,18 @@ onMounted(() => {
                 </td>
 
                 <td class="px-1 py-1 text-sm">
-                  {{ l.id }}
+                  {{ l.id }}({{ l?.loantype?.loantype_short ??  '' }})
                 </td>
                 
                 <!-- <td class="px-1 py-1 text-sm">
                   {{ l.cust_id }}
                 </td> -->
 
-                <td class="px-1 py-1 text-sm">
+                <!-- <td class="px-1 py-1 text-sm">
                     {{ l?.loantype?.loantype_short ??  '' }}
-                </td>
+                </td> -->
 
-                <td class="px-1 py-1 text-sm">
+                <td class="px-2 py-1 text-sm">
                   {{ l.customer.nametitle1.nametitle_kh }} {{ l.customer.cust_name_1 }}
                 </td>
 
@@ -341,17 +338,19 @@ onMounted(() => {
                   {{ l.loan_lastcash }}
                 </td> -->
 
-                <td class="px-1 py-1 text-sm text-gray-700">
+                <td class="px-1 py-1 text-sm text-gray-900">
                   {{ formatNumber(Number(l.loan_newcash || 0)) }}
                 </td>
 
-                <td class="px-1 py-1 text-sm text-gray-700">
+                <td class="px-1 py-1 text-sm text-gray-900">
                   {{ formatNumber(Number(l.loan_totalcash || 0)) }}
                 </td>
 
-                  <td class="px-1 py-2 text-sm text-gray-400">
-                    <p class="font-semibold">{{ l.createdby.employee.full_name }} - {{ formatDateForOutput(new Date(l.created_at)) }} </p>
-                    <p class="font-semibold">{{ l.updatedby.employee.full_name }} - {{ formatDateForOutput(new Date(l.updated_at)) }} </p> 
+                  <td class="px-1 py-2 text-sm text-gray-900">
+                    <span>{{ l.createdby.employee.full_name }} - {{ formatDateForOutput(new Date(l.created_at)) }} </span>
+                  </td>
+                  <td class="px-1 py-2 text-sm text-gray-900">
+                    <span>{{ l.updatedby.employee.full_name }} - {{ formatDateForOutput(new Date(l.updated_at)) }} </span> 
                   </td>
 
                   <!-- <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
@@ -359,13 +358,13 @@ onMounted(() => {
                   </td> -->
 
                 <!-- contacts -->
-                <td class="px-1 py-1 text-sm text-gray-700">
+                <td class="px-1 py-1 text-sm text-gray-900">
                   <div v-if="l.count_schedule > 0" class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-6">
 
                     <a
                       :href="`/app/dashboard/schedules/prints/${l.id}/print-sched`"
                       target="_blank" rel="noopener"
-                      class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
+                      class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-900 text-white text-sm"
                     >
                       Sched
                     </a>
@@ -373,26 +372,26 @@ onMounted(() => {
                     <a
                       :href="`/app/dashboard/loanrecords/prints/${l.id}/print-atm`"
                       target="_blank" rel="noopener"
-                      class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
+                      class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-900 text-white text-sm"
                     >
                        ATM
                     </a>
 
-                    <!-- <NuxtLink
-                      :to="`/app/dashboard/loanrecords/prints/${l.id}/print-landlayout`"
-                      target="_blank"
-                      class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
+                    <a
+                      :href="`/app/dashboard/loanrecords/prints/${l.id}/print-landlayout`"
+                      target="_blank" rel="noopener"
+                      class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-900 text-white text-sm"
                     >
                        Land
-                    </NuxtLink> -->
+                    </a>
 
-                    <!-- <NuxtLink
-                      :to="`/app/dashboard/schedules/prints/${l.id}/print-sched2`"
-                      target="_blank"
+                    <a
+                      :href="`/app/dashboard/schedules/prints/${l.id}/print-sched2`"
+                      target="_blank" rel="noopener"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        Sched2
-                    </NuxtLink> -->
+                    </a>
 
                     <!-- <NuxtLink
                       :to="`/app/dashboard/loanrecords/prints/${l.id}/print-receipt2`"

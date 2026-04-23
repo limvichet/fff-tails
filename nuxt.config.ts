@@ -35,7 +35,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'https://apiloan.cdcf.info',
       public: { 
-        siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://apiloan.cdcf.info'
+        siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://chhoukroit.pages.dev'
       }
   },
   // $development: {

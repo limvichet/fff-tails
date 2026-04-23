@@ -4,24 +4,7 @@
 
 <style>
 /* 1. GLOBAL PRINT FONTS & RESET */
-@font-face {
-  font-family: 'Notosan';
-  src: url('/fonts/NotoSansKhmer.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Muol';
-  src: url('/fonts/KhmerOSmuollight.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'tacteng';
-  src: url('/fonts/TACTENG.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
+
 
 :root {
   --page-width: 210mm;
@@ -60,7 +43,9 @@ body {
 .start {align-items: start !important;}
 .end {align-items: end !important;}
 .between {justify-content: space-between;}
+.around {justify-content: space-around;}
 .right { text-align: right; }
+.left { text-align: left; }
 .center { text-align: center; }
 .mb { margin-bottom: 10px; }
 .mt { margin-top: 10px; }
@@ -71,6 +56,11 @@ body {
 .l-space { padding-left: 260px; }
 .bold { font-weight: 700;}
 
+.loading {
+  padding-top: 20px;
+  text-align: center;
+}
+
 .col-2 { width: 20%; }
 .col-3 { width: 25%; }
 .col-4 { width: 33.33%; }
@@ -80,8 +70,8 @@ body {
 
 h1, h2 {font-family: "Muol", Arial, sans-serif !important;}
 h3 {font-family: "Notosan", Arial, sans-serif !important;}
-h1 { font-size: 13pt; font-weight: 700;}
-h2 { font-size: 12pt; font-weight: 700;}
+h1 { font-size: 13pt;}
+h2 { font-size: 12pt;}
 h3 { font-size: 11pt; font-weight: 700;}
 p { line-height: 1.6; font-size: 12pt !important;}
 .inden { text-indent: 50px;}
@@ -96,6 +86,7 @@ table {
   width: 100%;
   border-collapse: collapse;
 }
+th { font-weight: 900; }
 table td, table th {
   padding: 5px;
   border-bottom: 1px solid #ddd;

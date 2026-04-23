@@ -1,10 +1,15 @@
 <script setup lang="ts">
 
-definePageMeta({
-  layout: "print",
-  requiresAuth: false,
-  ssr: false
-})
+  definePageMeta({
+    layout: "print",
+    requiresAuth: false,
+    ssr: false
+  })
+
+  useHead({
+    title: "Preview atm",
+    meta: [{ name: "Loan", content: "preview atm" }],
+  })
 
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
@@ -94,7 +99,7 @@ onMounted(async () => {
 
 <template>
 
-  <div v-if="loading"><p>Preparing Document...</p></div>
+  <div v-if="loading" class="loading"><p>Preparing Document ...</p></div>
   <div v-else-if="!dd">No Data ...</div>
   
   <div v-if="!loading && loanrecord" class="page">

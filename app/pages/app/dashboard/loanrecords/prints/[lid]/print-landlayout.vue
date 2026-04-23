@@ -1,10 +1,15 @@
 <script setup lang="ts">
 
-definePageMeta({
-  layout: false,
-  requiresAuth: false,
-  ssr: false
-})
+  definePageMeta({
+    layout: "print",
+    requiresAuth: false,
+    ssr: false
+  })
+
+  useHead({
+    title: "Preview landlayout",
+    meta: [{ name: "Loan", content: "preview landlayout" }],
+  })
 
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
@@ -106,6 +111,9 @@ function formatYear(date: string) {
 
 
 <template>
+  <div v-if="loading" class="loading"><p>Preparing Document ...</p></div>
+  <div v-else-if="!dd">No Data ...</div>
+  
   <div class="page" v-if="!loading && loanrecord && capital && invoice">
     <!-- HEADER -->
     <header class="center mt">
@@ -123,7 +131,7 @@ function formatYear(date: string) {
         កើតនៅថ្ងៃទី{{ numUnicode(formatDay(loanrecord.customer.cust_dob_1)) }}
         ខែ{{ numUnicode(formatMonth(loanrecord.customer.cust_dob_1)) }}
         ឆ្នាំ{{ numUnicode(formatYear(loanrecord.customer.cust_dob_1)) }}
-        អាសយដ្ឋានបច្ចុប្បន្ន{{ loanrecord.customer.cust_address }}
+        អាសយដ្ឋានបច្ចុប្បន្ន{{ loanrecord.customer.cust_address }}។
       </p>
 
       <!-- TITLE -->
@@ -131,7 +139,7 @@ function formatYear(date: string) {
       <h2 class="center">លោកស្រីប្រធាន{{ capital.organization }}</h2>
 
       <!-- DESCRIPTION -->
-      <p class="inden">
+      <p class="inden mt">
         ដោយខ្លាចក្រែងបាត់បង់ ឬខូចខាតដោយប្រការណាមួយនូវប្លង់ដែលបានដាក់ហ៊ីប៉ូតែក
         យើងខ្ញុំឯកភាពស្នើសុំលោកស្រីប្រធាន
         <strong>{{ capital.organization }}</strong>
@@ -175,21 +183,17 @@ function formatYear(date: string) {
 
     <!-- FOOTER -->
     <footer >
-      <!-- DATE -->
-      <div class="center l-space mt">
-        <p>{{ invoice.datesignChhankitek }}</p>
-        <p>ខេត្តកំពង់ធំ {{ invoice.datesignSoriyakitek }}</p>
-      </div>
+
 
       <!-- SIGNATURE -->
-      <div class="fingerprint mt">
+      <div class="row around end mt center">
         <!-- LEFT -->
-        <div class="fingerprint-article">
+        <div>
           <div>
-            <p><strong><center>ស្នាមម្រាមដៃ</center></strong></p>
-            <p><strong><center>អ្នកស្នើសុំតម្កល់​ឯកសារ</center></strong></p>
+            <p><strong>ស្នាមម្រាមដៃ</strong></p>
+            <p><strong>អ្នកស្នើសុំតម្កល់​ឯកសារ</strong></p>
           </div>
-
+          <div class="v-space"></div>
           <p>
             <strong>
               {{ loanrecord.customer.cust_name_1 }}
@@ -202,14 +206,19 @@ function formatYear(date: string) {
         </div>
 
         <!-- RIGHT -->
-        <div class="fingerprint-article">
-          <div>
-            <p><strong><center>យល់ព្រមតាមការស្នើសុំ</center></strong></p>
-            <p><strong><center>{{ capital.organization }}</center></strong></p>
-            <p><strong><center>ហត្ថលេខា</center></strong></p>
+        <div>
+          <!-- DATE -->
+          <div class="center">
+            <p>{{ invoice.datesignChhankitek }}</p>
+            <p>ខេត្តកំពង់ធំ {{ invoice.datesignSoriyakitek }}</p>
           </div>
-
-          <p><strong><center>{{ capital.name }}</center></strong></p>
+          <div class="mt">
+            <p><strong>យល់ព្រមតាមការស្នើសុំ</strong></p>
+            <p><strong>{{ capital.organization }}</strong></p>
+            <p><strong>ហត្ថលេខា</strong></p>
+          </div>
+          <div class="v-space"></div>
+          <p><strong>{{ capital.name }}</strong></p>
         </div>
       </div>
     </footer>
@@ -219,7 +228,7 @@ function formatYear(date: string) {
   <div v-else class="center">Loading...</div>
 </template>
 
-
+<!-- 
 <style scoped>
 
 /* =======================
@@ -388,4 +397,4 @@ h2 {
   }
 }
 
-</style>
+</style> -->

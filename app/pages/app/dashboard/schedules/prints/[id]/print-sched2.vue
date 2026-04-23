@@ -1,9 +1,14 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: false,
+  layout: "print",
   requiresAuth: false,
   ssr: false
 })
+
+  useHead({
+    title: "Preview schedule 2",
+    meta: [{ name: "Schedule", content: "preview schedule 2" }],
+  })
 
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
@@ -102,7 +107,7 @@ const dd = ref<PrintSchedule | null>(null)
 const capital = computed(() => dd.value?.capital ?? null)
 const loanrecord = computed(() => dd.value?.loanrecord ?? null)
 const schedules = computed(() => dd.value?.schedules ?? [])
-const sumSchedule = computed(() => dd.value?.sum_schedule_principle ?? 0)
+// const sumSchedule = computed(() => dd.value?.sum_schedule_principle ?? 0)
 const invoice = computed(() => dd.value?.invoice ?? null)
 
 const loading = ref(false)
@@ -141,7 +146,9 @@ const formatMonthYear = (d: string) => {
 
 
 
-
+// setTimeout(() => {
+//   window.print()
+// }, 500)
 
 const logoRef = ref<HTMLImageElement | null>(null)
 
@@ -158,129 +165,129 @@ const waitImageLoad = () => {
   })
 }
 
-// setTimeout(() => {
-//   window.print()
-// }, 500)
-
 </script>
 
 
 <template>
-  <div class="container page" v-if="dd">
+
+  <div v-if="loading" class="loading"><p>Preparing Document ...</p></div>
+  <div v-else-if="!dd">No Data ...</div>
+
+
+
+  <div class="page" v-if="dd">
 
     <!-- HEADER -->
     <header class="row">
-      <div class="col-8">
 
-        <!-- LOGO + TITLE -->
-        <div class="row mb-3 header-left">
-          <img
-            ref="logoRef"
-            src="/imgs/logo.png"
-            class="logo"
-            alt="logo"
-          />
-
-          <div class="header-text">
-            <h2>{{ capital?.organization }}</h2>
-            <div>កាលវិភាគសងប្រាក់</div>
-          </div>
+      <div class="col-8 row end">
+        <img ref="logoRef" src="/imgs/logo.png" class="logo" alt="logo" />
+        <div class="pl">
+          <h3><strong>{{ capital?.organization }}</strong></h3>
+          <h3><strong>កាលវិភាគសងប្រាក់</strong></h3>
         </div>
+      </div>
 
-        <!-- CUSTOMER INFO -->
-        <table>
+      <div class="col-4">
+        <table class="table border">
           <tbody>
             <tr>
-              <th style="width:20%">អតិថិជន</th>
-              <td style="width:40%">
-                {{ loanrecord!.customer.nametitle1?.nametitle_kh }}
-                {{ loanrecord!.customer.cust_name_1 }}
-
-                <template v-if="loanrecord!.customer.cust_name_2">
-                  - {{ loanrecord!.customer.cust_name_2 }}
-                </template>
-              </td>
-            </tr>
-
-            <tr>
-              <th>ថ្ងៃខែឆ្នាំខ្ចីប្រាក់</th>
-              <td>{{ invoice!.datesignSoriyakitek }}</td>
+              <td>&nbsp; លេខសម្គាល់កម្ចី </td>
+              <td class="right">{{ loanrecord!.id }} &nbsp; </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <!-- RIGHT SIDE -->
-      <div class="col-3">
-        <table>
-          <tbody>
-            <tr>
-              <td>លេខសម្គាល់កម្ចី</td>
-              <td class="right">{{ loanrecord!.id }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
     </header>
 
-    <!-- SCHEDULE TABLE -->
-    <main class="row mt">
-      
-        <table>
-          <thead>
-            <tr>
-              <th>ល.រ</th>
-              <th>កាលបរិច្ឆេទបង់ប្រាក់</th>
-              <th>សរុបប្រាក់ត្រូវបង់</th>
-              <th>ផ្សេងៗ</th>
-            </tr>
-          </thead>
 
-          <tbody>
-            <tr
-              v-for="(schedule, i) in schedules"
-              :key="schedule.id"
-            >
-              <td>{{ schedule.schedule_paymentnumber }}</td>
+  
 
-              <td>
-                {{ formatDate(schedule.schedule_principle_date) }}
-              </td>
+  <main class="mt">
 
-              <td>
-                {{ formatNumber(schedule.schedule_totalpay) }} {{ loanrecord!.currency.currency_kh }}
-              </td>
+      <!-- CUSTOMER INFO -->
+      <table>
+        <tbody>
+          <tr>
+            <td>អតិថិជន</td>
+            <td>
+              {{ loanrecord!.customer.nametitle1?.nametitle_kh }}
+              {{ loanrecord!.customer.cust_name_1 }}
 
-              <td>
-                {{ schedule.schedule_note || '' }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      
+              <span v-if="loanrecord!.customer.cust_name_2">
+                - {{ loanrecord!.customer.cust_name_2 }}
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td>ថ្ងៃខែឆ្នាំខ្ចីប្រាក់</td>
+            <td>{{ invoice!.datesignSoriyakitek }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+
+      <!-- SCHEDULE TABLE -->
+      <table class="mt">
+        <thead>
+          <tr>
+            <th class="left bold">ល.រ</th>
+            <th class="left bold">កាលបរិច្ឆេទបង់ប្រាក់</th>
+            <th class="left bold">សរុបប្រាក់ត្រូវបង់</th>
+            <th class="left bold">ផ្សេងៗ</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr v-for="(schedule, i) in schedules" :key="schedule.id">
+            <td>{{ schedule.schedule_paymentnumber }}</td>
+
+            <td>
+              {{ formatDate(schedule.schedule_principle_date) }}
+            </td>
+
+            <td>
+              {{ formatNumber(schedule.schedule_totalpay) }} {{ loanrecord!.currency.currency_kh }}
+            </td>
+
+            <td>
+              {{ schedule.schedule_note || '' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
     </main>
 
-    <!-- FOOTER / SIGN -->
-    <footer class="mt l-space">
-      <div>
-        <p><center>{{ invoice!.datesignChhankitek }}</center></p>
-        <p><center>កំពង់ធំ {{ invoice!.datesignSoriyakitek }}</center></p> 
-        <p><center>អ្នកធ្វើតារាង</center></p>
-      </div>
-       <div class="v-space"></div>
-      <div>
-        <p><center>{{ capital!.name }}</center></p>
-      </div>
-    </footer>
+
+
+  <!-- FOOTER / SIGN -->
+  <footer class="mt l-space">
+    <div>
+      <p>
+        <center>{{ invoice!.datesignChhankitek }}</center>
+      </p>
+      <p>
+        <center>កំពង់ធំ {{ invoice!.datesignSoriyakitek }}</center>
+      </p>
+      <p>
+        <center>អ្នកធ្វើតារាង</center>
+      </p>
+    </div>
+    <div class="v-space"></div>
+    <div>
+      <p>
+        <center>{{ capital!.name }}</center>
+      </p>
+    </div>
+  </footer>
+
   </div>
 
-  <!-- LOADING -->
-  <div v-else class="center mt">
-    Loading...
-  </div>
 </template>
 
-
+<!-- 
 <style scoped>
 /* 1. FONTS & BASE */
 @font-face {
@@ -395,4 +402,4 @@ table td, table th {
 .sign { margin-top: 30px; }
 .v-space { height: 90px; }
 .l-space { padding-left: 200px; }
-</style>
+</style> -->
