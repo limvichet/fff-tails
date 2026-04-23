@@ -1,14 +1,14 @@
 <script setup lang="ts">
 
 definePageMeta({
-  layout: false,
+  layout: "print",
   requiresAuth: false,
   ssr: false
 })
 
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { numUnicode } from "~/utils/number"
+import { formatFullDate } from "~/utils/date"
 
 type ApiResponse = {
   success: boolean
@@ -90,29 +90,24 @@ onMounted(async () => {
   // setTimeout(() => window.print(), 300)
 })
 
-function formatDay(date: string) {
-  return date ? new Date(date).getDate() : ""
-}
-function formatMonth(date: string) {
-  return date ? new Date(date).getMonth() + 1 : ""
-}
-function formatYear(date: string) {
-  return date ? new Date(date).getFullYear() : ""
-}
-
-
-
-
 </script>
 
 <template>
+
+  <div v-if="loading"><p>Preparing Document...</p></div>
+  <div v-else-if="!dd">No Data ...</div>
+  
   <div v-if="!loading && loanrecord" class="page">
     <!-- HEADER -->
-    <header class="center mt">
-      <h1>ព្រះរាជាណាចក្រកម្ពុជា</h1>
-      <h1>ជាតិ សាសនា ព្រះមហាក្សត្រ</h1>
-      <p class="tacteng">3</p>
-      <h2>លិខិតផ្ទេកម្មសិទ្ធិ</h2>
+    <header class="row between center">
+      <div></div>
+      <div>
+        <h1>ព្រះរាជាណាចក្រកម្ពុជា</h1>
+        <h1>ជាតិ សាសនា ព្រះមហាក្សត្រ</h1>
+        <p class="tacteng">3</p>
+        <h2>លិខិតផ្ទេកម្មសិទ្ធិ</h2>
+      </div>
+      <div></div>
     </header>
 
     <!-- MAIN -->
@@ -120,16 +115,14 @@ function formatYear(date: string) {
       <p class="inden">
         {{ loanrecord!.customer.nametitle1.type }}ឈ្មោះ
         &nbsp; <strong>{{ loanrecord!.customer.cust_name_1 }}</strong> &nbsp; 
-        កើតនៅថ្ងៃទី{{ numUnicode(formatDay(loanrecord!.customer.cust_dob_1)) }}
-        ខែ{{ khMonth(formatMonth(loanrecord!.customer.cust_dob_1)) }}
-        ឆ្នាំ{{ numUnicode(formatYear(loanrecord!.customer.cust_dob_1)) }}
-        អាសយដ្ឋាន {{ loanrecord!.customer.cust_address }}
+        កើតនៅ{{ formatFullDate(loanrecord!.customer.cust_dob_1) }}
+        អាសយដ្ឋាន {{ loanrecord!.customer.cust_address }}។
       </p>
 
       <!-- TITLE -->
       <h2 class="center mt">យល់ព្រម</h2>
 
-      <p class="inden justify">
+      <p class="inden justify mt">
         <strong>១-</strong>
         ប្រគល់កាត ATM លេខ
         <span v-if="!loanrecord?.customer?.cust_atm_num">............................</span>
@@ -148,7 +141,8 @@ function formatYear(date: string) {
       <p class="inden justify"><strong>៣-</strong> ផ្ដាច់ការប្រើប្រាស់ប្រព័ន្ធធនាគារតាម APPទូរស័ព្ទដែ ឬប្រព័ន្ធយូនីធីជាដើមក្នុងកំឡុងពេល​ការទូទាត់តាម កាលវិភាគនៅមិនទាន់បានបញ្ចប់នៅឡើយ(ដើម្បីជៀសវាងការមិនទុកចិត្តគ្នាលើការដកប្រាក់)។</p>
 
       <p class="inden justify"><strong>៤-</strong> មិនបើកកាត ATM ថ្មី ឬបិទគណនីធនាគារ ដោយមិនបានពិភាក្សាជាមួយលោកស្រី
-                {{ capital?.name }}ជាមុនឡើយ។</p>
+      {{ capital?.name }}ជាមុនឡើយ។
+      </p>
 
       <p class="inden justify">
         ខ្ញុំបាទ/នាងខ្ញុំ សូមធានាថាកាត   ATM  នេះជាកម្មសិទ្ធិរបស់ខ្ញុំបាទ/នាងខ្ញុំប្រាកដមែន។ ការប្រគល់កាត ATM ធ្វើឡើងដោយគ្មានការបង្ខិតបង្ខំពីជនណាម្នាក់ឡើយ។
@@ -168,7 +162,6 @@ function formatYear(date: string) {
         <p>{{ invoice?.datesignSoriyakitek }}</p>
       </div>
       
-
       <div class="mt center">
         <span><strong>ស្នាមម្រាមដៃ</strong></span>
         <div class="v-space"></div>
@@ -185,7 +178,7 @@ function formatYear(date: string) {
 </template>
 
 
-
+<!-- 
 <style scoped>
 
 /* =======================
@@ -337,4 +330,4 @@ h2 {
   }
 }
 
-</style>
+</style> -->

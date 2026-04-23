@@ -1,8 +1,0 @@
-const create_copy_vue_vue_type_style_index_0_scoped_acd858f6_lang = ".label[data-v-acd858f6]{color:#555;display:block;font-size:14px;margin-bottom:4px}.dark .label[data-v-acd858f6]{color:#ccc}.input[data-v-acd858f6]{border:1px solid #ddd;border-radius:8px;padding:8px 12px;width:100%}input[type=date][data-v-acd858f6]{-moz-appearance:none;appearance:none;-webkit-appearance:none}.text-red-500[data-v-acd858f6]{color:#f56565}.text-sm[data-v-acd858f6]{font-size:12px}";
-
-const create_copyStyles_CFhAxU52 = [
-  create_copy_vue_vue_type_style_index_0_scoped_acd858f6_lang
-];
-
-export { create_copyStyles_CFhAxU52 as default };
-//# sourceMappingURL=create copy-styles.CFhAxU52.mjs.map

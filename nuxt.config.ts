@@ -29,29 +29,31 @@ export default defineNuxtConfig({
           rel: 'apple-touch-icon',
           href: '/icons/icon-192.png'
         },
-        // {
-        //   rel: 'stylesheet',
-        //   href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;700&display=swap'
-        // }
       ]
     }
   },
-  $development: {
-    runtimeConfig: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
+  runtimeConfig: {
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'https://apiloan.cdcf.info',
       public: { 
-        siteUrl: process.env.NUXT_PUBLIC_SITE_URL
+        siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://apiloan.cdcf.info'
       }
-    },
   },
-  $production: {
-    runtimeConfig: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
-      public: { 
-        siteUrl: process.env.NUXT_PUBLIC_SITE_URL
-      }
-    },
-  },
+  // $development: {
+  //   runtimeConfig: {
+  //     apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
+  //     public: { 
+  //       siteUrl: process.env.NUXT_PUBLIC_SITE_URL
+  //     }
+  //   },
+  // },
+  // $production: {
+  //   runtimeConfig: {
+  //     apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
+  //     public: { 
+  //       siteUrl: process.env.NUXT_PUBLIC_SITE_URL
+  //     }
+  //   },
+  // },
   //ssr: true,
   nitro: {
     prerender: {

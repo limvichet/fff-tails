@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: "print",
+  layout: false,
   requiresAuth: false,
   ssr: false
 })
@@ -197,8 +197,8 @@ const waitImageLoad = () => {
 
 <template>
 
-  <div v-if="loading"><p>Preparing Document ...</p></div>
-  <div v-else-if="!dd">No Data ...</div>
+  <div v-if="loading">Loading...</div>
+  <div v-else-if="!dd">No Data (API failed)</div>
 
 
   <div class="page" v-else>
@@ -240,7 +240,7 @@ const waitImageLoad = () => {
     <table>
       <tbody>
         <tr>
-          <td>អតិថិជន</td>
+          <td class="label">អតិថិជន</td>
           <td>
             {{ loanrecord?.customer?.nametitle1?.nametitle_kh }}
             {{ loanrecord?.customer?.cust_name_1 }}
@@ -251,7 +251,7 @@ const waitImageLoad = () => {
           </td>
         </tr>
         <tr>
-          <td>សរុបទឹកប្រាក់</td>
+          <td class="label">សរុបទឹកប្រាក់</td>
           <td>
             {{ formatNumber(Number(loanrecord?.loan_totalcash || 0)) }}
             {{ loanrecord?.currency?.currency_kh }}
@@ -334,7 +334,7 @@ const waitImageLoad = () => {
           <div>ស្នាមម្រាមដៃ</div>
           <div>អ្នកធានា</div>
           <div class="v-space"></div>
-          <div class="sign">{{ loanrecord?.guarantor?.cust_name_1 || '....................' }}</div>
+          <div class="sign">{{ loanrecord?.guarantor?.cust_name_1 || '........' }}</div>
         </div>
         <div class="col-3">
           <div>ស្នាមម្រាមដៃ</div>
@@ -356,3 +356,144 @@ const waitImageLoad = () => {
 
   </div>
 </template>
+
+<style scoped>
+/* 1. FONTS & BASE */
+@font-face {
+  font-family: 'Notosan';
+  src: url('/fonts/NotoSansKhmer.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+body {
+  font-family: "Notosan", Arial, sans-serif;
+  font-size: 11pt;
+  margin: 0;
+  padding: 0;
+}
+
+/* 2. SCREEN PREVIEW */
+.page {
+  width: 210mm;
+  min-height: 260mm;
+  padding: 15mm;
+  margin: 16px auto;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  color: #000;
+}
+
+/* 5. LAYOUT UTILITIES */
+.row { display: flex; align-items: center;}
+.start {align-items: start !important;}
+.end {align-items: end !important;}
+.between {justify-content: space-between;}
+.right { text-align: right; }
+.center { text-align: center; }
+.mb { margin-bottom: 10px; }
+.mt { margin-top: 10px; }
+.ml { margin-left: 10px; }
+.mr { margin-right: 10px; }
+.pl {padding-left: 5px;}
+.v-space { height: 90px; }
+.l-space { padding-left: 260px; }
+strong { font-weight: 700;}
+
+.col-2 { width: 20%; }
+.col-3 { width: 25%; }
+.col-4 { width: 33.33%; }
+.col-8 { width: 66.66%; }
+.col-10 { width: 80%; }
+
+.logo { width: 60px; height: 60px; opacity: .9; object-fit: contain; }
+
+h1, h2 {font-family: "Muol", Arial, sans-serif !important;}
+h3 {font-family: "Notosan", Arial, sans-serif !important;}
+h1 { font-size: 13pt; font-weight: 700;}
+h2 { font-size: 12pt; font-weight: 700;}
+h3 { font-size: 11pt; font-weight: 700;}
+
+
+/* 4. TABLE STYLES */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table td, table th {
+  padding: 5px 3px;
+  text-align: left;
+  font-size: 11pt;
+  vertical-align: top;
+  border-bottom: 1px solid #ddd;
+}
+
+/* 3. PRINT CONFIGURATION */
+@page {
+  size: A4;
+  margin: 15mm; 
+
+  /* @bottom-right {
+    content: counter(page) " / " counter(pages);
+    font-family: "Notosan", sans-serif;
+    font-size: 8pt;
+  } */
+}
+
+@media (prefers-color-scheme: dark) {
+  .page {
+    background: black;
+    color: white;
+  }
+}
+
+@media print {
+  html, body {
+    width: 210mm;
+    background: #fff;
+  }
+
+  .page {
+    width: auto;
+    height: auto;
+    margin: 0 !important;
+    padding: 0 !important; /* Let @page handle the margins */
+    border: none !important;
+    box-shadow: none !important;
+    background: white;
+    color: #000;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Typography for Print */
+  body {
+    font-size: 11pt;
+    line-height: 1.2;
+    color: #000;
+  }
+}
+
+
+@media print {
+  footer, tfoot, .note, .table tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .table thead {
+    display: table-header-group;
+  }
+}
+
+
+</style>

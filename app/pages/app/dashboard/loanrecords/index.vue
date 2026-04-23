@@ -370,13 +370,13 @@ onMounted(() => {
                       Sched
                     </a>
 
-                    <!-- <NuxtLink
-                      :to="`/app/dashboard/loanrecords/prints/${l.id}/print-atm`"
-                      target="_blank"
+                    <a
+                      :href="`/app/dashboard/loanrecords/prints/${l.id}/print-atm`"
+                      target="_blank" rel="noopener"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        ATM
-                    </NuxtLink> -->
+                    </a>
 
                     <!-- <NuxtLink
                       :to="`/app/dashboard/loanrecords/prints/${l.id}/print-landlayout`"

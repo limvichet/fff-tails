@@ -1,0 +1,146 @@
+<template>
+  <slot />
+</template>
+
+<style>
+/* 1. GLOBAL PRINT FONTS & RESET */
+@font-face {
+  font-family: 'Notosan';
+  src: url('/fonts/NotoSansKhmer.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Muol';
+  src: url('/fonts/KhmerOSmuollight.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'tacteng';
+  src: url('/fonts/TACTENG.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --page-width: 210mm;
+  --page-padding: 15mm;
+}
+
+/* Ensure background colors print */
+* {
+  box-sizing: border-box;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5; /* Light grey background for screen preview */
+  font-family: "Notosan", Arial, sans-serif;
+  font-size: 11pt;
+}
+
+/* 2. THE PAGE WRAPPER (Paper Simulation) */
+.page {
+  width: var(--page-width);
+  min-height: 297mm; /* Standard A4 height */
+  padding: var(--page-padding);
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 4. REUSABLE UTILITIES (Shared across all print pages) */
+.row { display: flex; align-items: center;}
+.start {align-items: start !important;}
+.end {align-items: end !important;}
+.between {justify-content: space-between;}
+.right { text-align: right; }
+.center { text-align: center; }
+.mb { margin-bottom: 10px; }
+.mt { margin-top: 10px; }
+.ml { margin-left: 10px; }
+.mr { margin-right: 10px; }
+.pl {padding-left: 5px;}
+.v-space { height: 90px; }
+.l-space { padding-left: 260px; }
+.bold { font-weight: 700;}
+
+.col-2 { width: 20%; }
+.col-3 { width: 25%; }
+.col-4 { width: 33.33%; }
+.col-8 { width: 66.66%; }
+.col-10 { width: 80%; }
+.logo { width: 60px; height: 60px; opacity: .9; object-fit: contain; }
+
+h1, h2 {font-family: "Muol", Arial, sans-serif !important;}
+h3 {font-family: "Notosan", Arial, sans-serif !important;}
+h1 { font-size: 13pt; font-weight: 700;}
+h2 { font-size: 12pt; font-weight: 700;}
+h3 { font-size: 11pt; font-weight: 700;}
+p { line-height: 1.6; font-size: 12pt !important;}
+.inden { text-indent: 50px;}
+.tacteng {
+  font-family: "tacteng", Arial, sans-serif !important;
+  font-size: 16pt;
+  line-height: 1.4;
+  text-align: center;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+table td, table th {
+  padding: 5px;
+  border-bottom: 1px solid #ddd;
+}
+.border-all td, .border-all th {
+  border: 1px solid #000;
+}
+
+/* 3. PRINT SPECIFIC RULES */
+@media (prefers-color-scheme: dark) {
+  .page {
+    background: black;
+    color: white;
+  }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+    color: #000;
+  }
+
+  body {
+    background-color: white;
+  }
+
+  .page {
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: 100%;
+    height: auto;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Prevent elements from breaking mid-content */
+  footer, tfoot, .note, .table tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}
+
+
+</style>
