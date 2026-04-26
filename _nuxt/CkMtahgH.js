@@ -1,0 +1,1 @@
+function i(t,o){const n=Math.pow(10,o);return Math.floor(t*n)/n}const r=t=>{const o=parseFloat(t);return isNaN(o)?"0.00":o.toLocaleString(void 0,{minimumFractionDigits:2,maximumFractionDigits:2})},a=t=>{if(t==null)return"";const o={0:"០",1:"១",2:"២",3:"៣",4:"៤",5:"៥",6:"៦",7:"៧",8:"៨",9:"៩"};return t.toString().split("").map(n=>o[n]??n).join("")};export{i as a,r as f,a as n};

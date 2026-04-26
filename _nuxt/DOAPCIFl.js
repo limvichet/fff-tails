@@ -1,1 +1,0 @@
-function a(t,o){const i=Math.pow(10,o);return Math.floor(t*i)/i}const r=t=>{const o=parseFloat(t);return isNaN(o)?"0.00":o.toLocaleString(void 0,{minimumFractionDigits:2,maximumFractionDigits:2})};export{a,r as f};
