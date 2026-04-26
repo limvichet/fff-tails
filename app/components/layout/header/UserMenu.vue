@@ -78,6 +78,7 @@ import { UserCircleIcon, ChevronDownIcon, LogoutIcon, SettingsIcon, InfoCircleIc
 import { RouterLink } from 'vue-router'
 import { ref, onMounted, onUnmounted } from 'vue'
 import ModalChangePassword from './ModalChangePassword.vue';
+import { useAuth } from '@/composables/useAuth';
 
 const { user, logout } = useAuth();
 const route = useRoute();

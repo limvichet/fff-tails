@@ -8,7 +8,7 @@
 
 :root {
   --page-width: 210mm;
-  --page-padding: 15mm;
+  --page-padding: 13mm;
 }
 
 /* Ensure background colors print */
@@ -30,7 +30,7 @@ body {
 .page {
   width: var(--page-width);
   min-height: 297mm; /* Standard A4 height */
-  padding: var(--page-padding);
+  padding: var(--page-padding) var(--page-padding) 0 var(--page-padding);
   margin: 0 auto;
   background: white;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -74,6 +74,10 @@ h1 { font-size: 13pt;}
 h2 { font-size: 12pt;}
 h3 { font-size: 11pt; font-weight: 700;}
 p { line-height: 1.6; font-size: 12pt !important;}
+.fs-10 { font-size: 10pt !important;}
+.fs-11 { font-size: 11pt !important;}
+.fs-12 { font-size: 12pt !important;}
+.fs-13 { font-size: 13pt !important;}
 .inden { text-indent: 50px;}
 .tacteng {
   font-family: "tacteng", Arial, sans-serif !important;
@@ -87,8 +91,9 @@ table {
   border-collapse: collapse;
 }
 th { font-weight: 900; }
+td { font-size: 13px;}
 table td, table th {
-  padding: 5px;
+  padding: 5px 4px;
   border-bottom: 1px solid #ddd;
 }
 .border-all td, .border-all th {
@@ -106,7 +111,7 @@ table td, table th {
 @media print {
   @page {
     size: A4;
-    margin: 0;
+    margin-bottom: var(--page-padding);
     color: #000;
   }
 

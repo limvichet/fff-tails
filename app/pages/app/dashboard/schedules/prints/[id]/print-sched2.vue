@@ -189,7 +189,7 @@ const waitImageLoad = () => {
       </div>
 
       <div class="col-4">
-        <table class="table border">
+        <table class="table">
           <tbody>
             <tr>
               <td>&nbsp; លេខសម្គាល់កម្ចី </td>
@@ -230,16 +230,15 @@ const waitImageLoad = () => {
 
       <!-- SCHEDULE TABLE -->
       <table class="mt">
-        <thead>
+        <tbody>
+
           <tr>
             <th class="left bold">ល.រ</th>
             <th class="left bold">កាលបរិច្ឆេទបង់ប្រាក់</th>
             <th class="left bold">សរុបប្រាក់ត្រូវបង់</th>
             <th class="left bold">ផ្សេងៗ</th>
           </tr>
-        </thead>
 
-        <tbody>
           <tr v-for="(schedule, i) in schedules" :key="schedule.id">
             <td>{{ schedule.schedule_paymentnumber }}</td>
 

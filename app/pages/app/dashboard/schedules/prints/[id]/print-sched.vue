@@ -159,8 +159,8 @@ const fetchData = async () => {
 // ---------------- LIFECYCLE ----------------
 onMounted(async () => {
   await fetchData()
-  await waitImageLoad()   // ✅ wait image
-  // window.print()
+  await waitImageLoad()
+  window.print()
 })
 
 // ---------------- HELPERS ----------------
@@ -270,8 +270,8 @@ const waitImageLoad = () => {
     </table>
 
     <!-- SCHEDULE -->
-    <table class="mt">
-      <thead>
+    <table class="mt left">
+      <tbody>
         <tr>
           <th>ល.រ</th>
           <th>ថ្ងៃខែឆ្នាំ</th>
@@ -284,9 +284,9 @@ const waitImageLoad = () => {
           <th>ប្រាក់បង់</th>
           <th>ប្រាក់សល់</th>
         </tr>
-      </thead>
+      
 
-      <tbody>
+      
         <tr v-for="s in schedules" :key="s.id">
           <td class="center">{{ s.schedule_paymentnumber }}</td>
           <td>{{ formatDate(s.schedule_principle_date) }}</td>
@@ -299,14 +299,14 @@ const waitImageLoad = () => {
           <td>{{ formatNumber(Number(s.schedule_paidcash || 0)) }}</td>
           <td>{{ formatNumber(Number(s.schedule_lessmoney || 0))}}</td>
         </tr>
-      </tbody>
+      
 
-      <tfoot>
+      
         <tr class="bold">
           <td colspan="3" class="center bold">សរុប</td>
           <td colspan="7">{{ formatNumber(sumSchedule) }}</td>
         </tr>
-      </tfoot>
+      </tbody>
     </table>
 
     
@@ -358,6 +358,7 @@ const waitImageLoad = () => {
         </div>
       </div>
     </footer>
+    
 
   </div>
 </template>

@@ -16,7 +16,7 @@ import { ref, computed, onMounted, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useMessage } from "~/composables/useMessage"
 import { useChequeSchedule } from "~/composables/useChequeSchedule"
-
+import { formatNumber } from '~/utils/number'
 
 const {
   showModal,
@@ -153,10 +153,6 @@ const viewSchedule = (loanId: number) => {
 }
 
 
-
-
-
-
 watch(() => form.chequeschedule_bank_id, (val) => {
   //console.log("Selected bank:", val)
 })
@@ -244,7 +240,7 @@ if (banks.value.length > 0) {
                 </td>
 
                 <td class="px-2 py-1 text-sm">
-                  {{ s.loan_totalcash }}
+                  {{ formatNumber(s.loan_totalcash) }}
                 </td>
 
                 <td class="px-2 py-1 text-sm">

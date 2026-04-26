@@ -31,9 +31,9 @@ export const useFFFSeo = ({
   });
 
   // Render the Open Graph image component:
-  defineOgImageComponent(ogImageComponent, {
-    headline: ogImageHeadline,
-    title: title,
-    desc: description,
-  });
+  // defineOgImageComponent(ogImageComponent, {
+  //   headline: ogImageHeadline,
+  //   title: title,
+  //   desc: description,
+  // });
 };

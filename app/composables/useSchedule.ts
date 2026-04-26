@@ -49,9 +49,9 @@ export const useSchedule = () => {
         (newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24)
       )
 
-      const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
-      const loan_principle = Number(form.loan_principle.replace(/,/g, "") || 0)
-      let loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+      const loan_totalcash = Number(form.loan_totalcash)
+      const loan_principle = Number(form.loan_principle)
+      let loan_interest_rate = Number(form.loan_interest_rate)
 
       let schedule_outstanding = loan_totalcash - loan_principle * i
       let schedule_principle = 0
@@ -112,9 +112,9 @@ export const useSchedule = () => {
         (newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24)
       )
 
-      const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
+      const loan_totalcash = Number(form.loan_totalcash)
       const loan_principle = 0
-      let loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+      let loan_interest_rate = Number(form.loan_interest_rate)
       
       let schedule_outstanding = loan_totalcash
       let schedule_principle = 0
@@ -221,9 +221,9 @@ export const useSchedule = () => {
         (newEndDate.getTime() - newStartDate.getTime()) / (1000 * 60 * 60 * 24)
       )
 
-      const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
-      const loan_principle = Number(form.loan_principle.replace(/,/g, "") || 0)
-      let loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+      const loan_totalcash = Number(form.loan_totalcash)
+      const loan_principle = Number(form.loan_principle)
+      let loan_interest_rate = Number(form.loan_interest_rate)
 
       const interest = loan_totalcash * fixDouble(loan_interest_rate / 100, 3)
       const principle = loan_principle - interest
@@ -253,8 +253,8 @@ export const useSchedule = () => {
     schedules.value = []
 
     const loan_period = form.loan_peroid
-    const loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
-    const overdraft = Number(form.loan_over_draft.replace(/,/g, "") || 0)
+    const loan_interest_rate = Number(form.loan_interest_rate)
+    const overdraft = Number(form.loan_over_draft)
 
     for (let i = 0; i < loan_period; i++) {
       const baseStart = new Date(formatDateForInput(form.loan_startdate))
@@ -323,8 +323,8 @@ export const useSchedule = () => {
     schedules.value = []
 
     const loan_period = form.loan_peroid
-    const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
-    const loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+    const loan_totalcash = Number(form.loan_totalcash)
+    const loan_interest_rate = Number(form.loan_interest_rate)
 
     // 🔥 Monthly fixed principal
     const principle_per_month = loan_totalcash / loan_period
@@ -393,9 +393,9 @@ export const useSchedule = () => {
   const generateW32 = (form: FormType) => {
     schedules.value = []
 
-    const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
+    const loan_totalcash = Number(form.loan_totalcash)
     const loan_period = form.loan_peroid
-    const loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+    const loan_interest_rate = Number(form.loan_interest_rate)
 
     // 🔥 Fixed principal per week
     const principle_per_week = loan_totalcash / loan_period
@@ -465,9 +465,9 @@ export const useSchedule = () => {
   const generateD33 = (form: FormType) => {
     schedules.value = []
 
-    const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
+    const loan_totalcash = Number(form.loan_totalcash)
     const loan_period = form.loan_peroid
-    const loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+    const loan_interest_rate = Number(form.loan_interest_rate)
 
     // 🔥 Fixed principal per day
     const principle_per_day = loan_totalcash / loan_period
@@ -536,9 +536,9 @@ export const useSchedule = () => {
   const generateD34 = (form: FormType) => {
     schedules.value = []
 
-    const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
+    const loan_totalcash = Number(form.loan_totalcash)
     const loan_period = form.loan_peroid
-    const loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+    const loan_interest_rate = Number(form.loan_interest_rate)
 
     for (let i = 0; i < loan_period; i++) {
       const baseStart = new Date(formatDateForInput(form.loan_startdate))
@@ -605,9 +605,9 @@ export const useSchedule = () => {
   const generateD35 = (form: FormType) => {
     schedules.value = []
 
-    const loan_totalcash = Number(form.loan_totalcash.replace(/,/g, "") || 0)
+    const loan_totalcash = Number(form.loan_totalcash)
     const loan_period = form.loan_peroid
-    const loan_interest_rate = Number(form.loan_interest_rate.replace(/,/g, "") || 0)
+    const loan_interest_rate = Number(form.loan_interest_rate)
 
     const cycleDays = 10
 

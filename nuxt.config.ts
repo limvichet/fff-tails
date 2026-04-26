@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
   modules: [
-    '@nuxt/fonts', '@nuxt/icon', '@nuxt/image', "@nuxtjs/color-mode", 'nuxt-og-image',
+    '@nuxt/fonts', '@nuxt/icon', '@nuxt/image', "@nuxtjs/color-mode",
     '@vite-pwa/nuxt'
   ],
   colorMode: {
@@ -32,41 +32,46 @@ export default defineNuxtConfig({
       ]
     }
   },
-  runtimeConfig: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'https://apiloan.cdcf.info',
+  // runtimeConfig: {
+  //   public: {
+  //     apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+  //   }
+  // },
+  // runtimeConfig: {
+  //     apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'https://apiloan.cdcf.info',
+  //     public: { 
+  //       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://chhoukroit.pages.dev'
+  //     }
+  // },
+  $development: {
+    runtimeConfig: {
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
       public: { 
-        siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://chhoukroit.pages.dev'
+        siteUrl: process.env.NUXT_PUBLIC_SITE_URL
       }
+    },
   },
-  // $development: {
-  //   runtimeConfig: {
-  //     apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
-  //     public: { 
-  //       siteUrl: process.env.NUXT_PUBLIC_SITE_URL
-  //     }
-  //   },
-  // },
-  // $production: {
-  //   runtimeConfig: {
-  //     apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
-  //     public: { 
-  //       siteUrl: process.env.NUXT_PUBLIC_SITE_URL
-  //     }
-  //   },
-  // },
-  //ssr: true,
+  $production: {
+    runtimeConfig: {
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
+      public: { 
+        siteUrl: process.env.NUXT_PUBLIC_SITE_URL
+      }
+    },
+  },
+  ssr: false,
   nitro: {
     prerender: {
       failOnError: false,
     },
     //preset: 'node-server'
   },
-  ogImage: {
-    enabled: true,
-    defaults: {
-      renderer: "satori",
-    },
-  },
+  // ogImage: {
+  //   enabled: true,
+  //   defaults: {
+  //     renderer: "satori",
+  //   },
+  // },
   experimental: {
     viewTransition: true
   },
