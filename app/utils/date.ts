@@ -15,6 +15,10 @@ export function formatDateForInput(date: string | null): string {
   return `${y}-${m}-${d}`
 }
 
+export function formatYear(date: string) {
+  return date ? new Date(date).getFullYear() : ""
+}
+
 
 export function formatDateForOutput(date: Date): string {
   const y = date.getFullYear()

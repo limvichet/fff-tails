@@ -283,6 +283,7 @@ const waitImageLoad = () => {
   </footer>
 
   </div>
+  <div v-else class="center mt">Loading...</div>
 
 </template>
 

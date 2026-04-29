@@ -41,6 +41,13 @@ type Loanrecord = {
     customer: Customer
     guarantor: Guarantor
     currency: Currency
+    loan_peroid: number
+    loantype_id: number
+    loantype: Loantype
+}
+type Loantype = {
+    id: number
+    loantype_shortcut: string
 }
 type Customer = {
     id: number

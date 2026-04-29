@@ -207,7 +207,7 @@ const waitImageLoad = () => {
   <div v-else-if="!dd">No Data ...</div>
 
 
-  <div class="page" v-else>
+  <div v-if="!loading && dd" class="page">
     
     <!-- HEADER -->
     <header class="row">
@@ -358,7 +358,7 @@ const waitImageLoad = () => {
         </div>
       </div>
     </footer>
-    
-
   </div>
+
+  <div v-else class="center mt">Loading...</div>
 </template>

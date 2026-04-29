@@ -393,21 +393,21 @@ onMounted(() => {
                        Sched2
                     </a>
 
-                    <!-- <NuxtLink
-                      :to="`/app/dashboard/loanrecords/prints/${l.id}/print-receipt2`"
-                      target="_blank"
+                    <a
+                      :href="`/app/dashboard/loanrecords/prints/${l.id}/print-receipt2`"
+                      target="_blank" rel="noopener"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        Receip2
-                    </NuxtLink> -->
+                    </a>
 
-                    <!-- <NuxtLink
-                      :to="`/app/dashboard/loanrecords/prints/${l.id}/print-contract2`"
-                      target="_blank"
+                    <!-- <a
+                      :href="`/app/dashboard/loanrecords/prints/${l.id}/print-contract2`"
+                      target="_blank" rel="noopener"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        Contract2
-                    </NuxtLink> -->
+                    </a> -->
                     
                   </div>
                 </td>

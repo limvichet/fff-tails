@@ -1,16 +1,21 @@
 <script setup lang="ts">
 
-definePageMeta({
-  layout: false,
-  requiresAuth: false,
-  ssr: false
-})
+  definePageMeta({
+    layout: "print",
+    requiresAuth: false,
+    ssr: false
+  })
 
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import { numUnicode } from "~/utils/number"
-import { formatFullDate } from "~/utils/date"
-import { UnicodeHelper } from '~/utils/unicodeHelper'
+  useHead({
+    title: "Preview atm",
+    meta: [{ name: "Loan", content: "preview atm" }],
+  })
+
+  import { ref, computed, onMounted } from 'vue'
+  import { useRoute } from 'vue-router'
+  import { numUnicode } from "~/utils/number"
+  import { formatFullDate, formatYear } from "~/utils/date"
+  import { UnicodeHelper } from '~/utils/unicodeHelper'
 
 
 type ApiResponse = {
@@ -106,6 +111,7 @@ type Currency = {
 const route = useRoute()
 const lid = route.params.lid as string
 
+
 const dd = ref<PrintReceipt2 | null>(null)
 const capital = computed(() => dd.value?.capital ?? null)
 const loanrecord = computed(() => dd.value?.loanrecord ?? null)
@@ -132,34 +138,44 @@ const fetchData = async () => {
 // ---------------- LIFECYCLE ----------------
 onMounted(async () => {
   await fetchData()
+  await waitImageLoad()
   // setTimeout(() => window.print(), 300)
 })
 
-function formatDay(date: string) {
-  return date ? new Date(date).getDate() : ""
-}
-function formatMonth(date: string) {
-  return date ? new Date(date).getMonth() + 1 : ""
-}
-function formatYear(date: string) {
-  return date ? new Date(date).getFullYear() : ""
-}
 
+
+const logoRef = ref<HTMLImageElement | null>(null)
+const waitImageLoad = () => {
+  return new Promise<void>((resolve) => {
+    if (!logoRef.value) return resolve()
+
+    if (logoRef.value.complete) {
+      resolve() // already loaded
+    } else {
+      logoRef.value.onload = () => resolve()
+      logoRef.value.onerror = () => resolve() // avoid blocking
+    }
+  })
+}
 </script>
 
 
 <template>
-  <div class="page" v-if="!loading && loanrecord && capital && invoice">
+
+  <div v-if="loading" class="loading"><p>Preparing Document ...</p></div>
+  <div v-else-if="!dd">No Data ...</div>
+
+  <div v-if="!loading && dd" class="page">
 
     <!-- HEADER -->
-    <header class="row" style="">
+    <header class="row" between center>
 
       <div style="margin-top: 20px; margin-left: -10px; display: flex; flex-direction: column; align-items: center;">
-          <img src="/imgs/logo.png" class="logo" />
-          <p><strong>{{ capital.organization }}</strong></p>
+          <img ref="logoRef" src="/imgs/logo.png" class="logo" />
+          <p><strong>{{ capital!.organization }}</strong></p>
       </div>
 
-      <div style="margin-left: 20px;">
+      <div style="margin-left: 20px;" class="center">
         <h1>ព្រះរាជាណាចក្រកម្ពុជា</h1>
         <h1>ជាតិ សាសនា ព្រះមហាក្សត្រ</h1>
         <p class="tacteng">3</p>
@@ -168,105 +184,110 @@ function formatYear(date: string) {
 
       <div></div>
 
-
-
     </header>
 
     <!-- MAIN CONTENT -->
     <main class="justify mt">
 
       <!-- CUSTOMER -->
-      <p>
-        {{ loanrecord.customer.nametitle1?.nametitle_kh }}
-        <strong>{{ loanrecord.customer.cust_name_1 }}</strong>
+      <p class="inden">
+        {{ loanrecord!.customer.nametitle1?.nametitle_kh }}
+        <strong>{{ loanrecord!.customer.cust_name_1 }}</strong>
 
-        ឆ្នាំ{{ numUnicode(formatYear(loanrecord.customer.cust_dob_1)) }}
+        កើតឆ្នាំ{{ numUnicode(formatYear(loanrecord!.customer.cust_dob_1)) }}
 
-        កាន់{{ loanrecord.customer.identification1?.identification_kh }}
+        កាន់{{ loanrecord!.customer.identification1?.identification_kh }}
 
-        លេខ{{ numUnicode(loanrecord.customer.cust_idcardnum_1) }}
+        លេខ{{ numUnicode(loanrecord!.customer.cust_idcardnum_1) }}
 
         ចុះថ្ងៃទី
-        <span v-if="loanrecord.customer.cust_idcardnum_date_1">
-          {{ formatFullDate(loanrecord.customer.cust_idcardnum_date_1) }}
+        <span v-if="loanrecord!.customer.cust_idcardnum_date_1">
+          {{ formatFullDate(loanrecord!.customer.cust_idcardnum_date_1) }}
         </span>
         <span v-else>......................</span>
 
         <!-- ADDRESS -->
-        <span v-if="loanrecord.customer.cust_address">
-          មានអាសយដ្ឋានស្ថិតនៅ{{ loanrecord.customer.cust_address }}
+        <span v-if="loanrecord!.customer.cust_address">
+          មានអាសយដ្ឋានស្ថិតនៅ{{ loanrecord!.customer.cust_address }}
         </span>
 
         <!-- GUARANTOR -->
-        <span v-if="loanrecord.guarantor?.cust_name_1">
-          និង {{ loanrecord.guarantor.nametitle1?.nametitle_kh }}
-          <strong>{{ loanrecord.guarantor.cust_name_1 }}</strong>
+        <span v-if="loanrecord!.guarantor?.cust_name_1">
+          និង{{ loanrecord!.guarantor.nametitle1?.nametitle_kh }}
+          <strong>{{ loanrecord!.guarantor.cust_name_1 }}</strong>
 
-          កើតថ្ងៃទី{{ formatFullDate(loanrecord.guarantor.cust_dob_1) }}
+          កើតថ្ងៃទី{{ formatFullDate(loanrecord!.guarantor.cust_dob_1) }}
 
-          កាន់{{ loanrecord.guarantor.identification1?.identification_kh }}
+          កាន់{{ loanrecord!.guarantor.identification1?.identification_kh }}
 
-          លេខ{{ numUnicode(loanrecord.guarantor.cust_idcardnum_1) }}
+          លេខ{{ numUnicode(loanrecord!.guarantor.cust_idcardnum_1) }}
 
-          <span v-if="loanrecord.guarantor.cust_address">
-            សព្វថ្ងៃរស់នៅ{{ loanrecord.guarantor.cust_address }}
+          <span v-if="loanrecord!.guarantor.cust_address">
+            សព្វថ្ងៃរស់នៅ{{ loanrecord!.guarantor.cust_address }}
           </span>
         </span>
+
+        <span>
+          បានទទួលប្រាក់កម្ចីចំនួន
+          <strong>
+            {{ numUnicode(formatNumber(schedule_amount)) }}{{ loanrecord!.currency.currency_kh }}
+          </strong>
+
+          ({{ UnicodeHelper.spellkhmer(schedule_amount) }}{{ loanrecord!.currency?.currency_kh }})
+          ពីលោកស្រី <strong>ឈួង សុខផេង</strong> កើតថ្ងៃទី១៦ ខែមេសា ឆ្នាំ១៩៨៨  កាន់អត្តសញ្ញាណប័ណ្ណសញ្ជាតិខ្មែរលេខៈ១៥០៩៧៧៨៨៩ ចុះថ្ងៃទី២៥ ខែធ្នូ ឆ្នាំ២០២០ មានអាសយដ្ឋានស្ថិតនៅភូមិកំពង់ក្របៅ សង្កាត់កំពង់ក្របៅ ក្រុងស្ទឹងសែន ខេត្តកំពង់ធំ។ 
+        </span>
+
       </p>
 
-      <!-- LOAN AMOUNT -->
-      <p>
-        បានទទួលប្រាក់កម្ចីចំនួន
-        <strong>
-          {{ numUnicode(formatNumber(schedule_amount)) }}
-          {{ loanrecord.currency.currency_kh }}
-        </strong>
+      
 
-        ({{ UnicodeHelper.spellkhmer(schedule_amount) }}{{ loanrecord.currency?.currency_kh }})
-      </p>
 
       <!-- AGREEMENT -->
-      <p>
-        លិខិតនេះធ្វើឡើងដោយគ្មានការបង្ខិតបង្ខំ...
+      <p class="inden">
+        លិខិតនេះត្រូវបានធ្វើឡើងដោយគ្មានការបង្ខិតបង្ខំពីភាគីណាមួយឡើយហើយបានអាននិងយល់នូវរាល់ ខ្លឹមសារទាំងឡាយនៃលិខិតនេះយ៉ាងច្បាស់លាស់ហើយយល់ព្រមផ្ដិតមេដៃស្ដាំចាប់ពីថ្ងៃនេះតទៅ។
       </p>
+      <p class="inden mt">ក្រែងពុំប្រាកដ ភាគីទាំងពីរ ព្រមព្រៀងគ្នាផ្តិតមេដៃទុកជាភស្តុតាង។ </p>
 
     </main>
 
     <!-- FOOTER -->
-    <footer class=" mt">
+    <footer class="mt bold center">
 
-      <div class="center">
-        <p>{{ invoice.datesignChhankitek }}</p>
-        <p>ធ្វើនៅកំពង់ធំ {{ invoice.datesignSoriyakitek }}</p>
+      <div>
+        <p>{{ invoice!.datesignChhankitek }}</p>
+        <p>ធ្វើនៅកំពង់ធំ {{ invoice!.datesignSoriyakitek }}</p>
       </div>
 
       <!-- SIGNATURE GRID -->
       <div class="row between mt">
 
         <!-- CAPITAL -->
-        <div class="fingerprint-article">
-          <h2>អ្នកប្រគល់ប្រាក់</h2>
-          <h2>{{ capital.name }}</h2>
+        <div>
+          <span>អ្នកប្រគល់ប្រាក់</span>
+          <div class="v-space"></div>
+          <span>{{ capital!.name }}</span>
         </div>
 
         <!-- CUSTOMER -->
-        <div class="fingerprint-article">
-          <h2>អ្នកទទួលប្រាក់</h2>
-          <h2>
-            {{ loanrecord.customer.cust_name_1 }}
-            <span v-if="loanrecord.customer.cust_name_2">
-              &nbsp;{{ loanrecord.customer.cust_name_2 }}
+        <div>
+          <span>អ្នកទទួលប្រាក់</span>
+          <div class="v-space"></div>
+          <span>
+            {{ loanrecord!.customer.cust_name_1 }}
+            <span v-if="loanrecord!.customer.cust_name_2">
+              &nbsp;{{ loanrecord!.customer.cust_name_2 }}
             </span>
-          </h2>
+          </span>
         </div>
 
         <!-- GUARANTOR -->
         <div
-          v-if="loanrecord.guarantor?.cust_name_1"
+          v-if="loanrecord!.guarantor?.cust_name_1"
           class="fingerprint-article"
         >
-          <h2>អ្នកធានា</h2>
-          <h2>{{ loanrecord.guarantor.cust_name_1 }}</h2>
+          <span>អ្នកធានា</span>
+          <div class="v-space"></div>
+          <span>{{ loanrecord!.guarantor.cust_name_1 }}</span>
         </div>
 
       </div>
@@ -276,178 +297,3 @@ function formatYear(date: string) {
 
   <div v-else class="center mt">Loading...</div>
 </template>
-
-
-<style scoped>
-
-/* =======================
-   1. FONTS
-======================= */
-@font-face {
-  font-family: 'Notosan';
-  src: url('/fonts/NotoSansKhmer.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Muol';
-  src: url('/fonts/KhmerOSmuollight.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'tacteng';
-  src: url('/fonts/TACTENG.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-/* =======================
-   2. GLOBAL RESET
-======================= */
-* {
-  box-sizing: border-box;
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
-}
-
-/* =======================
-   3. BASE TYPOGRAPHY
-======================= */
-body {
-  font-family: "Notosan", "Noto Sans Khmer", Arial, sans-serif;
-  font-size: 12pt;
-  line-height: 1.4;
-  color: #000;
-}
-
-strong {
-  font-weight: 700;
-}
-
-p {
-  line-height: 1.6;
-}
-
-/* =======================
-   4. PAGE LAYOUT (SCREEN)
-======================= */
-.page {
-  width: 210mm;
-  min-height: 260mm;
-  padding: 15mm;
-  margin: 20px auto;
-  background: white;
-  border: 1px solid #ddd;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  overflow: hidden;
-}
-
-/* =======================
-   5. UTILITIES
-======================= */
-.row { display: flex;}
-.start {align-items: start;}
-.between {justify-content: space-between;}
-.logo { width: 60px; height: 60px; object-fit: contain; }
-.col-6 { width: 50%; }
-
-.center { text-align: center; }
-.mt { margin-top: 15px; }
-.justify { text-align: justify; }
-
-.inden {
-  text-indent: 50px;
-}
-
-.v-space { height: 100px; }
-.l-space { padding-left: 260px; }
-
-/* =======================
-   6. HEADINGS / SPECIAL FONTS
-======================= */
-h1, h2 { text-align:  center; }
-h1 {
-  font-family: "Muol", Arial, sans-serif !important;
-  font-size: 13pt;
-  margin-top: 6px;
-}
-
-h2 {
-  font-family: "Muol", Arial, sans-serif !important;
-  font-size: 12pt;
-  margin-bottom: 6px;
-}
-
-.tacteng {
-  font-family: "tacteng", Arial, sans-serif !important;
-  font-size: 16pt;
-  line-height: 1.4;
-  text-align: center;
-}
-
-  /* fingerprint-2grid */
-  /* footer .fingerprint-article h2 {
-      margin: 0;
-      padding: 0;
-  } */
-  footer .fingerprint {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      column-gap: .6em;
-  }
-  .fingerprint-article {
-      height: 180px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-  }
-
-/* =======================
-   7. PRINT SETTINGS (IMPORTANT FIX)
-======================= */
-@page {
-  size: A4;
-  margin: 12mm 17.5mm;
-}
-
-@media print {
-  html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 210mm;
-  }
-
-  .page {
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-
-    /* IMPORTANT: prevents blank page */
-    overflow: hidden;
-    page-break-after: avoid;
-    break-after: avoid;
-  }
-
-  .no-print {
-    display: none !important;
-  }
-
-  body {
-    font-size: 12pt;
-    line-height: 1.4;
-    color: #000;
-  }
-}
-
-</style>

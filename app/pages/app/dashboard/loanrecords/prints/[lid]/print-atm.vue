@@ -102,7 +102,7 @@ onMounted(async () => {
   <div v-if="loading" class="loading"><p>Preparing Document ...</p></div>
   <div v-else-if="!dd">No Data ...</div>
   
-  <div v-if="!loading && loanrecord" class="page">
+  <div v-if="!loading && dd" class="page">
     <!-- HEADER -->
     <header class="row between center">
       <div></div>
@@ -170,7 +170,7 @@ onMounted(async () => {
       <div class="mt center">
         <span><strong>ស្នាមម្រាមដៃ</strong></span>
         <div class="v-space"></div>
-        <span><strong>{{ loanrecord.customer?.cust_name_1 }}</strong></span>
+        <span><strong>{{ loanrecord!.customer?.cust_name_1 }}</strong></span>
       </div>
 
     </footer>

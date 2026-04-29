@@ -29,7 +29,8 @@ body {
 /* 2. THE PAGE WRAPPER (Paper Simulation) */
 .page {
   width: var(--page-width);
-  min-height: 297mm; /* Standard A4 height */
+  /* min-height: 297mm; /* Standard A4 height */
+  min-height: 260mm; /* Standard A4 height */
   padding: var(--page-padding) var(--page-padding) 0 var(--page-padding);
   margin: 0 auto;
   background: white;
@@ -55,6 +56,7 @@ body {
 .v-space { height: 90px; }
 .l-space { padding-left: 260px; }
 .bold { font-weight: 700;}
+.justify { text-align: justify !important; }
 
 .loading {
   padding-top: 20px;
@@ -69,7 +71,7 @@ body {
 .logo { width: 60px; height: 60px; opacity: .9; object-fit: contain; }
 
 h1, h2 {font-family: "Muol", Arial, sans-serif !important;}
-h3 {font-family: "Notosan", Arial, sans-serif !important;}
+h6 {font-family: "Muol", Arial, sans-serif !important; font-size: 11px !important; margin-top: 4px;}
 h1 { font-size: 13pt;}
 h2 { font-size: 12pt;}
 h3 { font-size: 11pt; font-weight: 700;}
@@ -78,7 +80,11 @@ p { line-height: 1.6; font-size: 12pt !important;}
 .fs-11 { font-size: 11pt !important;}
 .fs-12 { font-size: 12pt !important;}
 .fs-13 { font-size: 13pt !important;}
-.inden { text-indent: 50px;}
+.inden { text-indent: 40px;}
+.inden-- { text-indent: -40px;}
+.margin-l-40 { margin-left: 40px;}
+.margin-l-80 { margin-left: 80px;}
+.muol {font-family: "Muol", Arial, sans-serif !important;}
 .tacteng {
   font-family: "tacteng", Arial, sans-serif !important;
   font-size: 16pt;
