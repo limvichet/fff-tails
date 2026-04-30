@@ -75,151 +75,224 @@
         <h3 class="fs-13 mt bold">បញ្ចាំមូលប្បទានប័ត្រ</h3>
       </div>
 
-      <div class="col-2" ></div>
+      <div class="col-1" ></div>
 
     </header>
 
     <main class="mt">
 
-           <!-- ភាគី ក -->
-          <p class="justify inden">
-            លោកស្រី <span class="muol fs-10">{{ capital.name }}</span> កើតឆ្នាំ {{ numUnicode(capital.birth_year) }} 
-            កាន់អត្តសញ្ញាណប័ណ្ណសញ្ចាតិខ្មែរលេខ១៥០៩៧៧៨៨៩ ចុះថ្ងៃទី ២៥/១២/២០២០ មានទីលំនៅស្ថិតនៅភូមិកំពង់ក្របៅ សង្កាត់កំពង់ក្របៅ ក្រុងស្ទឹងសែន ខេត្តកំពង់ធំ ជាអ្នកឲ្យខ្ចី<span class="muol fs-10">(ម្ចាស់បំណុល)</span> តទៅហៅកាត់ថា <span>ភាគី “ក”</span> ។
-          </p>
+      <!-- ភាគី ក -->
+      <p class="justify inden">
+        លោកស្រី <span class="muol fs-11">{{ capital.name }}</span> កើតឆ្នាំ {{ numUnicode(capital.birth_year) }}
+        កាន់អត្តសញ្ញាណប័ណ្ណសញ្ចាតិខ្មែរលេខ១៥០៩៧៧៨៨៩ ចុះថ្ងៃទី ២៥/១២/២០២០ មានទីលំនៅស្ថិតនៅភូមិកំពង់ក្របៅ
+        សង្កាត់កំពង់ក្របៅ ក្រុងស្ទឹងសែន ខេត្តកំពង់ធំ ជាអ្នកឲ្យខ្ចី<span class="muol fs-10">(ម្ចាស់បំណុល)</span>
+        តទៅហៅកាត់ថា <span>ភាគី “ក”</span> ។
+      </p>
 
-           <!-- និង -->
-          <h2 class="center mt">និង</h2>
+      <!-- និង -->
+      <h2 class="center mt">និង</h2>
 
-          <!-- ភាគី ខ -->
-          <p class="justify inden">
-            {{ loanrecord!.customer.nametitle1?.nametitle_kh }} <span class="muol fs-10">{{ dd.loanrecord.customer.cust_name_1 }}</span> កើតឆ្នាំ{{ numUnicode(formatYear(loanrecord!.customer.cust_dob_1)) }}
-            កាន់អត្តសញ្ញាណប័ណ្ណសញ្ចាតិខ្មែរលេខ {{ numUnicode(loanrecord.customer.cust_idcardnum_1) }} ចុះ{{ formatFullDate(loanrecord.customer.cust_idcardnum_date_1) }} 
-            មានអាសយដ្ឋានស្ថិតនៅ{{ dd.loanrecord.customer.cust_address }} ជាអ្នកខ្ចីប្រាក់<span class="muol fs-10">(កូនបំណុល)</span> តទៅហៅកាត់ថា <span class="muol fs-10">ភាគី “ខ”</span> ។
-          </p>
+      <!-- ភាគី ខ -->
+      <p class="justify inden">
+        {{ loanrecord!.customer.nametitle1?.nametitle_kh }} <span class="muol fs-10">{{
+          dd.loanrecord.customer.cust_name_1 }}</span> កើតឆ្នាំ{{
+            numUnicode(formatYear(loanrecord!.customer.cust_dob_1)) }}
+        កាន់អត្តសញ្ញាណប័ណ្ណសញ្ចាតិខ្មែរលេខ {{ numUnicode(loanrecord.customer.cust_idcardnum_1) }} ចុះ{{
+          formatFullDate(loanrecord.customer.cust_idcardnum_date_1) }}
+        មានអាសយដ្ឋានស្ថិតនៅ{{ dd.loanrecord.customer.cust_address }} ជាអ្នកខ្ចីប្រាក់<span
+          class="muol fs-10">(កូនបំណុល)</span> តទៅហៅកាត់ថា <span class="muol fs-10">ភាគី “ខ”</span> ។
+      </p>
 
-          <p class="justify inden muol fs-10">
-              ក្រោយពីបានពិភាក្សាគា្នយ៉ាងល្អិតល្អន់រួចមក ភាគីទាំងពីរបានព្រមពៀងគ្នាដូចខាងក្រោមៈ
-          </p>
+      <p class="justify inden muol fs-10">
+        ក្រោយពីបានពិភាក្សាគា្នយ៉ាងល្អិតល្អន់រួចមក ភាគីទាំងពីរបានព្រមពៀងគ្នាដូចខាងក្រោមៈ
+      </p>
 
-          <!-- ប្រការ១ -->
-          <p class="mt muol fs-10">ប្រការ១_អំពីប្រាក់ដើម  និងអំឡុងពេល</p> 
-          <p class="justify inden margin-l-40">
-              ភាគី “ក” យល់ព្រមឲ្យភាគី “ខ”  ខ្ចីប្រាក់ចំនួន 
-              <b>{{ numUnicode(formatNumber(loan2.contract_schedule_totalpay_all)) }}{{ loanrecord.currency.currency_kh }}
-              ({{UnicodeHelper.spellkhmer(loan2.contract_schedule_totalpay_all)}}{{loanrecord.currency.currency_kh}}គត់)</b>
-              ដោយមិនគិតការប្រាក់ហើយភាគី “ខ”  ស្នើសុំបង់រំលោះសម្រាប់រយៈពេលចំនួន<b>{{ numUnicode(loanrecord.loan_peroid) }}{{ loanrecord.loantype.loantype_shortcut }}</b> 
-              ក្នុង១ខែចំនួន <b>{{ numUnicode(formatNumber(loan2.contract_schedule_totalpay_first)) }}{{ loanrecord.currency.currency_kh }}
-              ({{UnicodeHelper.spellkhmer(loan2.contract_schedule_totalpay_first)}}{{loanrecord.currency.currency_kh}}គត់) គិតចាប់ពី{{ formatFullDate(loan2.contract_schedule_totalpay_first_date) }}
-              ដល់{{ formatFullDate(loan2.contract_schedule_totalpay_last_date) }}</b>
-              ហើយភាគី “ខ”  យល់ព្រមបង់រំលោះប្រាក់ដើមរាល់ថ្ងៃទី១ <b>ឬយ៉ាងយូរត្រឹមថ្ងៃទី៤</b>រៀងរាល់ខែ<b>ជាថ្ងៃកំណត់នៃការបង់រំលោះប្រាក់ដើម</b>ដោយមិនអាចឲ្យខកខានបានឡើយ។
-              ចំពោះទឹកប្រាក់ដើមដែលនៅសល់ចំនួន <b>{{numUnicode(Number(loan2.contract_schedule_totalpay_last))}}{{ loanrecord.currency.currency_kh }}
-              ({{UnicodeHelper.spellkhmer(loan2.contract_schedule_totalpay_last)}}{{loanrecord.currency.currency_kh}}គត់)</b>
-              ភាគី “ខ” សន្យាបង់នៅ<b>ថ្ងៃទ{{ formatFullDate(loan2.contract_schedule_totalpay_last_date) }}</b> ជាកំហិត។
-          </p>
+      <!-- ប្រការ១ -->
+      <section>
+        <p class="mt muol fs-10">ប្រការ១_អំពីប្រាក់ដើម និងអំឡុងពេល</p>
+        <p class="justify inden margin-l-40">
+          ភាគី “ក” យល់ព្រមឲ្យភាគី “ខ” ខ្ចីប្រាក់ចំនួន
+          <b>{{ numUnicode(formatNumber(loan2.contract_schedule_totalpay_all)) }}{{ loanrecord.currency.currency_kh }}
+            ({{ UnicodeHelper.spellkhmer(loan2.contract_schedule_totalpay_all) }}{{ loanrecord.currency.currency_kh
+            }}គត់)</b>
+          ដោយមិនគិតការប្រាក់ហើយភាគី “ខ” ស្នើសុំបង់រំលោះសម្រាប់រយៈពេលចំនួន<b>{{ numUnicode(loanrecord.loan_peroid) }}{{
+            loanrecord.loantype.loantype_shortcut }}</b>
+          ក្នុង១ខែចំនួន <b>{{ numUnicode(formatNumber(loan2.contract_schedule_totalpay_first)) }}{{
+            loanrecord.currency.currency_kh }}
+            ({{ UnicodeHelper.spellkhmer(loan2.contract_schedule_totalpay_first) }}{{ loanrecord.currency.currency_kh
+            }}គត់)
+            គិតចាប់ពី{{ formatFullDate(loan2.contract_schedule_totalpay_first_date) }}
+            ដល់{{ formatFullDate(loan2.contract_schedule_totalpay_last_date) }}</b>
+          ហើយភាគី “ខ” យល់ព្រមបង់រំលោះប្រាក់ដើមរាល់ថ្ងៃទី១
+          <b>ឬយ៉ាងយូរត្រឹមថ្ងៃទី៤</b>រៀងរាល់ខែ<b>ជាថ្ងៃកំណត់នៃការបង់រំលោះប្រាក់ដើម</b>ដោយមិនអាចឲ្យខកខានបានឡើយ។
+          ចំពោះទឹកប្រាក់ដើមដែលនៅសល់ចំនួន <b>{{ numUnicode(Number(loan2.contract_schedule_totalpay_last)) }}{{
+            loanrecord.currency.currency_kh }}
+            ({{ UnicodeHelper.spellkhmer(loan2.contract_schedule_totalpay_last) }}{{ loanrecord.currency.currency_kh
+            }}គត់)</b>
+          ភាគី “ខ” សន្យាបង់នៅ<b>{{ formatFullDate(loan2.contract_schedule_totalpay_last_date) }}</b> ជាកំហិត។
+        </p>
+      </section>
 
-          <!-- ប្រការ២ -->
-          <p class="mt muol fs-10">ប្រការ២_របៀបប្រគល់ប្រាក់ដើម</p> 
-          <p class="justify inden margin-l-40">
-            ចំពោះប្រាក់ដើមចំនួន  <b>{{numUnicode(formatNumber(loan2.contract_schedule_totalpay_all))}}{{ loanrecord.currency.currency_kh }}
-            ({{UnicodeHelper.spellkhmer(loan2.contract_schedule_totalpay_all)}}{{loanrecord.currency.currency_kh}}គត់)</b>
-            ភាគី “ខ” ត្រូវសងរំលោះជូនភាគី “ក” ទៅតាមប្រការ១ ជារៀងរាល់ខែក្នុងមួយខែចំនួន <b>{{numUnicode(formatNumber(loan2.contract_schedule_totalpay_first))}}{{ loanrecord.currency.currency_kh }}
-            ({{UnicodeHelper.spellkhmer(loan2.contract_schedule_totalpay_first)}}{{loanrecord.currency.currency_kh}}គត់)</b>
-            ហើយចំពោះប្រាក់ដែលនៅសល់ចំនួន <b>{{numUnicode(formatNumber(loan2.contract_schedule_totalpay_last))}}{{ loanrecord.currency.currency_kh }}
-            ({{UnicodeHelper.spellkhmer(loan2.contract_schedule_totalpay_last)}}{{loanrecord.currency.currency_kh}}គត់)</b>
-            ដូចក្នុងប្រការ១ ត្រូវសងផ្ដាច់នៅ<b>{{ formatFullDate(loan2.contract_schedule_totalpay_last_date) }}</b>
-            និងចេញមូលប្បទានប័ត្រ ធនាគារ{{ loan2.bank }}<b>ចំនួន៤សន្លឹក</b> សម្រាប់ធានាឲ្យការបង់រំលោះប្រចាំខែនីមួយៗ៖
-          </p>
-
-          <!-- cheques -->
-          <div v-if="loan_cheques.length > 0">
-            <!-- 1 -->
-            <p class="justify margin-l-80 inden--"><b>១.	</b>
-              មូលប្បទានប័ត្រធនាគារ{{ loan2.bank }}លេខ<b>{{ numUnicode(loan_cheques[0].cheque_number) }}</b>
-              ចុះ{{ formatFullDate(loan_cheques[0].schedule_cheque_to_date) }}
-              មានទឹកប្រាក់ចំនួន <b>{{numUnicode(formatNumber(loan_cheques[0].schedule_totalpay))}}{{ loanrecord.currency.currency_kh }}
-              ({{UnicodeHelper.spellkhmer(loan_cheques[0].schedule_totalpay)}}{{loanrecord.currency.currency_kh}}គត់)
+      <!-- ប្រការ២ -->
+      <section>
+        <p class="mt muol fs-10">ប្រការ២_របៀបប្រគល់ប្រាក់ដើម</p>
+        <p class="justify inden margin-l-40">
+          ចំពោះប្រាក់ដើមចំនួន <b>{{ numUnicode(formatNumber(loan2.contract_schedule_totalpay_all)) }}{{
+            loanrecord.currency.currency_kh }}
+            ({{ UnicodeHelper.spellkhmer(loan2.contract_schedule_totalpay_all) }}{{ loanrecord.currency.currency_kh
+            }}គត់)</b>
+          ភាគី “ខ” ត្រូវសងរំលោះជូនភាគី “ក” ទៅតាមប្រការ១ ជារៀងរាល់ខែក្នុងមួយខែចំនួន
+          <b>{{ numUnicode(formatNumber(loan2.contract_schedule_totalpay_first)) }}{{ loanrecord.currency.currency_kh }}
+            ({{ UnicodeHelper.spellkhmer(loan2.contract_schedule_totalpay_first) }}{{ loanrecord.currency.currency_kh
+            }}គត់)</b>
+          ហើយចំពោះប្រាក់ដែលនៅសល់ចំនួន <b>{{ numUnicode(formatNumber(loan2.contract_schedule_totalpay_last)) }}{{
+            loanrecord.currency.currency_kh }}
+            ({{ UnicodeHelper.spellkhmer(loan2.contract_schedule_totalpay_last) }}{{ loanrecord.currency.currency_kh
+            }}គត់)</b>
+          ដូចក្នុងប្រការ១ ត្រូវសងផ្ដាច់នៅ<b>{{ formatFullDate(loan2.contract_schedule_totalpay_last_date) }}</b>
+          និងចេញមូលប្បទានប័ត្រ ធនាគារ{{ loan2.bank }}<b>ចំនួន៤សន្លឹក</b> សម្រាប់ធានាឲ្យការបង់រំលោះប្រចាំខែនីមួយៗ៖
+        </p>
+        <!-- cheques -->
+        <div v-if="loan_cheques.length > 0">
+          <!-- 1 -->
+          <p class="justify margin-l-80 inden--"><b>១. </b>
+            មូលប្បទានប័ត្រធនាគារ{{ loan2.bank }}លេខ<b>{{ numUnicode(loan_cheques[0].cheque_number) }}</b>
+            ចុះ{{ formatFullDate(loan_cheques[0].schedule_cheque_to_date) }}
+            មានទឹកប្រាក់ចំនួន <b>{{ numUnicode(formatNumber(loan_cheques[0].schedule_totalpay)) }}{{
+              loanrecord.currency.currency_kh }}
+              ({{ UnicodeHelper.spellkhmer(loan_cheques[0].schedule_totalpay) }}{{ loanrecord.currency.currency_kh
+              }}គត់)
               ទុកសម្រាប់ទូទាត់លើប្រាក់ដើមដោយគិតចាប់ពី{{ formatFullDate(loan_cheques[0].schedule_cheque_from_date) }}
               ដល់{{ formatFullDate(loan_cheques[0].schedule_cheque_to_date) }}</b>
-              ដូចមានក្នុងប្រការ១។
-            </p>
-            <!-- 2-->
-            <p class="justify margin-l-80 inden--"><b>២.	</b>
-              មូលប្បទានប័ត្រធនាគារ{{ loan2.bank }}លេខ<b>{{ numUnicode(loan_cheques[1].cheque_number) }}</b>
-              ចុះ{{ formatFullDate(loan_cheques[1].schedule_cheque_to_date) }}
-              មានទឹកប្រាក់ចំនួន <b>{{numUnicode(formatNumber(loan_cheques[1].schedule_totalpay))}}{{ loanrecord.currency.currency_kh }}
-              ({{UnicodeHelper.spellkhmer(loan_cheques[1].schedule_totalpay)}}{{loanrecord.currency.currency_kh}}គត់)
+            ដូចមានក្នុងប្រការ១។
+          </p>
+          <!-- 2-->
+          <p class="justify margin-l-80 inden--"><b>២. </b>
+            មូលប្បទានប័ត្រធនាគារ{{ loan2.bank }}លេខ<b>{{ numUnicode(loan_cheques[1].cheque_number) }}</b>
+            ចុះ{{ formatFullDate(loan_cheques[1].schedule_cheque_to_date) }}
+            មានទឹកប្រាក់ចំនួន <b>{{ numUnicode(formatNumber(loan_cheques[1].schedule_totalpay)) }}{{
+              loanrecord.currency.currency_kh }}
+              ({{ UnicodeHelper.spellkhmer(loan_cheques[1].schedule_totalpay) }}{{ loanrecord.currency.currency_kh
+              }}គត់)
               ទុកសម្រាប់ទូទាត់លើប្រាក់ដើមដោយគិតចាប់ពី{{ formatFullDate(loan_cheques[1].schedule_cheque_from_date) }}
-              ដល់ថ្ងៃទី{{ formatFullDate(loan_cheques[1].schedule_cheque_to_date) }}</b>
-              ដូចមានក្នុងប្រការ១។
-            </p>
-            <!-- 3-->
-            <p class="justify margin-l-80 inden--"><b>៣.	</b>
-              មូលប្បទានប័ត្រធនាគារ{{ loan2.bank }}លេខ<b>{{ numUnicode(loan_cheques[2].cheque_number) }}</b>
-              ចុះ{{formatFullDate(loan_cheques[2].schedule_cheque_to_date)}}
-              មានទឹកប្រាក់ចំនួន <b>{{numUnicode(formatNumber(loan_cheques[2].schedule_totalpay))}}{{ loanrecord.currency.currency_kh }}
-              ({{UnicodeHelper.spellkhmer(loan_cheques[2].schedule_totalpay)}}{{loanrecord.currency.currency_kh}}គត់)
+              ដល់{{ formatFullDate(loan_cheques[1].schedule_cheque_to_date) }}</b>
+            ដូចមានក្នុងប្រការ១។
+          </p>
+          <!-- 3-->
+          <p class="justify margin-l-80 inden--"><b>៣. </b>
+            មូលប្បទានប័ត្រធនាគារ{{ loan2.bank }}លេខ<b>{{ numUnicode(loan_cheques[2].cheque_number) }}</b>
+            ចុះ{{ formatFullDate(loan_cheques[2].schedule_cheque_to_date) }}
+            មានទឹកប្រាក់ចំនួន <b>{{ numUnicode(formatNumber(loan_cheques[2].schedule_totalpay)) }}{{
+              loanrecord.currency.currency_kh }}
+              ({{ UnicodeHelper.spellkhmer(loan_cheques[2].schedule_totalpay) }}{{ loanrecord.currency.currency_kh
+              }}គត់)
               ទុកសម្រាប់ទូទាត់លើប្រាក់ដើមដោយគិតចាប់ពី{{ formatFullDate(loan_cheques[2].schedule_cheque_from_date) }}
-              ដល់ថ្ងៃទី{{ formatFullDate(loan_cheques[2].schedule_cheque_to_date) }}</b>
-              ដូចមានក្នុងប្រការ១។
-            </p>
-            <!-- 4-->
-            <p class="justify margin-l-80 inden--"><b>៤.	</b>
-              មូលប្បទានប័ត្រធនាគារ{{ loan2.bank }}លេខ<b>{{ numUnicode(loan_cheques[3].cheque_number) }}</b>  
-              ចុះ{{formatFullDate(loan_cheques[3].schedule_cheque_to_date)}}
-              មានទឹកប្រាក់ចំនួន <b>{{numUnicode(formatNumber(loan_cheques[3].schedule_totalpay))}}{{ loanrecord.currency.currency_kh }}
-              ({{UnicodeHelper.spellkhmer(loan_cheques[3].schedule_totalpay)}}{{loanrecord.currency.currency_kh}}គត់)</b>
-              មូលប្បទានប័ត្រនេះទុកសម្រាប់ធានាលើការអនុវត្តកាតព្វកិច្ចបង់ប្រាក់ដើមរបស់ភាគី “ខ”  ដែលបានខ្ចីពីភាគី “ក”   ដូចមានមានក្នុងប្រការ១ និងប្រការ២ និងមានសិទ្ធិចាត់ចែងប្រើប្រាស់ និងអាស្រ័យផលលើមូលប្បទានប័ត្រនេះដូចប្រការ២ ដោយឥតមានការតវ៉ា ប៉ុន្ដែមូលប្បទានប័ត្រនេះមិនអាចអនុវត្តបានទេក្នុងករណីភាគី “ខ”  បានអនុវត្តការសងគ្រប់ចំនួនដូចក្នុងប្រការ១ និងប្រការ២ ចប់រួចរាល់។ តែបើភាគី “ខ”  អនុវត្តដូចក្នុងប្រការ១ និងប្រការ២ ហើយមូលប្បទានប័ត្រនេះត្រូវទុកជាមោឃៈ។
-            </p>
-          </div>
-
-          <!-- ប្រការ៣-->
-          <p class="mt muol fs-10">ប្រការ៣_</p> 
-          <p class="justify inden margin-l-40">
-              ភាគី “ខ” ព្រមដាក់ធានាមូលប្បទានប័ត្រធនាគារភ្នំពេញពាណិជ្ជ<b>ចំនួន៣សន្លឹក</b> សម្រាប់ទូទាត់ការបង់រំលោះប្រចាំខែ <b>ហើយ១សន្លឹក</b>ទៀតសម្រាប់ធានាឲ្យការមិនអនុវត្តកាតព្វកិច្ចដែលរហូតដល់សងប្រាក់អស់ដូចក្នុងប្រការ១ ដោយមូលប្បទានប័ត្រនេះចេញឡើងក្នុងគោលបំណងទូទាត់ប្រាក់ប្រចាំថ្ងៃតែប៉ុណ្ណោះ    មូលប្បទានប័ត្រទី៤ ដូចប្រការ២នេះអនុវត្តបានលុះត្រាតែភាគី “ខ”  មិនបានអនុវត្តសងប្រាក់ឲ្យបានត្រឹមត្រូវដូចប្រការ១។
+              ដល់{{ formatFullDate(loan_cheques[2].schedule_cheque_to_date) }}</b>
+            ដូចមានក្នុងប្រការ១។
           </p>
-
-          <!-- ប្រការ៤-->
-          <p class="mt muol fs-10">ប្រការ៤_</p> 
-          <p class="justify inden margin-l-40">
-              មូលប្បទានប័ត្រទាំង៤ សន្លឹកដូចក្នុងប្រការ២ ចេញដោយឈ្មោះ  <b>{{loanrecord.customer.cust_name_1 }}</b> បានព្រមព្រៀងគ្នាសហការទទួលខុសត្រូវរួមផ្លូវច្បាប់លើការចេញមូលប្បទានប័ត្រធនាគារនេះ។
+          <!-- 4-->
+          <p class="justify margin-l-80 inden--"><b>៤. </b>
+            មូលប្បទានប័ត្រធនាគារ{{ loan2.bank }}លេខ<b>{{ numUnicode(loan_cheques[3].cheque_number) }}</b>
+            ចុះ{{ formatFullDate(loan_cheques[3].schedule_cheque_to_date) }}
+            មានទឹកប្រាក់ចំនួន <b>{{ numUnicode(formatNumber(loan_cheques[3].schedule_totalpay)) }}{{
+              loanrecord.currency.currency_kh }}
+              ({{ UnicodeHelper.spellkhmer(loan_cheques[3].schedule_totalpay) }}{{ loanrecord.currency.currency_kh
+              }}គត់)</b>
+            មូលប្បទានប័ត្រនេះទុកសម្រាប់ធានាលើការអនុវត្តកាតព្វកិច្ចបង់ប្រាក់ដើមរបស់ភាគី “ខ” ដែលបានខ្ចីពីភាគី “ក”
+            ដូចមានមានក្នុងប្រការ១ និងប្រការ២ និងមានសិទ្ធិចាត់ចែងប្រើប្រាស់ និងអាស្រ័យផលលើមូលប្បទានប័ត្រនេះដូចប្រការ២
+            ដោយឥតមានការតវ៉ា ប៉ុន្ដែមូលប្បទានប័ត្រនេះមិនអាចអនុវត្តបានទេក្នុងករណីភាគី “ខ”
+            បានអនុវត្តការសងគ្រប់ចំនួនដូចក្នុងប្រការ១ និងប្រការ២ ចប់រួចរាល់។ តែបើភាគី “ខ” អនុវត្តដូចក្នុងប្រការ១
+            និងប្រការ២ ហើយមូលប្បទានប័ត្រនេះត្រូវទុកជាមោឃៈ។
           </p>
+        </div>
+      </section>
 
-          <!-- ប្រការ៥-->
-          <p class="mt muol fs-10">ប្រការ៥_</p> 
-          <p class="justify inden margin-l-40">
-            ភាគីខ ត្រូវចេញថ្លៃសេវាមេធាវី នូវចំនួនទឹកប្រាក់  <b>USD២០០ (ពីររយដុល្លារអាមេរិច)</b> ។
-          </p>
+      <!-- ប្រការ៣-->
+      <section>
+        <p class="mt muol fs-10">ប្រការ៣_</p>
+        <p class="justify inden margin-l-40">
+          ភាគី “ខ” ព្រមដាក់ធានាមូលប្បទានប័ត្រធនាគារភ្នំពេញពាណិជ្ជ<b>ចំនួន៣សន្លឹក</b> សម្រាប់ទូទាត់ការបង់រំលោះប្រចាំខែ
+          <b>ហើយ១សន្លឹក</b>ទៀតសម្រាប់ធានាឲ្យការមិនអនុវត្តកាតព្វកិច្ចដែលរហូតដល់សងប្រាក់អស់ដូចក្នុងប្រការ១
+          ដោយមូលប្បទានប័ត្រនេះចេញឡើងក្នុងគោលបំណងទូទាត់ប្រាក់ប្រចាំថ្ងៃតែប៉ុណ្ណោះ មូលប្បទានប័ត្រទី៤
+          ដូចប្រការ២នេះអនុវត្តបានលុះត្រាតែភាគី “ខ” មិនបានអនុវត្តសងប្រាក់ឲ្យបានត្រឹមត្រូវដូចប្រការ១។
+        </p>
+      </section>
 
-          <!-- ប្រការ៦-->
-          <p class="mt muol fs-10">ប្រការ៦_</p> 
-          <p class="justify inden margin-l-40">
-            នៅពេលភាគី “ខ”  បានបង់ប្រាក់បានគ្រប់ចំនួន និងទៀងទាត់ដល់ថ្ងៃកំណត់នីមួយៗនៃមូលប្បទានប័ត្រដូចមានក្នុងប្រការ២ ជារៀងរាល់ថ្ងៃភាគី “ក”    ត្រូវប្រគល់មូលប្បទានប័ត្រធនាគារភ្នំពេញពាណិជ្ជ១សន្លឹកនោះឲ្យទៅភាគី “ខ”  ដើម្បីបំផ្លាញចោល ហើយបន្ដសកម្មភាពនេះបន្ដរហូតដល់ពេលដែលភាគី “ខ”  សងប្រាក់បានគ្រប់ចំនួននៃប្រាក់ដើមដូចមានក្នុងប្រការ១ រហូតដល់អស់សន្លឹកមូលប្បទានប័ត្រទាំង៣សន្លឹកនោះ។
-          </p>
+      <!-- ប្រការ៤-->
+      <section>
+        <p class="mt muol fs-10">ប្រការ៤_</p>
+        <p class="justify inden margin-l-40">
+          មូលប្បទានប័ត្រទាំង៤ សន្លឹកដូចក្នុងប្រការ២ ចេញដោយឈ្មោះ <b>{{ loanrecord.customer.cust_name_1 }}</b>
+          បានព្រមព្រៀងគ្នាសហការទទួលខុសត្រូវរួមផ្លូវច្បាប់លើការចេញមូលប្បទានប័ត្រធនាគារនេះ។
+        </p>
+      </section>
 
-          <!-- ប្រការ៧-->
-          <p class="mt muol fs-10">ប្រការ៧_ប្រាក់ពិន័យចំពោះការយឺតយ៉ាវ</p> 
-          <p class="justify inden-- margin-l-80"">បើមានការយឺតយ៉ាវក្នុងការបង់ការប្រាក់ភាគី “ខ” យល់ព្រមអោយភាគី “ក” ពិន័យដូចតទៅៈ</p>
-          <p class="justify inden-- margin-l-80""><b>១.	</b>លើសកំណត់១៥ថ្ងៃ ត្រូវពិន័យ៥%ក្នុងមួយថ្ងៃ នៃប្រាក់ដើមសរុប។</p>
-          <p class="justify inden-- margin-l-80""><b>២.	</b>លើសកំណត់២៥ថ្ងៃ ត្រូវពិន័យ១០% ក្នុងមួយថ្ងៃ នៃប្រាក់ដើមសរុប។</p>
-          <p class="justify inden-- margin-l-80""><b>៣.	</b>
-            ក្នុងករណីលើសពី៣ថ្ងៃ ហើយភាគី “ខ” អាក់ខានក្នុងការបង់ប្រាក់ដូចមានក្នុងប្រការ១ ចំនួន១៥ថ្ងៃ លុយដែលត្រូវបង់ពីមុននឹងចាត់ទុកជាមោឃៈហើយប្រយោជន៍ត្រូវបានទៅភាគី “ក” ដោយត្រូវចាត់ទុកថាភាគី“ខ”
-            នៅជំពាក់ប្រាក់ចំនួន  <b>{{ numUnicode(formatNumber(loan2.contract_schedule_totalpay_all)) }}{{ loanrecord.currency.currency_kh }}
-            ({{ numUnicode(formatNumber(loan2.contract_schedule_totalpay_all)) }}{{loanrecord.currency.currency_kh}}គត់)</b>
-            ដដែលព្រមទាំងភាគី“ខ” សុខចិត្តឲ្យភាគី“ក” ប្ដឹងទៅតុលាការដើម្បីអនុវត្តទៅតាមផ្លូវច្បាប់ដើម្បីទាមទារសំណងនៃការខូចខាតផ្សេងៗចំនួន ៣០,០០០$(សាមសិបពាន់ដុល្លាអាមេរិច) និងទាមទារសំណងការខូតខាតក្នុងមួយឆ្នាំ២៥%(ភាគរយ)។ ក្នុងករណីលើសរយៈពេល១០ថ្ងៃ ភាគី“ខ”  មិនអាចបង់រំលោះសងអស់ទឹកប្រាក់ដូចក្នុងប្រការ១ បានភាគី“ក”   និងភាគី“ខ”  ព្រមព្រៀងគ្នាត្រូវធ្វើកិច្ចសន្យាថ្មីមួយទៀត។
-          </p>
-          <p class="justify inden-- margin-l-80""><b>៤.	</b>ក្នុងករណីភាគី “ខ” មិនបានបំពេញកាតព្វកិច្ចសងប្រាក់ឲ្យបានគ្រប់ចំនួនជូនភាគី“ក” ភាគី“ក” មានសិទ្ធិគិតការប្រាក់ចំនួន១.៥ភាគរយលើប្រាក់ដើមដែលនៅលើភាគី“ខ” ហើយភាគី“ខ” បានឯកភាពខ្ចីប្រាក់ដូចក្នុងប្រការ១ ។</p>
+      <!-- ប្រការ៥-->
+      <section>
+        <p class="mt muol fs-10">ប្រការ៥_</p>
+        <p class="justify inden margin-l-40">
+          ភាគីខ ត្រូវចេញថ្លៃសេវាមេធាវី នូវចំនួនទឹកប្រាក់ <b>USD២០០ (ពីររយដុល្លារអាមេរិច)</b> ។
+        </p>
+      </section>
+
+      <!-- ប្រការ៦-->
+      <section>
+        <p class="mt muol fs-10">ប្រការ៦_</p>
+        <p class="justify inden margin-l-40">
+          នៅពេលភាគី “ខ” បានបង់ប្រាក់បានគ្រប់ចំនួន និងទៀងទាត់ដល់ថ្ងៃកំណត់នីមួយៗនៃមូលប្បទានប័ត្រដូចមានក្នុងប្រការ២
+          ជារៀងរាល់ថ្ងៃភាគី “ក” ត្រូវប្រគល់មូលប្បទានប័ត្រធនាគារភ្នំពេញពាណិជ្ជ១សន្លឹកនោះឲ្យទៅភាគី “ខ” ដើម្បីបំផ្លាញចោល
+          ហើយបន្ដសកម្មភាពនេះបន្ដរហូតដល់ពេលដែលភាគី “ខ” សងប្រាក់បានគ្រប់ចំនួននៃប្រាក់ដើមដូចមានក្នុងប្រការ១
+          រហូតដល់អស់សន្លឹកមូលប្បទានប័ត្រទាំង៣សន្លឹកនោះ។
+        </p>
+      </section>
+
+      <!-- ប្រការ៧-->
+      <section>
+        <p class="mt muol fs-10">ប្រការ៧_ប្រាក់ពិន័យចំពោះការយឺតយ៉ាវ</p>
+        <p class="justify inden-- margin-l-80"">បើមានការយឺតយ៉ាវក្នុងការបង់ការប្រាក់ភាគី “ខ” យល់ព្រមអោយភាគី “ក” ពិន័យដូចតទៅៈ</p>
+            <p class=" justify inden-- margin-l-80""><b>១. </b>លើសកំណត់១៥ថ្ងៃ ត្រូវពិន័យ៥%ក្នុងមួយថ្ងៃ នៃប្រាក់ដើមសរុប។
+        </p>
+        <p class="justify inden-- margin-l-80""><b>២.	</b>លើសកំណត់២៥ថ្ងៃ ត្រូវពិន័យ១០% ក្នុងមួយថ្ងៃ នៃប្រាក់ដើមសរុប។</p>
+            <p class=" justify inden-- margin-l-80""><b>៣. </b>
+          ក្នុងករណីលើសពី៣ថ្ងៃ ហើយភាគី “ខ” អាក់ខានក្នុងការបង់ប្រាក់ដូចមានក្នុងប្រការ១ ចំនួន១៥ថ្ងៃ
+          លុយដែលត្រូវបង់ពីមុននឹងចាត់ទុកជាមោឃៈហើយប្រយោជន៍ត្រូវបានទៅភាគី “ក” ដោយត្រូវចាត់ទុកថាភាគី“ខ”
+          នៅជំពាក់ប្រាក់ចំនួន <b>{{ numUnicode(formatNumber(loan2.contract_schedule_totalpay_all)) }}{{
+            loanrecord.currency.currency_kh }}
+            ({{ numUnicode(formatNumber(loan2.contract_schedule_totalpay_all))
+            }}{{ loanrecord.currency.currency_kh }}គត់)</b>
+          ដដែលព្រមទាំងភាគី“ខ” សុខចិត្តឲ្យភាគី“ក”
+          ប្ដឹងទៅតុលាការដើម្បីអនុវត្តទៅតាមផ្លូវច្បាប់ដើម្បីទាមទារសំណងនៃការខូចខាតផ្សេងៗចំនួន
+          ៣០,០០០$(សាមសិបពាន់ដុល្លាអាមេរិច) និងទាមទារសំណងការខូតខាតក្នុងមួយឆ្នាំ២៥%(ភាគរយ)។ ក្នុងករណីលើសរយៈពេល១០ថ្ងៃ
+          ភាគី“ខ” មិនអាចបង់រំលោះសងអស់ទឹកប្រាក់ដូចក្នុងប្រការ១ បានភាគី“ក” និងភាគី“ខ”
+          ព្រមព្រៀងគ្នាត្រូវធ្វើកិច្ចសន្យាថ្មីមួយទៀត។
+        </p>
+        <p class="justify inden-- margin-l-80""><b>៤.	</b>ក្នុងករណីភាគី “ខ” មិនបានបំពេញកាតព្វកិច្ចសងប្រាក់ឲ្យបានគ្រប់ចំនួនជូនភាគី“ក” ភាគី“ក” មានសិទ្ធិគិតការប្រាក់ចំនួន១.៥ភាគរយលើប្រាក់ដើមដែលនៅលើភាគី“ខ” ហើយភាគី“ខ” បានឯកភាពខ្ចីប្រាក់ដូចក្នុងប្រការ១ ។</p>
+          </section>
           
           <!-- ប្រការ៨-->
-          <p class="mt muol fs-10">ប្រការ៨_</p> 
-          <p class="justify inden margin-l-40">កិច្ចសន្យានេះត្រូវបង្កើតកាតព្វកិច្ចដល់ទាយាទភាគីទាំងពីរ ហើយក្នុងករណីដែលភាគីណាមួយពុំអនុវត្តកាតព្វកិច្ចតាមការសន្យាដូចមានចែងក្នុងប្រការនីមួយៗនៃកិច្ចព្រមព្រៀងនេះ ត្រូវទទួលខុសត្រូវតាមផ្លូវច្បាប់។ រាល់ការប្រគល់ទទួលប្រាក់ភាគី“ក” និងភាគី“ខ” ត្រូវធ្វើលិខិតប្រគល់ ទទួលប្រាក់ជាលាយលក្ខណ៍អក្សរ។</p>
-
-          <!-- ប្រការ៩-->
-          <p class="mt muol fs-10">ប្រការ៩_ច្បាប់ដែលមានសមត្ថកិច្ច</p> 
-          <p class="justify inden-- margin-l-80"><b>១.	</b>គូភាគីត្រូវប្រកាន់ឈរលើគោលការណ៍សម្រុះសម្រួលគ្នា ពិភាក្សាឈរលើគោលការណ៍យោគយល់គ្នាជាមុនសិនក្នុងករណីមិនសះជា ជាសមត្ថកិច្ចរបស់តុលាការគ្រប់ជាន់ថ្នាក់នៃព្រះរាជាណាចក្រកម្ពុជា ឬនៅទីកន្លែងអនុវត្តកិច្ចព្រមព្រៀង។</p>
-          <p class="justify inden-- margin-l-80""><b>២.	</b>កិច្ចសន្យានេះគ្របដណ្តប់ដោយច្បាប់នៃព្រះរាជាណាចក្រកម្ពុជា។</p>
-          <p class="justify inden-- margin-l-80""><b>៣.	</b>កិច្ចព្រមព្រៀងនេះត្រូវបានធ្វើឡើងដោយគ្មានការបង្ខិតបង្ខំពីភាគីណាមួយឡើយ ហើយភាគីទាំងអស់បានមើលបានអាន បានស្ដាប់ និងយល់នូវរាល់ខ្លឹមសារទាំងឡាយគ្រប់ប្រការខាងលើនៃកិច្ចសន្យានេះច្បាស់លាស់ ហើយយល់ព្រមផ្ដិតមេដៃស្ដាំទុកជាភស្ដុតាង។</p>
-          <p class="justify inden-- margin-l-80""><b>៤.	</b>កិច្ចសន្យានេះមានប្រសិទ្ធិភាពអនុវត្តចាប់ពីថ្ងៃផ្ដិតមេដៃស្ដាំនេះតទៅ។</p>
-          <p class="justify inden-- margin-l-80"">កិច្ចព្រមព្រៀងនេះត្រូវបានធ្វើឡើងជា០៣ច្បាប់ជាភាសាខ្មែរ មានតម្លៃស្មើគ្នារក្សាទុកនៅភាគីនីមួយៗចំនួន០១ច្បាប់ និងរក្សាទុកនៅក្រុមហ៊ុនមេធាវី០១ច្បាប់ទុកជាភស្តុតាង។</p>
+          <section>
+            <p class=" mt muol fs-10">ប្រការ៨_</p>
+        <p class="justify inden margin-l-40">កិច្ចសន្យានេះត្រូវបង្កើតកាតព្វកិច្ចដល់ទាយាទភាគីទាំងពីរ
+          ហើយក្នុងករណីដែលភាគីណាមួយពុំអនុវត្តកាតព្វកិច្ចតាមការសន្យាដូចមានចែងក្នុងប្រការនីមួយៗនៃកិច្ចព្រមព្រៀងនេះ
+          ត្រូវទទួលខុសត្រូវតាមផ្លូវច្បាប់។ រាល់ការប្រគល់ទទួលប្រាក់ភាគី“ក” និងភាគី“ខ” ត្រូវធ្វើលិខិតប្រគល់
+          ទទួលប្រាក់ជាលាយលក្ខណ៍អក្សរ។</p>
+      </section>
+      <section>
+        <!-- ប្រការ៩-->
+        <p class="mt muol fs-10">ប្រការ៩_ច្បាប់ដែលមានសមត្ថកិច្ច</p>
+        <p class="justify inden-- margin-l-80"><b>១. </b>គូភាគីត្រូវប្រកាន់ឈរលើគោលការណ៍សម្រុះសម្រួលគ្នា
+          ពិភាក្សាឈរលើគោលការណ៍យោគយល់គ្នាជាមុនសិនក្នុងករណីមិនសះជា
+          ជាសមត្ថកិច្ចរបស់តុលាការគ្រប់ជាន់ថ្នាក់នៃព្រះរាជាណាចក្រកម្ពុជា ឬនៅទីកន្លែងអនុវត្តកិច្ចព្រមព្រៀង។</p>
+        <p class="justify inden-- margin-l-80"><b>២. </b>កិច្ចសន្យានេះគ្របដណ្តប់ដោយច្បាប់នៃព្រះរាជាណាចក្រកម្ពុជា។</p>
+        <p class=" justify inden-- margin-l-80"><b>៣.
+          </b>កិច្ចព្រមព្រៀងនេះត្រូវបានធ្វើឡើងដោយគ្មានការបង្ខិតបង្ខំពីភាគីណាមួយឡើយ ហើយភាគីទាំងអស់បានមើលបានអាន បានស្ដាប់
+          និងយល់នូវរាល់ខ្លឹមសារទាំងឡាយគ្រប់ប្រការខាងលើនៃកិច្ចសន្យានេះច្បាស់លាស់ ហើយយល់ព្រមផ្ដិតមេដៃស្ដាំទុកជាភស្ដុតាង។
+        </p>
+        <p class="justify inden-- margin-l-80"><b>៤.
+          </b>កិច្ចសន្យានេះមានប្រសិទ្ធិភាពអនុវត្តចាប់ពីថ្ងៃផ្ដិតមេដៃស្ដាំនេះតទៅ។</p>
+        <p class=" justify inden-- margin-l-80">កិច្ចព្រមព្រៀងនេះត្រូវបានធ្វើឡើងជា០៣ច្បាប់ជាភាសាខ្មែរ
+          មានតម្លៃស្មើគ្នារក្សាទុកនៅភាគីនីមួយៗចំនួន០១ច្បាប់ និងរក្សាទុកនៅក្រុមហ៊ុនមេធាវី០១ច្បាប់ទុកជាភស្តុតាង។</p>
+      </section>
 
     </main>
 

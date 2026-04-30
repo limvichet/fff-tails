@@ -22,7 +22,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #f5f5f5; /* Light grey background for screen preview */
-  font-family: "Notosan", Arial, sans-serif;
+  font-family: "KrasarRegular", Arial, sans-serif !important;
   font-size: 11pt;
 }
 
@@ -63,6 +63,7 @@ body {
   text-align: center;
 }
 
+.col-1 { width: 10%; }
 .col-2 { width: 20%; }
 .col-3 { width: 25%; }
 .col-4 { width: 33.33%; }

@@ -170,7 +170,7 @@ layer(base);
 @theme inline {
     /* custom fonts */
   --font-sans-en: "Roboto";
-  --font-sans-kh: "Notosan";
+  --font-sans-kh: "KrasarRegular";
   --font-sans-kh-moul: "Moul";
   --font-sans-serif: var(--font-sans-en), var(--font-sans-kh), system-ui, sans-serif;
 }

@@ -10,12 +10,25 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 import ContractType1 from '~/components/loanrecords/contracts2/ContractType1.vue'
+import ContractType3 from '~/components/loanrecords/contracts2/ContractType3.vue'
+import ContractType4 from '~/components/loanrecords/contracts2/ContractType4.vue'
+import ContractType5 from '~/components/loanrecords/contracts2/ContractType5.vue'
+import ContractType6 from '~/components/loanrecords/contracts2/ContractType6.vue'
+import ContractType7 from '~/components/loanrecords/contracts2/ContractType7.vue'
+import ContractType8 from '~/components/loanrecords/contracts2/ContractType8.vue'
+import ContractType10 from '~/components/loanrecords/contracts2/ContractType10.vue'
 
 function getComponent(type: number) {
   switch (type) {
-    case 1: return ContractType1
+    // case 1: return ContractType1
+    // case 3: return ContractType3
     // case 4: return ContractType4
-    default: return ContractType1
+    // case 5: return ContractType5
+    // case 6: return ContractType6
+    // case 7: return ContractType7
+    // case 8: return ContractType8
+    case 10: return ContractType10
+    default: return ContractType10
   }
 }
 

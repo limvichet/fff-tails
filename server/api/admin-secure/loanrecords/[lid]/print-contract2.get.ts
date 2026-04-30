@@ -44,6 +44,8 @@ type Loanrecord = {
     loan_peroid: number
     loantype_id: number
     loantype: Loantype
+    loan_collateral_1: string,
+    loan_collateral_2: string,
 }
 type Loantype = {
     id: number
