@@ -16,6 +16,8 @@
   import ComponentCard from "@/components/common/ComponentCard.vue"
   import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
   import type { CustomerFormDataResponse } from "~/types/customer"
+  import { useCustomToast } from '~/composables/useCustomToast';
+  const { showToast } = useCustomToast();
 
   const { successMsg, errorMsg, success } = useMessage()
   const errors = reactive<Record<string, string>>({})
@@ -269,7 +271,12 @@
         })
 
         // errorMsg.value = errorList.join(' | ')
-        errorMsg.value = "Please fix the validation errors."
+        errorMsg.value = "Please fill the validation fields."
+        showToast(
+          `Please fill the validation.`,
+          `Please fill the validation fields.`,
+          `error`
+        )
         return
       }
 

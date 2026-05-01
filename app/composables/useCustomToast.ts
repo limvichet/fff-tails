@@ -8,7 +8,7 @@ export const useCustomToast = () => {
     const config = {
       success: {
         icon: '✅',
-        bg: '#74EBBD', // Emerald Green
+        bg: '#5FE9B5', // Emerald Green
       },
       warning: {
         icon: '⚠️',
@@ -16,7 +16,7 @@ export const useCustomToast = () => {
       },
       error: {
         icon: '❌',
-        bg: '#EF4444', // Red
+        bg: '#FFA5A6', // Red
       }
     };
 

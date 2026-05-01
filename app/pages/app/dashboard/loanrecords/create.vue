@@ -17,6 +17,8 @@
   import CommonCustomerSelect2 from "@/components/common/CommonCustomerSelect2.vue"
   import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
   import type { LoanrecordFormDataResponse } from "~/types/loanrecord"
+  import { useCustomToast } from '~/composables/useCustomToast';
+  const { showToast } = useCustomToast();
 
   const { hasRole } = useAuth()
   const { successMsg, errorMsg, success } = useMessage()
@@ -291,8 +293,13 @@ Object.keys(baseSchema.shape).forEach((field) => {
           errorList.push(`${field}: ${e.message}`)
         })
 
-         errorMsg.value = errorList.join(' | ')
-       // errorMsg.value = "Please fix the validation errors."
+         // errorMsg.value = errorList.join(' | ')
+         errorMsg.value = "Please fix the validation errors."
+          showToast(
+            `Please fill the validation.`,
+            `Please fill the validation fields.`,
+            `error`
+          )
         return
       }
 

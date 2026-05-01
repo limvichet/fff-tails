@@ -18,6 +18,8 @@ import { useRouter } from "vue-router"
 import { useMessage } from "~/composables/useMessage"
 import { formatDateForOutput } from '~/utils/date'
 import { PencilIcon, TrashIcon} from "@/icons";
+import { useCustomToast } from '~/composables/useCustomToast';
+const { showToast } = useCustomToast();
 
 const router = useRouter()
 const { errorMsg, successMsg, success } = useMessage()
@@ -173,16 +175,17 @@ const openDeleteModal = (id: number) => {
   isDeleteModal.value = true
 }
 
-const closeModal = () => {
+const closeDeleteModal = () => {
   isDeleteModal.value = false
   selectedCustomerId.value = null
 }
 
 onMounted(() => {
   window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeModal()
+    if (e.key === "Escape") closeDeleteModal()
   })
 })
+
 
 const deleteCustomer = async () => {
   if (!selectedCustomerId.value) return
@@ -192,11 +195,17 @@ const deleteCustomer = async () => {
       method: "DELETE",
     })
 
-    closeModal()
+    closeDeleteModal()
     fetchCustomers()
     success("Customer deleted successfully!")
   } catch (err) {
     errorMsg.value = "Delete failed"
+    showToast(
+      `Cannot delete ID #${selectedCustomerId.value}`,
+      `Loans are using with this.`,
+      `error`
+    )
+
   }
 }
 
@@ -356,8 +365,8 @@ const deleteCustomer = async () => {
       </ComponentCard>
     </div>
 
-    <!-- Modal -->
-    <div v-if="isDeleteModal" @click.self="closeModal"
+    <!-- Delete Modal -->
+    <div v-if="isDeleteModal" @click.self="closeDeleteModal"
       class="fixed inset-0 flex items-center justify-center overflow-y-auto modal z-50">
 
       <!-- BACKDROP -->
@@ -367,7 +376,7 @@ const deleteCustomer = async () => {
       <div
         class="no-scrollbar relative w-full max-w-[400px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-6">
         <!-- close btn -->
-        <button @click="closeModal"
+        <button @click="closeDeleteModal"
           class="transition-color absolute right-5 top-5 z-999 flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 hover:bg-blue-200 hover:text-blue-600 dark:bg-gray-700 dark:bg-white/[0.05] dark dark:hover:bg-white/[0.07] dark:hover:text-gray-300">
           <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none"
             xmlns="http://www.w3.org/2000/svg">
@@ -382,12 +391,12 @@ const deleteCustomer = async () => {
           </h6>
 
           <p class="mb-3 text-sm text-gray-500">
-            Are you sure you want to delete this customer?
+            Are you sure you want to delete this?
           </p>
         </div>
         <form class="flex flex-col">
           <div class="flex items-center gap-3 mt-6 lg:justify-end">
-            <button @click="closeModal" type="button"
+            <button @click="closeDeleteModal" type="button"
               class="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-blue-50 dark:border-gray-700 dark:bg-gray-800 dark dark:hover:bg-white/[0.03] sm:w-auto">
               Cancel
             </button>

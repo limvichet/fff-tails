@@ -15,8 +15,9 @@
   import { useRoute } from "vue-router"
   import ComponentCard from "@/components/common/ComponentCard.vue"
   import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
-  import ComponentSubmitCard from "@/components/common/ComponentSubmitCard.vue"
   import type { Customer, CustomerFormDataResponse } from "~/types/customer"
+  import { useCustomToast } from '~/composables/useCustomToast';
+  const { showToast } = useCustomToast();
 
   const { successMsg, errorMsg } = useMessage()
   const loading = ref(false)
@@ -510,8 +511,13 @@
         })
 
         // errorMsg.value = errorList.join(' | ')
-        errorMsg.value = "Please fix the validation errors."
+        errorMsg.value = "Please fill the validation fields."
         loading.value = false
+        showToast(
+          `Please fill the validation.`,
+          `Please fill the validation fields.`,
+          `error`
+        )
         return
       }
 

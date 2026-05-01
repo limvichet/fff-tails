@@ -14,12 +14,10 @@ useHead({
 import { z } from "zod"
 import { useRoute } from "vue-router"
 import ComponentCard from "@/components/common/ComponentCard.vue"
-import ComponentSubmitCard from "@/components/common/ComponentSubmitCard.vue"
 import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
 import type { LoanrecordFormDataResponse } from "~/types/loanrecord"
 import { formatDateForInput } from "@/utils/date"
 import { useCustomToast } from '~/composables/useCustomToast';
-
 const { showToast } = useCustomToast();
 
 const { hasRole } = useAuth()
@@ -364,6 +362,11 @@ const updateForm = async () => {
       })
       errorMsg.value = "Please fix the validation errors before submitting."
       loading.value = false
+      showToast(
+        `Please fill the validation.`,
+        `Please fill the validation fields.`,
+        `error`
+      )
       return
     }
 

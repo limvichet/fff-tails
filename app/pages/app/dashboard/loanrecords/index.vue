@@ -19,6 +19,8 @@ import { useRouter } from "vue-router"
 import { useMessage } from "~/composables/useMessage"
 import { formatDateForOutput } from '~/utils/date'
 import { formatNumber } from '~/utils/number'
+import { useCustomToast } from '~/composables/useCustomToast';
+const { showToast } = useCustomToast();
 
 
 const router = useRouter()
@@ -203,14 +205,14 @@ const openDeleteModal = (id: number) => {
   isDeleteModal.value = true
 }
 
-const closeModal = () => {
+const closeDeleteModal = () => {
   isDeleteModal.value = false
   selectedLoanId.value = null
 }
 
 onMounted(() => {
   window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeModal()
+    if (e.key === "Escape") closeDeleteModal()
   })
 })
 
@@ -225,11 +227,16 @@ const deleteLoan = async () => {
       method: "DELETE",
     })
 
-    closeModal()
+    closeDeleteModal()
     fetchLoanrecords()
     success("Loan record deleted successfully!")
   } catch (err) {
     errorMsg.value = "Delete failed"
+    showToast(
+      `Cannot delete ID #${selectedLoanId.value}`,
+      `Schedules are using with this.`,
+      `error`
+    )
   }
 }
 
@@ -321,22 +328,10 @@ onMounted(() => {
                 <td class="px-1 py-1 text-sm">
                   {{ l.id }}({{ l?.loantype?.loantype_short ??  '' }})
                 </td>
-                
-                <!-- <td class="px-1 py-1 text-sm">
-                  {{ l.cust_id }}
-                </td> -->
-
-                <!-- <td class="px-1 py-1 text-sm">
-                    {{ l?.loantype?.loantype_short ??  '' }}
-                </td> -->
 
                 <td class="px-2 py-1 text-sm">
                   {{ l.customer.nametitle1.nametitle_kh }} {{ l.customer.cust_name_1 }}
                 </td>
-
-                <!-- <td class="px-1 py-1 text-sm text-gray-700">
-                  {{ l.loan_lastcash }}
-                </td> -->
 
                 <td class="px-1 py-1 text-sm">
                   {{ formatNumber(Number(l.loan_newcash || 0)) }}
@@ -352,10 +347,6 @@ onMounted(() => {
                   <td class="px-1 py-2 text-sm">
                     <span>{{ l.updatedby.employee.full_name }} - {{ formatDateForOutput(new Date(l.updated_at)) }} </span> 
                   </td>
-
-                  <!-- <td class="px-1 py-2 text-sm text-gray-400 hidden sm:table-cell">
-                    <span class="font-semibold">{{ l.updatedby.employee.full_name }}- {{ formatDate(l.updated_at) }} </span> 
-                  </td> -->
 
                 <!-- contacts -->
                 <td class="px-1 py-1 text-sm">
@@ -491,6 +482,51 @@ onMounted(() => {
       </div>
 
     </ComponentCard>
+
+    <!-- Delete Modal -->
+    <div v-if="isDeleteModal" @click.self="closeDeleteModal"
+      class="fixed inset-0 flex items-center justify-center overflow-y-auto modal z-50">
+
+      <!-- BACKDROP -->
+      <div class="fixed inset-0 h-full w-full bg-gray-400/50 backdrop-blur-[1px]" aria-hidden="false"></div>
+
+      <!-- MODAL CONTENT -->
+      <div
+        class="no-scrollbar relative w-full max-w-[400px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-6">
+        <!-- close btn -->
+        <button @click="closeDeleteModal"
+          class="transition-color absolute right-5 top-5 z-999 flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 hover:bg-blue-200 hover:text-blue-600 dark:bg-gray-700 dark:bg-white/[0.05] dark dark:hover:bg-white/[0.07] dark:hover:text-gray-300">
+          <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M6.04289 16.5418C5.65237 16.9323 5.65237 17.5655 6.04289 17.956C6.43342 18.3465 7.06658 18.3465 7.45711 17.956L11.9987 13.4144L16.5408 17.9565C16.9313 18.347 17.5645 18.347 17.955 17.9565C18.3455 17.566 18.3455 16.9328 17.955 16.5423L13.4129 12.0002L17.955 7.45808C18.3455 7.06756 18.3455 6.43439 17.955 6.04387C17.5645 5.65335 16.9313 5.65335 16.5408 6.04387L11.9987 10.586L7.45711 6.04439C7.06658 5.65386 6.43342 5.65386 6.04289 6.04439C5.65237 6.43491 5.65237 7.06808 6.04289 7.4586L10.5845 12.0002L6.04289 16.5418Z"
+              fill="" />
+          </svg>
+        </button>
+        <div class="px-2">
+          <h6 class="mb-2 text-2xl font-semibold">
+            Delete Loan
+          </h6>
+
+          <p class="mb-3 text-sm text-gray-500">
+            Are you sure you want to delete this?
+          </p>
+        </div>
+        <form class="flex flex-col">
+          <div class="flex items-center gap-3 mt-6 lg:justify-end">
+            <button @click="closeDeleteModal" type="button"
+              class="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-blue-50 dark:border-gray-700 dark:bg-gray-800 dark dark:hover:bg-white/[0.03] sm:w-auto">
+              Cancel
+            </button>
+            <button @click="deleteLoan" type="button"
+              class="flex w-full justify-center rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 sm:w-auto">
+              Delete Loan
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
 
   </div>
 </template>

@@ -17,6 +17,9 @@ import { useRouter } from "vue-router"
 import { useMessage } from "~/composables/useMessage"
 import { useChequeSchedule } from "~/composables/useChequeSchedule"
 import { formatNumber } from '~/utils/number'
+import { useCustomToast } from '~/composables/useCustomToast';
+const { showToast } = useCustomToast();
+const isDeleteModal = ref(false)
 
 const {
   showModal,
@@ -29,8 +32,11 @@ const {
 } = useChequeSchedule()
 
 const router = useRouter()
-const { errorMsg, successMsg } = useMessage()
+const { errorMsg, successMsg, success } = useMessage()
+const selectedId = ref<number | null>(null)
 
+successMsg.value = null
+errorMsg.value = null
 
 // --------------------
 // Types (match your API)
@@ -161,6 +167,37 @@ if (banks.value.length > 0) {
   form.chequeschedule_bank_id = banks.value[0]!.id
 }
 
+const openDeleteModal = (id: number) => {
+  selectedId.value = id
+  isDeleteModal.value = true
+}
+
+const closeDeleteModal = () => {
+  isDeleteModal.value = false
+  selectedId.value = null
+}
+
+const deleteSchedule = async () => {
+  if (!selectedId.value) return
+
+  try {
+    await $fetch(`/api/admin-secure/schedules/${selectedId.value}`, {
+      method: "DELETE",
+    })
+
+    closeDeleteModal()
+    fetchSchedules()
+    success("Schedule deleted successfully!")
+  } catch (err) {
+    errorMsg.value = "Delete failed"
+    showToast(
+      `Cannot delete ID #${selectedId.value}`,
+      `Payments are using with this.`,
+      `error`
+    )
+
+  }
+}
 
 
 </script>
@@ -185,6 +222,10 @@ if (banks.value.length > 0) {
       <!-- Error -->
       <div v-if="errorMsg" class="mb-3 p-2 bg-red-500/20 text-red-400 text-sm rounded">
         {{ errorMsg }}
+      </div>
+
+      <div v-if="successMsg" class="mb-3 p-2 rounded bg-emerald-500/20 text-emerald-300 text-sm">
+        {{ successMsg }}
       </div>
 
       <!-- Loading -->
@@ -272,8 +313,12 @@ if (banks.value.length > 0) {
                   )">
                     Cheque
                   </button>
-                  <button @click="viewSchedule(s.loan_id)" class="px-2 py-1 bg-blue-600 text-white rounded text-xs">
+                  <button @click="viewSchedule(s.loan_id)" class="px-2 py-1 bg-blue-600 text-white rounded text-xs mr-1">
                     View
+                  </button>
+                  <button @click="openDeleteModal(s.loan_id)"
+                    class="px-2 py-1 bg-red-600 text-white rounded text-xs">
+                    Delete
                   </button>
                 </td>
               </tr>
@@ -409,6 +454,50 @@ if (banks.value.length > 0) {
     </div>
 
 
+    <!-- Delete Modal -->
+    <div v-if="isDeleteModal" @click.self="closeDeleteModal"
+      class="fixed inset-0 flex items-center justify-center overflow-y-auto modal z-50">
+
+      <!-- BACKDROP -->
+      <div class="fixed inset-0 h-full w-full bg-gray-400/50 backdrop-blur-[1px]" aria-hidden="false"></div>
+
+      <!-- MODAL CONTENT -->
+      <div
+        class="no-scrollbar relative w-full max-w-[400px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-6">
+        <!-- close btn -->
+        <button @click="closeDeleteModal"
+          class="transition-color absolute right-5 top-5 z-999 flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 hover:bg-blue-200 hover:text-blue-600 dark:bg-gray-700 dark:bg-white/[0.05] dark dark:hover:bg-white/[0.07] dark:hover:text-gray-300">
+          <svg class="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M6.04289 16.5418C5.65237 16.9323 5.65237 17.5655 6.04289 17.956C6.43342 18.3465 7.06658 18.3465 7.45711 17.956L11.9987 13.4144L16.5408 17.9565C16.9313 18.347 17.5645 18.347 17.955 17.9565C18.3455 17.566 18.3455 16.9328 17.955 16.5423L13.4129 12.0002L17.955 7.45808C18.3455 7.06756 18.3455 6.43439 17.955 6.04387C17.5645 5.65335 16.9313 5.65335 16.5408 6.04387L11.9987 10.586L7.45711 6.04439C7.06658 5.65386 6.43342 5.65386 6.04289 6.04439C5.65237 6.43491 5.65237 7.06808 6.04289 7.4586L10.5845 12.0002L6.04289 16.5418Z"
+              fill="" />
+          </svg>
+        </button>
+        <div class="px-2">
+          <h6 class="mb-2 text-2xl font-semibold">
+            Delete Schedule
+          </h6>
+
+          <p class="mb-3 text-sm text-gray-500">
+            Are you sure you want to delete this?
+          </p>
+        </div>
+        <form class="flex flex-col">
+          <div class="flex items-center gap-3 mt-6 lg:justify-end">
+            <button @click="closeDeleteModal" type="button"
+              class="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-blue-50 dark:border-gray-700 dark:bg-gray-800 dark dark:hover:bg-white/[0.03] sm:w-auto">
+              Cancel
+            </button>
+            <button @click="deleteSchedule" type="button"
+              class="flex w-full justify-center rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 sm:w-auto">
+              Delete Schedule
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
   </div>
 </template>
 
