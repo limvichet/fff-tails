@@ -71,16 +71,18 @@ body {
 .col-10 { width: 80%; }
 .logo { width: 60px; height: 60px; opacity: .9; object-fit: contain; }
 
-h1, h2 {font-family: "Muol", Arial, sans-serif !important;}
+h1, h2, h4 {font-family: "Muol", Arial, sans-serif !important;}
 h6 {font-family: "Muol", Arial, sans-serif !important; font-size: 11px !important; margin-top: 4px;}
 h1 { font-size: 13pt;}
 h2 { font-size: 12pt;}
 h3 { font-size: 11pt; font-weight: 700;}
+h4 { font-size: 10pt;}
 p { line-height: 1.6; font-size: 12pt !important;}
 .fs-10 { font-size: 10pt !important;}
 .fs-11 { font-size: 11pt !important;}
 .fs-12 { font-size: 12pt !important;}
 .fs-13 { font-size: 13pt !important;}
+.color-blue { color: blue;}
 .inden { text-indent: 40px;}
 .inden-- { text-indent: -40px;}
 .margin-l-40 { margin-left: 40px;}

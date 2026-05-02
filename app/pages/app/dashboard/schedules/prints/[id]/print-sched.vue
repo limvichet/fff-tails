@@ -160,7 +160,7 @@ const fetchData = async () => {
 onMounted(async () => {
   await fetchData()
   await waitImageLoad()
-  window.print()
+  // window.print()
 })
 
 // ---------------- HELPERS ----------------
@@ -215,8 +215,8 @@ const waitImageLoad = () => {
       <div class="col-8 row end">
         <img ref="logoRef" src="/imgs/logo-48.png" class="logo" />
         <div class="pl">
-          <h3><strong>{{ capital?.organization }}</strong></h3>
-          <h3>កាលវិភាគសងប្រាក់</h3>
+          <h2 class="color-blue">{{ capital?.organization }}</h2>
+          <h3><b>កាលវិភាគសងប្រាក់</b></h3>
         </div>
       </div>
 

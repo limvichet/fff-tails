@@ -13,7 +13,7 @@
 
   import { ref, computed, onMounted } from 'vue'
   import { useRoute } from 'vue-router'
-  import { numUnicode } from "~/utils/number"
+  import { numUnicode, FixNumber } from "~/utils/number"
   import { formatFullDate, formatYear } from "~/utils/date"
   import { UnicodeHelper } from '~/utils/unicodeHelper'
 
@@ -168,24 +168,26 @@ const waitImageLoad = () => {
   <div v-if="!loading && dd" class="page">
 
     <!-- HEADER -->
-    <header class="row" between center>
+    <header class="row center">
 
-      <div style="margin-top: 20px; margin-left: -10px; display: flex; flex-direction: column; align-items: center;">
+      <div class="col-2" style="margin-top: 20px; margin-left: -20px; display: flex; flex-direction: column; align-items: center;">
           <img ref="logoRef" src="/imgs/logo.png" class="logo" />
-          <p><strong>{{ capital!.organization }}</strong></p>
+          <h4 class="color-blue">{{ capital!.organization }}</h4>
       </div>
 
-      <div style="margin-left: 20px;" class="center">
+      <div class="center">
         <h1>ព្រះរាជាណាចក្រកម្ពុជា</h1>
         <h1>ជាតិ សាសនា ព្រះមហាក្សត្រ</h1>
         <p class="tacteng">3</p>
-        <h2>កិច្ចសន្យាខ្ចីប្រាក់ និង លិខិតទទួលប្រគល់-ទទួលប្រាក់កម្ចី</h2>
+        <br>
+        <h2>កិច្ចសន្យាខ្ចីប្រាក់ និងលិខិតទទួលប្រគល់-ទទួលប្រាក់កម្ចី</h2>
       </div>
 
-      <div></div>
+      <!-- <div class="col-1"></div> -->
 
     </header>
 
+    <br>
     <!-- MAIN CONTENT -->
     <main class="justify mt">
 
@@ -200,11 +202,11 @@ const waitImageLoad = () => {
 
         លេខ{{ numUnicode(loanrecord!.customer.cust_idcardnum_1) }}
 
-        ចុះថ្ងៃទី
+        ចុះ
         <span v-if="loanrecord!.customer.cust_idcardnum_date_1">
           {{ formatFullDate(loanrecord!.customer.cust_idcardnum_date_1) }}
         </span>
-        <span v-else>......................</span>
+        <span v-else>ថ្ងៃទី......................</span>
 
         <!-- ADDRESS -->
         <span v-if="loanrecord!.customer.cust_address">
@@ -216,7 +218,7 @@ const waitImageLoad = () => {
           និង{{ loanrecord!.guarantor.nametitle1?.nametitle_kh }}
           <strong>{{ loanrecord!.guarantor.cust_name_1 }}</strong>
 
-          កើតថ្ងៃទី{{ formatFullDate(loanrecord!.guarantor.cust_dob_1) }}
+          កើត{{ formatFullDate(loanrecord!.guarantor.cust_dob_1) }}
 
           កាន់{{ loanrecord!.guarantor.identification1?.identification_kh }}
 
@@ -228,13 +230,12 @@ const waitImageLoad = () => {
         </span>
 
         <span>
-          បានទទួលប្រាក់កម្ចីចំនួន
-          <strong>
-            {{ numUnicode(formatNumber(schedule_amount)) }}{{ loanrecord!.currency.currency_kh }}
-          </strong>
-
-          ({{ UnicodeHelper.spellkhmer(schedule_amount) }}{{ loanrecord!.currency?.currency_kh }})
-          ពីលោកស្រី <strong>ឈួង សុខផេង</strong> កើតថ្ងៃទី១៦ ខែមេសា ឆ្នាំ១៩៨៨  កាន់អត្តសញ្ញាណប័ណ្ណសញ្ជាតិខ្មែរលេខៈ១៥០៩៧៧៨៨៩ ចុះថ្ងៃទី២៥ ខែធ្នូ ឆ្នាំ២០២០ មានអាសយដ្ឋានស្ថិតនៅភូមិកំពង់ក្របៅ សង្កាត់កំពង់ក្របៅ ក្រុងស្ទឹងសែន ខេត្តកំពង់ធំ។ 
+          បានទទួលប្រាក់ចំនួន
+          <b>
+            {{ numUnicode(formatNumber(FixNumber(schedule_amount))) }}{{ loanrecord!.currency.currency_kh }}
+          </b>
+          ({{ UnicodeHelper.spellkhmer(Number(FixNumber(schedule_amount))) }}{{ loanrecord!.currency?.currency_kh }}គត់)
+          ពីលោកស្រី <b>ឈួង សុខផេង</b> កើតថ្ងៃទី១៦ ខែមេសា ឆ្នាំ១៩៨៨  កាន់អត្តសញ្ញាណប័ណ្ណសញ្ជាតិខ្មែរលេខ១៥០៩៧៧៨៨៩ ចុះថ្ងៃទី២៥ ខែធ្នូ ឆ្នាំ២០២០ មានអាសយដ្ឋានស្ថិតនៅភូមិកំពង់ក្របៅ សង្កាត់កំពង់ក្របៅ ក្រុងស្ទឹងសែន ខេត្តកំពង់ធំ។ 
         </span>
 
       </p>
@@ -244,7 +245,7 @@ const waitImageLoad = () => {
 
       <!-- AGREEMENT -->
       <p class="inden">
-        លិខិតនេះត្រូវបានធ្វើឡើងដោយគ្មានការបង្ខិតបង្ខំពីភាគីណាមួយឡើយហើយបានអាននិងយល់នូវរាល់ ខ្លឹមសារទាំងឡាយនៃលិខិតនេះយ៉ាងច្បាស់លាស់ហើយយល់ព្រមផ្ដិតមេដៃស្ដាំចាប់ពីថ្ងៃនេះតទៅ។
+        លិខិតនេះត្រូវបានធ្វើឡើងដោយគ្មានការបង្ខិតបង្ខំពីភាគីណាមួយឡើយហើយបានអាន និងយល់នូវរាល់ខ្លឹមសារទាំងឡាយនៃលិខិតនេះយ៉ាងច្បាស់លាស់ ហើយយល់ព្រមផ្ដិតមេដៃស្ដាំចាប់ពីថ្ងៃនេះតទៅ។
       </p>
       <p class="inden mt">ក្រែងពុំប្រាកដ ភាគីទាំងពីរ ព្រមព្រៀងគ្នាផ្តិតមេដៃទុកជាភស្តុតាង។ </p>
 
@@ -275,7 +276,8 @@ const waitImageLoad = () => {
           <span>
             {{ loanrecord!.customer.cust_name_1 }}
             <span v-if="loanrecord!.customer.cust_name_2">
-              &nbsp;{{ loanrecord!.customer.cust_name_2 }}
+              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+              {{ loanrecord!.customer.cust_name_2 }}
             </span>
           </span>
         </div>

@@ -183,8 +183,8 @@ const waitImageLoad = () => {
       <div class="col-8 row end">
         <img ref="logoRef" src="/imgs/logo.png" class="logo" alt="logo" />
         <div class="pl">
-          <h3><strong>{{ capital?.organization }}</strong></h3>
-          <h3><strong>កាលវិភាគសងប្រាក់</strong></h3>
+          <h2 class="color-blue">{{ capital?.organization }}</h2>
+          <h3><b>កាលវិភាគសងប្រាក់</b></h3>
         </div>
       </div>
 

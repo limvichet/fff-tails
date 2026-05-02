@@ -13,6 +13,13 @@ export const formatNumber = (val: any) => {
 }
 
 
+export const FixNumber = (val: any) => {
+  const num = parseFloat(val)
+  return isNaN(num)
+    ? "0.00"
+    : num.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(/,/g, '')
+}
+
 /* convert num to num unicode */
 export const numUnicode = (value: string | number): string => {
   if (value === null || value === undefined) return ""
