@@ -48,7 +48,7 @@ export const usePaymentCashin = () => {
   const paymentCashinIsEditMode = ref(false)
 
   const paymentCashinItems = ref<Cashin[]>([])
-  const scheduleItem = ref<Schedule>()
+  const scheduleItem = ref<Schedule | null>(null);
 
   const paymentCashinForm = reactive<Partial<Cashin>>({
     id: undefined,
@@ -118,6 +118,7 @@ export const usePaymentCashin = () => {
       const data = res?.data ?? res
       paymentCashinItems.value = data?.cashins ?? []
       scheduleItem.value = data?.schedule ?? null
+      // console.log(scheduleItem)
     } catch (err) {
       console.error(err)
     } finally {

@@ -20,7 +20,7 @@ export const useAuth = () => {
   const login = async (credentials: LoginREQ) => {
 
 
-    const config = useRuntimeConfig()
+    // const config = useRuntimeConfig()
     // console.log("API BASE:", config.public.apiBaseUrl)
     // console.log("LOGIN URL:", config.public.apiBaseUrl + "/api/admin-public/login")
     // console.log("ENV TEST:", config.public.apiBaseUrl)
@@ -40,7 +40,7 @@ export const useAuth = () => {
       // ✅ now cookie is available
       await fetchUser();
 
-      console.log(res)
+      // console.log(res)
     } catch (error: any) {
       throw error;
     } finally {

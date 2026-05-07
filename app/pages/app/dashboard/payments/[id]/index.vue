@@ -420,7 +420,7 @@ const getStatusClass = (s: Schedule) => {
         <!-- HEADER -->
         <div class="flex items-center justify-between px-6 py-4 border-b">
           <h2 class="text-lg text-blue-800 dark:text-white">
-            Cashin for <span class="text-sm">Schedule#{{ paymentCashinForm.schedule_id }} | Loan#{{ scheduleItem!.loan_id }} | Payment#{{ scheduleItem!.schedule_paymentnumber }}</span>
+            Cashin for <span class="text-sm">Schedule#{{ paymentCashinForm.schedule_id }} | Loan#{{ scheduleItem?.loan_id }} | Payment#{{ scheduleItem?.schedule_paymentnumber }}</span>
           </h2>
           <button @click="handleClose" :disabled="paymentCashinLoading">✕</button>
         </div>
