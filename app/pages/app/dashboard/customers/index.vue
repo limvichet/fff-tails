@@ -316,7 +316,6 @@ const deleteCustomer = async () => {
                         class="inline-flex items-center gap-1 px-1 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm">
                         <!-- Pencil Icon -->
                         <component :is="PencilIcon" class="w-4 h-4" />
-
                         <!-- Text -->
                         <span>Edit</span>
                       </button>

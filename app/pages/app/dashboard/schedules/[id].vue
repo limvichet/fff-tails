@@ -106,13 +106,6 @@ console.log("Fetched schedules:", schedules.value)
 
 onMounted(fetchData)
 
-// Helpers
-// const formatNumber = (val: any) => {
-//   const num = parseFloat(val)
-//   return isNaN(num)
-//     ? "0.00"
-//     : num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-// }
 </script>
 
 <template>

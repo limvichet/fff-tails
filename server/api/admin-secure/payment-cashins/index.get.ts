@@ -1,39 +1,37 @@
 import { getCookie, getQuery, createError, type H3Event } from "h3"
-
+import { st } from "vue-router/dist/router-CWoNjPRp.mjs"
 type ApiResponse = {
   success: boolean
-  data: PaymentResponses
-}
-type PaymentResponses = {
-  current_page: number
-  data: Schedule[]
-  per_page: number
-  total: number
-  last_page: number
-  [key: string]: any
+  data: PaymentCahinResponses
 }
 
-type Schedule = {
-    loan_id: number;
-    loan_startdate: string
-    loan_enddate: string
-    currency_en: string
-    loan_totalcash: string
-    loan_interest_rate: number
-    loan_peroid: string
-    loantype_short: string
-    loan_check_status: string
-    cust_name_1: string
-    cust_name_2?: string
-    created_by: string
+
+type PaymentCahinResponses = {
+  schedule: {
+    id: number
+    loan_id: number
+    schedule_principle_date: string
+    schedule_paymentnumber: number
+    schedule_interest_rate: number
+    schedule_interest: number
+    schedule_outstanding: number
+    schedule_over_draft: number
+    schedule_principle: number
+    schedule_totalpay: number
+  }
+  cashin: {
+    id: number
+    schedule_id: number
+    cashin_number: number
+    cash: number
+    recipient: string
+    note: string
+    invoice_id: number
+    created_by: number
+    updated_by: number
     created_at: string
-    updated_by: string
     updated_at: string
-    schedule_principle_payment_tt: string;
-    schedule_principle_tt: string;
-    schedule_totalpay_tt: string;
-    schedule_totalcashin_tt: string;
-    schedule_lessmoney_tt: string;
+  }
 }
 
 
@@ -51,11 +49,6 @@ export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> =
   // Get query params (?page=1&keyword=abc)
   const query = getQuery(event)
 
-  const page =
-    query.page && !isNaN(Number(query.page))
-      ? Number(query.page)
-      : 1
-
   const param =
     typeof query.param === "string" && query.param.trim()
       ? query.param
@@ -63,12 +56,8 @@ export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> =
 
   try {
 
-    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/payments?page=${page}&param=${param}`, {
+    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/payment-cashins?param=${param}`, {
       method: "GET",
-      // query: {
-      //   page: query.page || 1,
-      //   param: query.param || undefined,
-      // },
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/json",

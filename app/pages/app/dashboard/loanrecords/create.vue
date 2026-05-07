@@ -211,7 +211,7 @@ const schema = baseSchema.refine((data) => {
   const start = new Date(data.loan_startdate)
   const first = new Date(data.loan_first_paid_date)
 
-  return first > start
+  return first >= start
 }, {
   message: "must be greater than Start Date",
   path: ["loan_first_paid_date"]
@@ -246,7 +246,7 @@ Object.keys(baseSchema.shape).forEach((field) => {
     Object.keys(errors).forEach((k) => (errors[k] = ""))
 
     try{
-      console.log("FORM BEFORE PARSE:", form)
+      // console.log("FORM BEFORE PARSE:", form)
 
       // 🔹 Clean numeric fields before validation
       const newForm = { ...form }

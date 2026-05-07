@@ -179,7 +179,7 @@ const submitForm = async () => {
   errorMsg.value = null
   successMsg.value = null
 
-  console.log("Schedules:", schedules.value)         // ✅ direct object
+  // console.log("Schedules:", schedules.value)         // ✅ direct object
 
   const payload = {
     loan_id: form.loan_id,
@@ -195,14 +195,14 @@ const submitForm = async () => {
     schedule_totalpay: schedules.value.map(s => Number(s.schedule_totalpay || 0)),
   }
 
-  console.log("Payload:", payload)                   // ✅ direct object
+  // console.log("Payload:", payload)                   // ✅ direct object
   // console.log("Payload JSON:", JSON.stringify(payload, null, 2))
   try {
     const res = await $fetch<{ success: boolean; message: string; loan_id: number }>("/api/admin-secure/schedules", {
       method: "POST",
       body: payload,
     })
-    console.log(res.loan_id)
+    // console.log(res.loan_id)
     successMsg.value = res.message
 
     if (res && res.loan_id) {
@@ -210,9 +210,9 @@ const submitForm = async () => {
     }
 
   } catch (err: any) {
-    console.log('FULL ERROR:', err)
-    console.log('DATA:', err?.data)
-    console.log('MESSAGE:', err?.data?.message)
+    // console.log('FULL ERROR:', err)
+    // console.log('DATA:', err?.data)
+    // console.log('MESSAGE:', err?.data?.message)
     if (err.errors) {
       err.errors.forEach((e: any) => {
         const path = e.path[0]

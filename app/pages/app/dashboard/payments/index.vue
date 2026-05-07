@@ -17,6 +17,8 @@ import ComponentCard from "@/components/common/ComponentCard.vue"
 import { ref, computed, onMounted, watch } from "vue"
 import { useMessage } from "~/composables/useMessage"
 import { formatDateForOutput } from "~/utils/date"
+import { formatNumber } from "~/utils/number"
+
 
 // =====================
 // Types
@@ -28,6 +30,7 @@ type Schedule = {
   loan_enddate: string
   currency_en: string
   loan_totalcash: string
+  loan_interest_rate: number
   loan_peroid: string
   loantype_short: string
   loan_check_status: number
@@ -140,6 +143,59 @@ const nextPage = () => {
     fetchPayments()
   }
 }
+
+const router = useRouter()
+const showPayment = (id: number) => {
+  router.push(`/app/dashboard/payments/${id}`)
+}
+
+// =====================
+// Loan status helper
+// =====================
+const getPaymentStatus = (p: Schedule) => {
+  const loantype_id = Number(p.loan_id) // or p.loanrecord.loantype_id if nested
+  const loan_totalcash = Number(p.loan_totalcash)
+  const schedule_principle_payment_tt = Number(p.schedule_principle_payment_tt)
+  const schedule_principle_tt = Number(p.schedule_principle_tt)
+  const schedule_totalpay_tt = Number(p.schedule_totalpay_tt)
+  const schedule_totalcashin_tt = Number(p.schedule_totalcashin_tt)
+  const schedule_lessmoney_tt = Number(p.schedule_lessmoney_tt)
+
+  const cash_less_tt =
+    schedule_totalcashin_tt +
+    (schedule_lessmoney_tt < 0 ? Math.abs(schedule_lessmoney_tt) : 0)
+
+  let status: number | null = null
+
+  if (schedule_principle_payment_tt > 0) {
+    if (loantype_id === 14 || loantype_id === 36) {
+      if (
+        schedule_principle_tt === schedule_principle_payment_tt &&
+        schedule_totalpay_tt === schedule_totalcashin_tt
+      ) {
+        status = 0
+      } else {
+        status = 1
+      }
+    } else {
+      if (
+        (loan_totalcash === schedule_principle_payment_tt &&
+          schedule_totalcashin_tt >= schedule_totalpay_tt) ||
+        (schedule_principle_tt === schedule_principle_payment_tt &&
+          (cash_less_tt - schedule_totalpay_tt) / schedule_totalpay_tt < 0.00001)
+      ) {
+        status = 0
+      } else {
+        status = 1
+      }
+    }
+  } else if (schedule_principle_payment_tt === 0) {
+    status = 1
+  }
+
+  return status
+}
+
 </script>
 
 <template>
@@ -175,11 +231,13 @@ const nextPage = () => {
               <th class="px-2 py-2 text-left">#</th>
               <th class="px-2 py-2 text-left">Loan</th>
               <th class="px-2 py-2 text-left">Customer</th>
-              <th class="px-2 py-2 text-left">Period</th>
               <th class="px-2 py-2 text-left">Total Loan</th>
-              <th class="px-2 py-2 text-left">Paid</th>
-              <th class="px-2 py-2 text-left">Remaining</th>
-              <th class="px-2 py-2 text-left">Create/Update</th>
+              <th class="px-2 py-2 text-left">Rate</th>
+              <th class="px-2 py-2 text-left">Start</th>
+              <th class="px-2 py-2 text-left">End</th>
+              <th class="px-2 py-2 text-center">DebtReturn</th>
+              <th class="px-2 py-2 text-left">Status</th>
+              <th class="px-2 py-2 text-left">Actions</th>
             </tr>
           </thead>
 
@@ -202,25 +260,49 @@ const nextPage = () => {
                 <span v-if="p.cust_name_2"></span>
               </td>
 
-              <td class="px-2 py-1">
-                {{ p.loan_peroid }}
-              </td>
 
               <td class="px-2 py-1">
-                {{ p.loan_totalcash }} {{ p.currency_en }}
+                <small>{{ p.currency_en }}</small> {{ formatNumber(p.loan_totalcash) }}
               </td>
 
-              <td class="px-2 py-1 text-green-600">
-                {{ p.schedule_totalcashin_tt }}
+              <td class="px-2 py-1">
+                {{ formatNumber(p.loan_interest_rate) }}
               </td>
 
-              <td class="px-2 py-1 text-red-500">
-                {{ p.schedule_lessmoney_tt }}
+              <td class="px-2 py-1">
+                {{ formatDateForOutput(new Date(p.loan_startdate)) }}
               </td>
 
-              <td class="px-2 py-1 text-gray-400">
-                <div>{{ formatDateForOutput(new Date(p.loan_startdate)) }}</div>
-                <div>{{ formatDateForOutput(new Date(p.loan_enddate)) }}</div>
+              <td class="px-2 py-1">
+                {{ formatDateForOutput(new Date(p.loan_enddate)) }}
+              </td>
+
+              <td class="px-2 py-1 text-center">
+                <span 
+                  :class="Number(p.schedule_lessmoney_tt) < 0 
+                    ? 'bg-red-600 text-white text-xs font-normal rounded px-1 py-1' 
+                    : 'bg-blue-600 text-white text-xs font-normal rounded px-1 py-1'" 
+                >
+                  {{ formatNumber(Number(p.schedule_lessmoney_tt)) }}
+                </span>
+              </td>
+
+              <td class="px-2 py-1">
+                  <span
+                    :class="getPaymentStatus(p) === 1 
+                      ? 'bg-blue-600 text-white text-xs font-normal rounded px-2 py-1' 
+                      : 'bg-red-600 text-white text-xs font-normal rounded px-2 py-1'"
+                  >
+                    {{ getPaymentStatus(p) === 1 ? 'Active' : 'Finish' }}
+                  </span>
+              </td>
+
+              <td class="px-2 py-1">
+                <button 
+                  @click="showPayment(p.id)"
+                  class="bg-blue-500 text-white text-xs font-normal rounded px-2 py-1">
+                  show
+                </button>
               </td>
             </tr>
 
@@ -259,6 +341,11 @@ const nextPage = () => {
       </div>
 
     </ComponentCard>
+
+
+
+
+
   </div>
 </template>
 

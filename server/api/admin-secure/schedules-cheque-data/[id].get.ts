@@ -30,7 +30,6 @@ type Schedule = {
 }
 
 import { getCookie, getRouterParam, createError } from "h3"
-import { number, string } from "zod";
 
 export default defineEventHandler(async (event) => {
   const { apiBaseUrl } = useRuntimeConfig(event);

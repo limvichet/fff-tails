@@ -884,7 +884,8 @@
 
           <!-- submit -->
           <template #footer>
-            <button @click="submitForm" :disabled="loading"
+            <button @click="submitForm" 
+              :disabled="loading"
               class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition">
               <Icon v-if="loading" name="svg-spinners:180-ring-with-bg" class="text-lg" />
               {{ loading ? "Saving..." : "Save Customer" }}
