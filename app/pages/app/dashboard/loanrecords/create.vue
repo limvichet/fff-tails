@@ -17,6 +17,7 @@
   import CommonCustomerSelect2 from "@/components/common/CommonCustomerSelect2.vue"
   import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
   import type { LoanrecordFormDataResponse } from "~/types/loanrecord"
+  import {onInputNumber} from "~/utils/number"
   import { useCustomToast } from '~/composables/useCustomToast';
   const { showToast } = useCustomToast();
 
@@ -365,16 +366,33 @@ Object.keys(baseSchema.shape).forEach((field) => {
   // )
 
 
-  function onInput<K extends keyof typeof form>(event: Event, field: K) {
-    const target = event.target as HTMLInputElement
-    if (!target) return
+  // function onInput<K extends keyof typeof form>(event: Event, field: K) {
+  //   const target = event.target as HTMLInputElement
+  //   if (!target) return
 
-    // Remove commas and parse number
-    const numericValue = parseFloat(target.value.replace(/,/g, '')) || 0
+  //   // Remove commas and parse number
+  //   const numericValue = parseFloat(target.value.replace(/,/g, '')) || 0
 
-    // Update only the target field
-    form[field] = numericValue
-  }
+  //   // Update only the target field
+  //   form[field] = numericValue
+  // }
+
+//  function onInput<K extends keyof typeof form>(event: Event, field: K) {
+//   const target = event.target as HTMLInputElement
+//   if (!target) return
+
+//   // Keep only numbers 0-9
+//   const cleanValue = target.value.replace(/\D/g, '')
+
+//   // Convert to number
+//   const numericValue = Number(cleanValue) || 0
+
+//   // Update form
+//   form[field] = numericValue
+
+//   // Re-render formatted value
+//   target.value = numericValue.toLocaleString()
+// }
 
 
   const isloan_collateral_map_link_1_Valid = computed(() => {
@@ -590,7 +608,7 @@ watch(form, () => {
           type="text"
           class="input"
           :value="form.loan_lastcash.toLocaleString()"
-          @input="(e) => onInput(e, 'loan_lastcash')"
+          @input="(e) => onInputNumber(e, 'loan_lastcash', form)"
         />
     </div>
 
@@ -605,7 +623,7 @@ watch(form, () => {
           type="text"
           class="input"
           :value="form.loan_newcash.toLocaleString()"
-          @input="(e) => onInput(e, 'loan_newcash')"
+          @input="(e) => onInputNumber(e, 'loan_newcash', form)"
         />
     </div>
 
@@ -635,7 +653,7 @@ watch(form, () => {
           type="text"
           class="input"
           :value="form.loan_principle.toLocaleString()"
-          @input="(e) => onInput(e, 'loan_principle')"
+          @input="(e) => onInputNumber(e, 'loan_principle', form)"
         />
     </div>
 
@@ -680,7 +698,7 @@ watch(form, () => {
           type="text"
           class="input"
           :value="form.loan_over_draft.toLocaleString()"
-          @input="(e) => onInput(e, 'loan_over_draft')"
+          @input="(e) => onInputNumber(e, 'loan_over_draft', form)"
         />
     </div>
 

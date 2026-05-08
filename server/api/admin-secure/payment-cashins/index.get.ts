@@ -18,6 +18,10 @@ type PaymentCahinResponses = {
     schedule_over_draft: number
     schedule_principle: number
     schedule_totalpay: number
+    loantype_id: number
+    schedule_next_paynumber: number
+    loan_status: number
+    last_loan_status: string
   }
   cashin: {
     id: number
@@ -27,11 +31,23 @@ type PaymentCahinResponses = {
     recipient: string
     note: string
     invoice_id: number
-    created_by: number
-    updated_by: number
     created_at: string
-    updated_at: string
+    created_by: number
+    createdby: Createdby
   }
+}
+
+type Createdby = {
+  id: number;
+  emp_id: number;
+  employee: Employee;
+}
+
+type Employee = {
+  id: number;
+  surname: string;
+  first_name: string;
+  full_name: string;
 }
 
 

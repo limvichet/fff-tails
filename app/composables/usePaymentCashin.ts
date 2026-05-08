@@ -21,10 +21,22 @@ type Cashin = {
   recipient: string
   note: string
   invoice_id: number
-  created_by: number
-  updated_by: number
   created_at: string
-  updated_at: string
+  created_by: number
+  createdby: Createdby
+}
+
+type Createdby = {
+  id: number;
+  emp_id: number;
+  employee: Employee;
+}
+
+type Employee = {
+  id: number;
+  surname: string;
+  first_name: string;
+  full_name: string;
 }
 
 type Schedule = {
@@ -38,6 +50,10 @@ type Schedule = {
     schedule_over_draft: number
     schedule_principle: number
     schedule_totalpay: number
+    schedule_next_paynumber: number
+    loantype_id: number
+    loan_status: number
+    last_loan_status: string
 }
 
 export const usePaymentCashin = () => {
@@ -49,6 +65,8 @@ export const usePaymentCashin = () => {
 
   const paymentCashinItems = ref<Cashin[]>([])
   const scheduleItem = ref<Schedule | null>(null);
+
+  const showSaveButton = ref(true)
 
   const paymentCashinForm = reactive<Partial<Cashin>>({
     id: undefined,
@@ -95,8 +113,6 @@ export const usePaymentCashin = () => {
   }
 
 
-
-
   // RESET
   const resetForm = () => {
     paymentCashinForm.id = undefined
@@ -118,7 +134,13 @@ export const usePaymentCashin = () => {
       const data = res?.data ?? res
       paymentCashinItems.value = data?.cashins ?? []
       scheduleItem.value = data?.schedule ?? null
-      // console.log(scheduleItem)
+
+      if (scheduleItem.value) {
+        handleScheduleStatus(
+          scheduleItem.value,
+          scheduleItem.value.schedule_next_paynumber
+        )
+      }
     } catch (err) {
       console.error(err)
     } finally {
@@ -221,6 +243,57 @@ export const usePaymentCashin = () => {
     }
   }
 
+
+  const handleScheduleStatus = (
+    data: any,
+    schedule_next_paynumber: number
+  ) => {
+
+    if ([14, 36].includes(data.loantype_id)) {
+
+      if (schedule_next_paynumber > 0) {
+        showSaveButton.value = false
+      } else {
+        showSaveButton.value = true
+      }
+
+    } else {
+
+      if (
+        schedule_next_paynumber > 0 &&
+        data.last_loan_status == "active"
+      ) {
+
+        showSaveButton.value = false
+
+      } else if (
+        schedule_next_paynumber == 0 &&
+        data.last_loan_status == "active"
+      ) {
+
+        showSaveButton.value = true
+
+      } else if (
+        schedule_next_paynumber > 0 &&
+        [0, 1].includes(data.loan_status)
+      ) {
+
+        showSaveButton.value = false
+
+      } else if (
+        schedule_next_paynumber == 0 &&
+        data.loan_status == 0
+      ) {
+
+        showSaveButton.value = false
+
+      } else {
+
+        showSaveButton.value = true
+      }
+    }
+  }
+
   return {
     paymentCashinItems,
     paymentCashinForm,
@@ -235,6 +308,7 @@ export const usePaymentCashin = () => {
     paymentCashinEditItem,
     paymentCashinDeleteItem,
     scheduleItem,
+    showSaveButton,
     errors,
   }
 }

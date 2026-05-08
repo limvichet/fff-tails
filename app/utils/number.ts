@@ -69,3 +69,51 @@ export const khMonth = (month: number | string): string => {
 
   return months[m] ?? ""
 }
+
+
+
+export const onInputNumber = <T extends Record<string, any>, K extends keyof T>(
+  event: Event,
+  field: K,
+  form: T
+) => {
+  const target = event.target as HTMLInputElement
+  if (!target) return
+
+  // Allow only numbers and one dot
+  let cleanValue = target.value.replace(/[^0-9.]/g, '')
+
+  // Prevent multiple dots
+  const parts = cleanValue.split('.')
+
+  let integer = parts[0] || ''
+  let decimal = parts[1] || ''
+
+  if (parts.length > 2) {
+    decimal = parts.slice(1).join('')
+  }
+
+  // Limit decimal to 2 digits
+  decimal = decimal.slice(0, 2)
+
+  // Auto fill decimal 2 digits
+  // if (cleanValue.includes('.')) {
+  //   decimal = decimal.padEnd(2, '0')
+  // }
+
+  // Final value
+  cleanValue = decimal
+    ? `${integer}.${decimal}`
+    : integer
+
+  // Convert to number
+  const numericValue = parseFloat(cleanValue) || 0
+
+  // Update form
+  form[field] = numericValue as unknown as T[K]
+
+  // Re-render formatted value
+  target.value =
+    Number(integer || 0).toLocaleString() +
+    (decimal ? `.${decimal}` : '')
+}

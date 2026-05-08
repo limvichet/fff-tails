@@ -31,6 +31,7 @@ const {
   paymentCashinSubmitForm,
   scheduleItem,
   errors,
+  showSaveButton,
   paymentCashinLoading
 } = usePaymentCashin()
 
@@ -430,7 +431,7 @@ const getStatusClass = (s: Schedule) => {
 
           <!-- Schedule -->
           <h3 class="text-xs font-uppercase tracking-wider text-blue-800 mb-3 uppercase">Information</h3>
-          <div class="grid grid-cols-3 gap-3 bg-slate-50 dark:bg-gray-800/50 p-4 rounded-lg">
+          <div class="grid grid-cols-3 gap-3 bg-slate dark:bg-gray-800/50 p-4 rounded-lg">
             <!-- <div class="hidden">
               <label class="text-sm text-gray-500">Schedule ID</label>
               <input v-model="paymentCashinForm.schedule_id" type="number" class="w-full border rounded px-3 py-2" />
@@ -470,19 +471,23 @@ const getStatusClass = (s: Schedule) => {
               <table class="min-w-[300px] w-full custom-scrollbar text-sm">
                 <thead class="bg-slate-50 dark:bg-gray-800 text-slate-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
                   <tr class="text-left">
-                    <th class="px-2 py-3 font-semibold">ID</th>
-                    <th class="px-2 py-3 font-semibold text-left">Schedule</th>
+                    <th class="px-2 py-3 font-semibold">#</th>
                     <th class="px-2 py-3 font-semibold text-left">Cash</th>
                     <th class="px-2 py-3 font-semibold text-left">Recipient</th>
+                    <th class="px-2 py-3 font-semibold text-left">Employee</th>
+                    <th class="px-2 py-3 font-semibold text-left">Date</th>
+                    <th class="px-2 py-3 font-semibold text-left">Note</th>
                     <th class="px-2 py-3 font-semibold text-left">Action</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800 ">
                   <tr v-for="item in paymentCashinItems" :key="item.id" class="read-only:bg-slate-50 read-only:text-slate-500 read-only:cursor-not-allowed hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
-                    <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ item.id }}</td>
-                    <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ item.schedule_id }}</td>
-                    <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ item.cash }}</td>
+                    <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ item.cashin_number }}</td>
+                    <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ formatNumber(item.cash) }}</td>
                     <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ item.recipient }}</td>
+                    <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ item.createdby.employee.full_name }}</td>
+                    <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ formatDateForOutput(new Date(item.created_at)) }}</td>
+                    <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ item.note }}</td>
                     <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 space-x-2">
                       <button @click="paymentCashinEditItem(item)"
                         class="inline-flex items-center gap-1 px-1 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm">
@@ -504,15 +509,15 @@ const getStatusClass = (s: Schedule) => {
         </div>
 
         <!-- FOOTER -->
-        <div class="px-6 py-4 flex justify-end gap-2 border-t">
+        <div v-if="showSaveButton" class="px-6 py-4 flex justify-end gap-2 border-t">
           <button @click="handleClose" class="px-4 py-2 bg-gray-400 text-white rounded-lg">
             Cancel
           </button>
 
           <button @click="paymentCashinSubmitForm" 
             :disabled="paymentCashinLoading"
-            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition">
-            <Icon v-if="paymentCashinLoading" name="svg-spinners:180-ring-with-bg" class="text-lg" />
+            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition flex items-center justify-center gap-2">
+              <Icon v-if="paymentCashinLoading" name="svg-spinners:180-ring-with-bg" class="text-lg" />
               <span v-if="paymentCashinLoading">Saving...</span>
               <span v-else>{{ paymentCashinIsEditMode ? "Update" : "Save" }}</span>
           </button>
