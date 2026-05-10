@@ -552,13 +552,20 @@ const getStatusClass = (s: Schedule) => {
             Cancel
           </button>
 
-          <button @click="paymentCashinSubmitForm" 
-            :disabled="!showSaveButton"
-            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition flex items-center justify-center gap-2">
-              <Icon v-if="paymentCashinLoading" name="svg-spinners:180-ring-with-bg" class="text-lg" />
-              <span v-if="paymentCashinLoading">Progress...</span>
-              <span v-else>{{ paymentCashinIsEditMode ? "Update" : "Save" }}</span>
+          <button 
+            @click="paymentCashinSubmitForm" 
+            :disabled="!showSaveButton || paymentCashinLoading"
+            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition flex items-center justify-center gap-2"
+          >
+            <Icon 
+              v-if="paymentCashinLoading" 
+              name="svg-spinners:180-ring-with-bg" 
+              class="text-lg" 
+            />
+            <span v-if="paymentCashinLoading">Progress...</span>
+            <span v-else>{{ paymentCashinIsEditMode ? "Update" : "Save" }}</span>
           </button>
+
         </div>
 
       </div>
