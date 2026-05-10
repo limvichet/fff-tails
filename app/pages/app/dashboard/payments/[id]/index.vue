@@ -534,7 +534,7 @@ const getStatusClass = (s: Schedule) => {
         </div>
 
         <!-- FOOTER -->
-        <div v-if="showSaveButton" class="px-6 py-4 flex justify-end gap-2 border-t">
+        <!-- <div v-if="showSaveButton" class="px-6 py-4 flex justify-end gap-2 border-t">
           <button @click="handleClose" class="px-4 py-2 bg-gray-400 text-white rounded-lg">
             Cancel
           </button>
@@ -546,8 +546,8 @@ const getStatusClass = (s: Schedule) => {
               <span v-if="paymentCashinLoading">Progress...</span>
               <span v-else>{{ paymentCashinIsEditMode ? "Update" : "Save" }}</span>
           </button>
-        </div>
-        <!-- <div class="px-6 py-4 flex justify-end gap-2 border-t">
+        </div> -->
+        <div class="px-6 py-4 flex justify-end gap-2 border-t">
           <button @click="handleClose" class="px-4 py-2 bg-gray-200 text-white rounded-lg">
             Cancel
           </button>
@@ -559,7 +559,7 @@ const getStatusClass = (s: Schedule) => {
               <span v-if="paymentCashinLoading">Progress...</span>
               <span v-else>{{ paymentCashinIsEditMode ? "Update" : "Save" }}</span>
           </button>
-        </div> -->
+        </div>
 
       </div>
     </div>
