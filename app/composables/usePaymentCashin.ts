@@ -24,6 +24,7 @@ type Cashin = {
   created_at: string
   created_by: number
   createdby: Createdby
+  invoice: Invoice
 }
 
 type Createdby = {
@@ -37,6 +38,12 @@ type Employee = {
   surname: string;
   first_name: string;
   full_name: string;
+}
+
+type Invoice = {
+  id: number
+  invoice_type: string
+  invoice_number: string
 }
 
 type Schedule = {

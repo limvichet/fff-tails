@@ -18,6 +18,8 @@ import { formatDateForOutput } from '~/utils/date'
 import { formatNumber } from "@/utils/number"
 import { PencilIcon, TrashIcon} from "@/icons";
 
+const { user } = useAuth()
+
 const {
   paymentCashinItems,
   paymentCashinForm,
@@ -416,7 +418,7 @@ const getStatusClass = (s: Schedule) => {
     <div v-if="paymentCashinShowModal"
       class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
 
-      <div class="w-full max-w-2xl bg-white dark:bg-gray-900 rounded-xl shadow-2xl flex flex-col max-h-[90vh]">
+      <div class="w-full max-w-4xl bg-white dark:bg-gray-900 rounded-xl shadow-2xl flex flex-col max-h-[90vh]">
 
         <!-- HEADER -->
         <div class="flex items-center justify-between px-6 py-4 border-b">
@@ -472,6 +474,7 @@ const getStatusClass = (s: Schedule) => {
                 <thead class="bg-slate-50 dark:bg-gray-800 text-slate-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700">
                   <tr class="text-left">
                     <th class="px-2 py-3 font-semibold">#</th>
+                    <th class="px-2 py-3 font-semibold text-left">Invoice</th>
                     <th class="px-2 py-3 font-semibold text-left">Cash</th>
                     <th class="px-2 py-3 font-semibold text-left">Recipient</th>
                     <th class="px-2 py-3 font-semibold text-left">Employee</th>
@@ -483,6 +486,7 @@ const getStatusClass = (s: Schedule) => {
                 <tbody class="divide-y divide-gray-100 dark:divide-gray-800 ">
                   <tr v-for="item in paymentCashinItems" :key="item.id" class="read-only:bg-slate-50 read-only:text-slate-500 read-only:cursor-not-allowed hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors">
                     <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ item.cashin_number }}</td>
+                    <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ item.invoice.invoice_number }}</td>
                     <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ formatNumber(item.cash) }}</td>
                     <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ item.recipient }}</td>
                     <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ item.createdby.employee.full_name }}</td>
@@ -498,6 +502,27 @@ const getStatusClass = (s: Schedule) => {
                         class="inline-flex items-center gap-0.5 px-1 py-1 rounded bg-red-400 hover:bg-red-600 text-white text-sm">
                         <component :is="TrashIcon" class="w-4 h-4" />
                       </button>
+                      <!-- <button @click="paymentCashinEditItem(item)"
+                        :disabled="user?.id !== item.created_by"
+                        :class="['inline-flex items-center gap-1 px-1 py-1 rounded text-white text-sm',
+                          user?.id === item.created_by
+                            ? 'bg-blue-600 hover:bg-blue-700'
+                            : 'bg-gray-400 cursor-not-allowed'
+                        ]"
+                      >
+                        <component :is="PencilIcon" class="w-4 h-4" />
+                      </button>
+              
+                      <button @click="paymentCashinDeleteItem(Number(item.id))"
+                        :disabled="user?.id !== item.created_by"
+                        :class="['inline-flex items-center gap-0.5 px-1 py-1 rounded text-white text-sm',
+                          user?.id === item.created_by
+                            ? 'bg-red-400 hover:bg-red-600'
+                            : 'bg-gray-400 cursor-not-allowed'
+                        ]"
+                      >
+                        <component :is="TrashIcon" class="w-4 h-4" />
+                      </button> -->
                     </td>
                   </tr>
                 </tbody>
@@ -518,10 +543,23 @@ const getStatusClass = (s: Schedule) => {
             :disabled="paymentCashinLoading"
             class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition flex items-center justify-center gap-2">
               <Icon v-if="paymentCashinLoading" name="svg-spinners:180-ring-with-bg" class="text-lg" />
-              <span v-if="paymentCashinLoading">Saving...</span>
+              <span v-if="paymentCashinLoading">Progress...</span>
               <span v-else>{{ paymentCashinIsEditMode ? "Update" : "Save" }}</span>
           </button>
         </div>
+        <!-- <div class="px-6 py-4 flex justify-end gap-2 border-t">
+          <button @click="handleClose" class="px-4 py-2 bg-gray-200 text-white rounded-lg">
+            Cancel
+          </button>
+
+          <button @click="paymentCashinSubmitForm" 
+            :disabled="!showSaveButton"
+            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition flex items-center justify-center gap-2">
+              <Icon v-if="paymentCashinLoading" name="svg-spinners:180-ring-with-bg" class="text-lg" />
+              <span v-if="paymentCashinLoading">Progress...</span>
+              <span v-else>{{ paymentCashinIsEditMode ? "Update" : "Save" }}</span>
+          </button>
+        </div> -->
 
       </div>
     </div>

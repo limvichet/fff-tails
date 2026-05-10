@@ -34,6 +34,7 @@ type PaymentCahinResponses = {
     created_at: string
     created_by: number
     createdby: Createdby
+    invoice: Invoice
   }
 }
 
@@ -50,6 +51,11 @@ type Employee = {
   full_name: string;
 }
 
+type Invoice = {
+  id: number
+  invoice_type: string
+  invoice_number: string
+}
 
 export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> => {
   const { apiBaseUrl } = useRuntimeConfig(event)
