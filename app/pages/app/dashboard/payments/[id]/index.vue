@@ -562,7 +562,7 @@ const getStatusClass = (s: Schedule) => {
               name="svg-spinners:180-ring-with-bg" 
               class="text-lg" 
             />
-            <span v-if="paymentCashinLoading">....</span>
+            <span v-if="paymentCashinLoading">Wait</span>
             <span v-else>{{ paymentCashinIsEditMode ? "Update" : "Save" }}</span>
           </button>
 
