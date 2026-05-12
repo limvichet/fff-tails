@@ -65,15 +65,15 @@ type Schedule = {
 
 export const usePaymentCashin = () => {
   const { showToast } = useCustomToast()
-  const errors = reactive<Record<string,string>>({})
+  const paymentCashinErrors = reactive<Record<string,string>>({})
   const paymentCashinShowModal = ref(false)
   const paymentCashinLoading = ref(false)
   const paymentCashinIsEditMode = ref(false)
 
   const paymentCashinItems = ref<Cashin[]>([])
-  const scheduleItem = ref<Schedule | null>(null);
+  const paymentCashinScheduleItem = ref<Schedule | null>(null);
 
-  const showSaveButton = ref(true)
+  const paymentCashinShowSaveButton = ref(true)
 
   const paymentCashinForm = reactive<Partial<Cashin>>({
     id: undefined,
@@ -93,9 +93,9 @@ export const usePaymentCashin = () => {
   const validateField = (field: keyof typeof paymentCashinSchema.shape) => {
     try {
       paymentCashinSchema.shape[field].parse(paymentCashinForm[field])
-      errors[field] = ""
+      paymentCashinErrors[field] = ""
     } catch (err: any) {
-      errors[field] = err.errors?.[0]?.message || "Invalid value"
+      paymentCashinErrors[field] = err.paymentCashinErrors?.[0]?.message || "Invalid value"
     }
   }
 
@@ -112,7 +112,7 @@ export const usePaymentCashin = () => {
   const result = paymentCashinSchema.safeParse(paymentCashinForm)
   if (!result.success) {
       result.error.errors.forEach((e) => {
-        errors[e.path[0] as string] = e.message
+        paymentCashinErrors[e.path[0] as string] = e.message
       })
       return false
     }
@@ -140,12 +140,12 @@ export const usePaymentCashin = () => {
       const res = await $fetch<ApiResponse>(`/api/admin-secure/payment-cashins?param=${schedule_id}`)
       const data = res?.data ?? res
       paymentCashinItems.value = data?.cashins ?? []
-      scheduleItem.value = data?.schedule ?? null
+      paymentCashinScheduleItem.value = data?.schedule ?? null
 
-      if (scheduleItem.value) {
-        handleScheduleStatus(
-          scheduleItem.value,
-          scheduleItem.value.schedule_next_paynumber
+      if (paymentCashinScheduleItem.value) {
+        paymentCashinHandleScheduleStatus(
+          paymentCashinScheduleItem.value,
+          paymentCashinScheduleItem.value.schedule_next_paynumber
         )
       }
     } catch (err) {
@@ -251,7 +251,7 @@ export const usePaymentCashin = () => {
   }
 
 
-  const handleScheduleStatus = (
+  const paymentCashinHandleScheduleStatus = (
     data: any,
     schedule_next_paynumber: number
   ) => {
@@ -259,9 +259,9 @@ export const usePaymentCashin = () => {
     if ([14, 36].includes(data.loantype_id)) {
 
       if (schedule_next_paynumber > 0) {
-        showSaveButton.value = false
+        paymentCashinShowSaveButton.value = false
       } else {
-        showSaveButton.value = true
+        paymentCashinShowSaveButton.value = true
       }
 
     } else {
@@ -271,32 +271,32 @@ export const usePaymentCashin = () => {
         data.last_loan_status == "active"
       ) {
 
-        showSaveButton.value = false
+        paymentCashinShowSaveButton.value = false
 
       } else if (
         schedule_next_paynumber == 0 &&
         data.last_loan_status == "active"
       ) {
 
-        showSaveButton.value = true
+        paymentCashinShowSaveButton.value = true
 
       } else if (
         schedule_next_paynumber > 0 &&
         [0, 1].includes(data.loan_status)
       ) {
 
-        showSaveButton.value = false
+        paymentCashinShowSaveButton.value = false
 
       } else if (
         schedule_next_paynumber == 0 &&
         data.loan_status == 0
       ) {
 
-        showSaveButton.value = false
+        paymentCashinShowSaveButton.value = false
 
       } else {
 
-        showSaveButton.value = true
+        paymentCashinShowSaveButton.value = true
       }
     }
   }
@@ -314,8 +314,8 @@ export const usePaymentCashin = () => {
     paymentCashinSubmitForm,
     paymentCashinEditItem,
     paymentCashinDeleteItem,
-    scheduleItem,
-    showSaveButton,
-    errors,
+    paymentCashinScheduleItem,
+    paymentCashinShowSaveButton,
+    paymentCashinErrors,
   }
 }
