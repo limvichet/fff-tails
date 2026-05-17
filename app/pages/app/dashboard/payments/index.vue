@@ -204,14 +204,31 @@ const getPaymentStatus = (p: Schedule) => {
     <ComponentCard title="Payments">
 
       <!-- Search -->
-      <div class="relative mb-3">
+      <div class="relative">
+        <!-- Icon -->
+        <svg
+          class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"
+          />
+        </svg>
+
+        <!-- Search Input -->
         <input
           v-model="searchInput"
           type="text"
-          placeholder="Search payments..."
-          class="input"
+          placeholder="Search records..."
+          class="input !pl-9 text-sm"
         />
       </div>
+
 
       <!-- Messages -->
       <div v-if="errorMsg" class="mb-3 p-2 bg-red-500/20 text-red-400 text-sm">

@@ -304,7 +304,8 @@ export const useSchedule = () => {
         schedule_totaldays: totalDays,
         schedule_interest_rate: loan_interest_rate,
         schedule_outstanding: overdraft,
-        schedule_over_draft: overdraft,
+        // schedule_over_draft: overdraft,
+        schedule_over_draft: 0,
         schedule_principle,
         schedule_interest,
         schedule_totalpay,
@@ -696,7 +697,7 @@ export const useSchedule = () => {
     })
   }
 
-    const reculculate_over_draft_m14 = () => {
+  const reculculate_over_draft_m14 = () => {
     schedules.value.forEach((item, index) => {
       if (index > 0) {
         item.schedule_over_draft = 0

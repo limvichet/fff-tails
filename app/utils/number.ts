@@ -71,7 +71,6 @@ export const khMonth = (month: number | string): string => {
 }
 
 
-
 export const onInputNumber = <T extends Record<string, any>, K extends keyof T>(
   event: Event,
   field: K,
@@ -80,40 +79,37 @@ export const onInputNumber = <T extends Record<string, any>, K extends keyof T>(
   const target = event.target as HTMLInputElement
   if (!target) return
 
-  // Allow only numbers and one dot
+  // Allow digits and dot
   let cleanValue = target.value.replace(/[^0-9.]/g, '')
 
-  // Prevent multiple dots
-  const parts = cleanValue.split('.')
-
-  let integer = parts[0] || ''
-  let decimal = parts[1] || ''
-
-  if (parts.length > 2) {
-    decimal = parts.slice(1).join('')
+  // Keep only the first dot
+  const firstDotIndex = cleanValue.indexOf('.')
+  if (firstDotIndex !== -1) {
+    cleanValue =
+      cleanValue.slice(0, firstDotIndex + 1) +
+      cleanValue.slice(firstDotIndex + 1).replace(/\./g, '')
   }
+
+  // Split integer and decimal
+  const [integerPart, decimalPartRaw] = cleanValue.split('.')
+  const integer = integerPart || ''
+  let decimal = decimalPartRaw ?? ''
 
   // Limit decimal to 2 digits
   decimal = decimal.slice(0, 2)
 
-  // Auto fill decimal 2 digits
-  // if (cleanValue.includes('.')) {
-  //   decimal = decimal.padEnd(2, '0')
-  // }
+  // Build final string (keep dot if user typed it)
+  cleanValue = decimalPartRaw !== undefined ? `${integer}.${decimal}` : integer
 
-  // Final value
-  cleanValue = decimal
-    ? `${integer}.${decimal}`
-    : integer
-
-  // Convert to number
-  const numericValue = parseFloat(cleanValue) || 0
+  // Convert to number (but don’t kill the dot-only case)
+  const numericValue =
+    cleanValue === '' || cleanValue === '.' ? 0 : parseFloat(cleanValue)
 
   // Update form
   form[field] = numericValue as unknown as T[K]
 
-  // Re-render formatted value
+  // Re-render formatted value (preserve dot if user typed it)
   target.value =
     Number(integer || 0).toLocaleString() +
-    (decimal ? `.${decimal}` : '')
+    (decimalPartRaw !== undefined ? `.${decimal}` : '')
 }

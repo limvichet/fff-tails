@@ -1,3 +1,4 @@
+// show
 export interface ApiResponse {
     success:    boolean;
     loanrecord: Loanrecord;
@@ -72,6 +73,7 @@ export interface Schedule {
     schedule_remaincash:    number;
     schedule_totalpreless:  number;
     invoice_id:             number;
+    invoice:                string;
     schedule_note:          string;
 }
 

@@ -17,9 +17,12 @@ import { useMessage } from "~/composables/useMessage"
 import { formatDateForOutput } from '~/utils/date'
 import { formatNumber } from "@/utils/number"
 import { PencilIcon, TrashIcon} from "@/icons";
+import {onInputNumber} from "~/utils/number"
 
 const { user } = useAuth()
 
+
+/* Cashin */
 const {
   paymentCashinItems,
   paymentCashinForm,
@@ -41,6 +44,8 @@ const handleCashinClose = async () => {
   await fetchData()
 }
 
+
+/* Preless */
 const {
   paymentPrelessItems,
   paymentPrelessForm,
@@ -62,6 +67,25 @@ const handlePrelessClose = async () => {
   await fetchData()
 }
 
+
+/* Payment */
+const {
+  paymentItem,
+  paymentForm,
+  paymentShowModal,
+  paymentOpenModal,
+  paymentCloseModal,
+  paymentSubmitForm,
+  paymentSchedule,
+  paymentErrors,
+  paymentShowSaveButton,
+  paymentLoading
+} = usePayment()
+
+const handleClose = async () => {
+  paymentCloseModal()
+  await fetchData()
+}
 
 
 // onMounted(() => {
@@ -140,6 +164,7 @@ type Schedule = {
     schedule_remaincash:    number;
     schedule_totalpreless:  number;
     invoice_id:             number;
+    invoice:                string;
     schedule_note:          string;
 }
 
@@ -216,28 +241,101 @@ const getStatusClass = (s: Schedule) => {
 }
 
 
-  function onInputPaymentCashin<K extends keyof typeof paymentCashinForm>(
-    event: Event,
-    field: K
-  ) {
-    const target = event.target as HTMLInputElement
-    if (!target) return
+function onInputPaymentCashin<K extends keyof typeof paymentCashinForm>(
+  event: Event,
+  field: K
+) {
+  const target = event.target as HTMLInputElement
+  if (!target) return
 
-    const numericValue = parseFloat(target.value.replace(/,/g, "")) || 0
-    paymentCashinForm[field] = numericValue as any
+  const numericValue = parseFloat(target.value.replace(/,/g, "")) || 0
+  paymentCashinForm[field] = numericValue as any
+}
+
+function onInputPaymentPreless<K extends keyof typeof paymentPrelessForm>(
+  event: Event,
+  field: K
+) {
+  const target = event.target as HTMLInputElement
+  if (!target) return
+
+  const numericValue = parseFloat(target.value.replace(/,/g, "")) || 0
+  paymentPrelessForm[field] = numericValue as any
+}
+
+function onInputPayment<K extends keyof typeof paymentForm>(
+  event: Event,
+  field: K
+) {
+  const target = event.target as HTMLInputElement
+  if (!target) return
+
+  const numericValue = parseFloat(target.value.replace(/,/g, "")) || 0
+  paymentForm[field] = numericValue as any
+}
+
+
+// watchEffect(() => {
+//   const rate = Number(String(paymentForm.schedule_interest_rate).replace(/,/g, '') || 0)
+//   const outstanding = Number(String(paymentForm.schedule_outstanding).replace(/,/g, '') || 0)
+//   const principle = Number(String(paymentForm.schedule_principle).replace(/,/g, '') || 0)
+//   const totalcashin = Number(String(paymentForm.schedule_totalcashin).replace(/,/g, '') || 0)
+//   const totalpreless = Number(String(paymentForm.schedule_totalpreless).replace(/,/g, '') || 0)
+//   paymentForm.schedule_interest = (rate/100) * outstanding
+//   paymentForm.schedule_totalpay = ((rate/100) * outstanding) + principle
+//   paymentForm.schedule_paidcash = Math.min(totalcashin, (((rate/100) * outstanding) + principle))
+//   paymentForm.schedule_remaincash = totalcashin - (Math.min(totalcashin, (((rate/100) * outstanding) + principle)))
+//   paymentForm.schedule_lessmoney = totalcashin - totalpreless - (((rate/100) * outstanding) + principle)
+// })
+
+const calculatePayment = () => {
+
+  const rate = Number(
+    String(paymentForm.schedule_interest_rate).replace(/,/g, '') || 0
+  )
+
+  const outstanding = Number(
+    String(paymentForm.schedule_outstanding).replace(/,/g, '') || 0
+  )
+
+  const principle = Number(
+    String(paymentForm.schedule_principle).replace(/,/g, '') || 0
+  )
+
+  const totalcashin = Number(
+    String(paymentForm.schedule_totalcashin).replace(/,/g, '') || 0
+  )
+
+  const totalpreless = Number(
+    String(paymentForm.schedule_totalpreless).replace(/,/g, '') || 0
+  )
+
+  // const interest = (rate / 100) * outstanding
+  const interest = calculateScheduleInterest(paymentSchedule.value?.schedule_totaldays ?? 0, rate, outstanding, fixDouble)  
+  const totalpay = interest + principle
+  const paidcash = Math.min(totalcashin, totalpay)
+
+  paymentForm.schedule_interest = interest
+  paymentForm.schedule_totalpay = totalpay
+  paymentForm.schedule_paidcash = paidcash
+  paymentForm.schedule_remaincash = totalcashin - paidcash
+  paymentForm.schedule_lessmoney =
+    totalcashin - totalpreless - totalpay
+}
+
+
+function calculateScheduleInterest(
+  totalDays: number,
+  rate: number,
+  outstanding: number,
+  fixDouble: (value: number, precision: number) => number
+): number {
+  if (totalDays >= 28 && totalDays <= 31) {
+    return rate * outstanding
+  } else {
+    return fixDouble((rate / 30) * outstanding * totalDays, 3)
   }
-
-  function onInputPaymentPreless<K extends keyof typeof paymentPrelessForm>(
-    event: Event,
-    field: K
-  ) {
-    const target = event.target as HTMLInputElement
-    if (!target) return
-
-    const numericValue = parseFloat(target.value.replace(/,/g, "")) || 0
-    paymentPrelessForm[field] = numericValue as any
-  }
-
+}
 
 </script>
 
@@ -277,9 +375,9 @@ const getStatusClass = (s: Schedule) => {
     </ComponentCard>
 
     <!-- ================= PAYMENT TABLE ================= -->
-    <ComponentCard title="2. Payment Schedule" class="mt-3">
+    <!-- <ComponentCard title="2. Payment Schedule" class="mt-3"> -->
 
-      <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-800">
+      <div class="overflow-x-auto rounded-xl border mt-3 border-gray-200 dark:border-gray-800">
 
         <table class="min-w-full text-sm text-left">
 
@@ -346,7 +444,27 @@ const getStatusClass = (s: Schedule) => {
               </td>
 
               <td class="px-3 py-2 text-blue-600">
-                {{ formatNumber(s.schedule_totalpay) }}
+                <button @click="paymentOpenModal(s.id)" type="button" class="text-xs rounded px-2 py-1 w-auto"
+                  :class="[
+                    // Color logic
+                    s.schedule_totalpay > 0
+                      ? (Number(s.schedule_totalpay) === Number(s.schedule_paidcash)
+                        ? 'bg-red-800 text-white'
+                        : 'bg-blue-800 text-white')
+                      : '',
+
+                    // Disabled styling logic
+                    (loan?.loantype_id === 14 || loan?.loantype_id === 36)
+                      ? ''
+                      : (i > 0 &&
+                        (Number(schedules[i - 1]?.schedule_paidcash) === 0 ||
+                          Number(s.schedule_outstanding) === 0))
+                        ? 'opacity-50 cursor-not-allowed'
+                        : ''
+                  ]"
+                  :disabled="!(loan?.loantype_id === 14 || loan?.loantype_id === 36) && i > 0 && (Number(schedules[i - 1]?.schedule_paidcash) === 0 || Number(s.schedule_outstanding) === 0)">
+                  {{ formatNumber(s.schedule_totalpay) }}
+                </button>
               </td>
 
               <!-- Cashin -->
@@ -357,8 +475,8 @@ const getStatusClass = (s: Schedule) => {
                   // Color logic
                   s.schedule_totalpay > 0
                     ? (Number(s.schedule_totalpay) === Number(s.schedule_paidcash)
-                      ? 'bg-red-400 text-white'
-                      : 'bg-green-600 text-white')
+                      ? 'bg-red-700 text-white'
+                      : 'bg-green-800 text-white')
                     : '',
 
                   // Disabled styling logic
@@ -393,8 +511,8 @@ const getStatusClass = (s: Schedule) => {
                     // Color logic
                     s.schedule_totalpay > 0
                       ? (Number(s.schedule_totalpay) === Number(s.schedule_paidcash)
-                        ? 'bg-red-400 text-white'
-                        : 'bg-green-600 text-white')
+                        ? 'bg-red-600 text-white'
+                        : 'bg-yellow-800 text-white')
                       : '',
 
                     // Disabled styling logic
@@ -416,9 +534,11 @@ const getStatusClass = (s: Schedule) => {
               </td>
 
               <td class="px-3 py-2 text-red-500">
+                {{ s.invoice }}
               </td>
 
               <td class="px-3 py-2 text-red-500">
+                {{ s.schedule_note }}
               </td>
 
               <!-- STATUS -->
@@ -464,7 +584,7 @@ const getStatusClass = (s: Schedule) => {
 
       </div>
 
-    </ComponentCard>
+    <!-- </ComponentCard> -->
 
 
     <!-- PAYMENT CASHIN MODAL -->
@@ -499,7 +619,7 @@ const getStatusClass = (s: Schedule) => {
               </div>
               <input 
                 :value="(paymentCashinForm.cash ?? 0).toLocaleString()" 
-                @input="(e) => onInputPaymentCashin(e, 'cash')"
+                @input="(e) => onInputNumber(e, 'cash', paymentCashinForm)"
                 type="text" class="w-full text-sm border rounded px-2 py-1" />
             </div>
             <!-- Recipient -->
@@ -657,7 +777,7 @@ const getStatusClass = (s: Schedule) => {
               </div>
               <input 
                 :value="(paymentPrelessForm.cash ?? 0).toLocaleString()" 
-                @input="(e) => onInputPaymentPreless(e, 'cash')"
+                @input="(e) => onInputNumber(e, 'cash', paymentPrelessForm)"
                 type="text" class="w-full text-sm border rounded px-2 py-1" />
             </div>
             <!-- Recipient -->
@@ -777,6 +897,201 @@ const getStatusClass = (s: Schedule) => {
             <span v-if="paymentPrelessLoading">Progress...</span>
             <span v-else>{{ paymentPrelessIsEditMode ? "Update" : "Save" }}</span>
           </button>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- PAYMENT MODAL -->
+    <div v-if="paymentShowModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+      <div class="w-full max-w-4xl bg-white dark:bg-gray-900 rounded-xl shadow-2xl flex flex-col max-h-[90vh]">
+
+        <!-- HEADER -->
+        <div class="flex items-center justify-between px-6 py-4 border-b">
+          <h2 class="text-lg text-blue-800 dark:text-white">
+            Payment Schedule
+            <span class="text-sm">
+              #{{ paymentForm.id }}
+              |
+              Loan#{{ paymentSchedule?.loan_id }}
+              |
+              Payment#{{ paymentForm.schedule_paymentnumber }}
+            </span>
+          </h2>
+
+          <button @click="handleClose" :disabled="paymentLoading">
+            ✕
+          </button>
+        </div>
+
+        <!-- BODY -->
+        <div class="p-6 space-y-5 overflow-y-auto">
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+
+              <!-- PRINCIPLE DATE -->
+              <div>
+                <label class="text-sm text-gray-500"> Date </label>
+                <input v-model="paymentForm.schedule_principle_date" type="date" readonly
+                  class="w-full text-sm border rounded px-3 py-2 bg-gray-100 dark:bg-gray-800" />
+              </div>
+
+              <!-- INTEREST RATE -->
+              <div>
+                <label class="text-sm text-gray-500"> Rate </label>
+                <input
+                  type="number"
+                  v-model="paymentForm.schedule_interest_rate"
+                  @input="calculatePayment"
+                  class="w-full text-sm border rounded px-3 py-2"
+                />
+              </div>
+
+              <!-- INTEREST -->
+              <div>
+                <label class="text-sm text-gray-500"> Interest</label>
+                <input :value="formatNumber(paymentForm.schedule_interest)" type="text" readonly
+                  class="w-full text-sm border rounded px-3 py-2 bg-gray-100 dark:bg-gray-800"/>
+              </div>
+
+              <!-- OUTSTANDING -->
+              <div>
+                <label class="text-sm text-gray-500"> Outstanding </label>
+                <input :value="formatNumber(paymentForm.schedule_outstanding)" type="text" readonly
+                  class="w-full text-sm border rounded px-3 py-2 bg-gray-100 dark:bg-gray-800" />
+              </div>
+
+              <!-- OVER DRAFT -->
+              <div>
+                <label class="text-sm text-gray-500"> Over Draft </label>
+                <input
+                  type="text"
+                  :value="paymentForm.schedule_over_draft?.toLocaleString()"
+                  @input="(e) => {
+                    onInputNumber(e, 'schedule_over_draft', paymentForm) 
+                    calculatePayment
+                  }"
+                  class="w-full text-sm border rounded px-3 py-2"
+                />
+              </div>
+
+              <!-- PRINCIPLE -->
+              <div>
+                <label class="text-sm text-gray-500"> Principle </label>
+                <input
+                  type="text"
+                  :value="paymentForm.schedule_principle?.toLocaleString()"
+                  @input="(e) => {
+                    onInputNumber(e, 'schedule_principle', paymentForm)
+                    calculatePayment
+                  }"
+                  class="w-full text-sm border rounded px-3 py-2"
+                  :class="paymentItem?.loantype_id === 13 ? 'bg-gray-100 dark:bg-gray-800' : ''"
+                  :readonly="paymentItem?.loantype_id === 13"
+                />
+              </div>
+
+              <!-- TOTAL PAY -->
+              <div>
+                <label class="text-sm text-gray-500"> Total Pay </label>
+                <input :value="formatNumber(paymentForm.schedule_totalpay)" type="text" readonly
+                  class="w-full text-sm border rounded px-3 py-2 bg-gray-100 dark:bg-gray-800" />
+              </div>
+
+              <!-- TOTAL CASHIN -->
+              <div>
+                <label class="text-sm text-gray-500"> Cashin </label>
+                <input :value="formatNumber(paymentForm.schedule_totalcashin)" type="text" readonly
+                  class="w-full text-sm border rounded px-3 py-2 bg-gray-100 dark:bg-gray-800" />
+              </div>
+
+              <!-- CASHIN 3 -->
+              <div>
+                <label class="text-sm text-gray-500">Cashin 3 <span class="text-red-500">(Paymented)</span></label>
+                <input 
+                  type="text"
+                  :value="paymentForm.schedule_cashin_3?.toLocaleString()"
+                  @input="(e) => {
+                    onInputNumber(e, 'schedule_cashin_3', paymentForm) 
+                    calculatePayment
+                  }"
+                  class="w-full text-sm border rounded px-3 py-2" />
+              </div>
+
+              <!-- REMAIN CASH -->
+              <div>
+                <label class="text-sm text-gray-500">Remain Cash</label>
+                <input :value="formatNumber(paymentForm.schedule_remaincash)" type="text" readonly
+                  class="w-full text-sm border rounded px-3 py-2 bg-gray-100 dark:bg-gray-800" />
+              </div>
+
+              <!-- PAID CASH -->
+              <div>
+                <label class="text-sm text-gray-500">Paid Cash</label>
+                <input :value="formatNumber(paymentForm.schedule_paidcash)" type="text" readonly
+                  class="w-full text-sm border rounded px-3 py-2 bg-gray-100 dark:bg-gray-800" />
+              </div>
+
+              <!-- TOTAL PRELESS -->
+              <div>
+                <label class="text-sm text-gray-500">Preless</label>
+                <input :value="formatNumber(paymentForm.schedule_totalpreless)" type="text" readonly
+                  class="w-full text-sm border rounded px-3 py-2 bg-gray-100 dark:bg-gray-800" />
+              </div>
+
+              <!-- NOTE -->
+              <div class="md:col-span-2">
+                <label class="text-sm text-gray-500">Note</label>
+                <textarea v-model="paymentForm.schedule_note" rows="1"
+                  class="w-full text-sm border rounded px-3 py-2" />
+              </div>
+
+              <!-- Invoice  -->
+              <div>
+                <label class="text-sm text-gray-500">Invoice</label>
+                <input :value="(paymentItem?.invoice_number)" type="text" readonly
+                  class="w-full text-sm border rounded px-3 py-2 bg-gray-100 dark:bg-gray-800" />
+              </div>
+
+              <!-- LESS MONEY -->
+              <div>
+                <label class="text-sm text-gray-500">Less Money</label>
+                <input :value="formatNumber(paymentForm.schedule_lessmoney)" type="text" readonly
+                  class="w-full text-sm border rounded px-3 py-2 bg-gray-100 dark:bg-gray-800" />
+              </div>
+
+            </div>
+          
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="px-6 py-4 flex justify-end gap-2 border-t">
+
+          <button @click="handleClose" class="px-4 py-2 bg-gray-400 text-white rounded-lg">
+            Cancel
+          </button>
+
+          <!-- <button v-if="paymentShowSaveButton" @click="paymentSubmitForm" :disabled="paymentLoading"
+            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition flex items-center justify-center gap-2">
+            <Icon v-if="paymentLoading" name="svg-spinners:180-ring-with-bg" class="text-lg" />
+
+            <span v-if="paymentLoading">
+              Progress...
+            </span>
+
+            <span v-else>
+              Save
+            </span>
+          </button> -->
+
+          <button
+            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition flex items-center justify-center gap-2">
+              Save
+          </button>
+
         </div>
 
       </div>
