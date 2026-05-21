@@ -29,6 +29,46 @@ const { errorMsg, successMsg, success } = useMessage()
 const isDeleteModal = ref(false)
 const selectedLoanId = ref<number | null>(null)
 
+
+
+// print option menu
+import { ChevronDown, Printer } from "lucide-vue-next"
+
+const openId = ref<number | null>(null)
+const menuRefs = ref<Record<number, HTMLElement | null>>({})
+
+const toggleMenu = (id: number) => {
+  openId.value = openId.value === id ? null : id
+}
+
+const setMenuRef = (id: number, el: HTMLElement | null) => {
+  menuRefs.value[id] = el
+}
+
+const handleClickOutside = (e: MouseEvent) => {
+  const target = e.target as Node
+
+  const isInside = Object.values(menuRefs.value).some(
+    (el) => el && el.contains(target)
+  )
+
+  if (!isInside) {
+    openId.value = null
+  }
+}
+
+onMounted(() => {
+  document.addEventListener("click", handleClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener("click", handleClickOutside)
+})
+
+
+
+
+
 successMsg.value = null
 errorMsg.value = null
 
@@ -305,13 +345,13 @@ onMounted(() => {
               <tr class="border-b border-gray-200 dark:border-gray-700">
                 <th class="px-2 py-3 text-left text-sm w-[2%]">#</th>
                 <th class="px-1 py-3 text-left text-sm w-[3%]">Loan</th>
-                <th class="px-1 py-3 text-left text-sm w-[15%]">Customer</th>
+                <th class="px-1 py-3 text-left text-sm w-[12%]">Customer</th>
                 <th class="px-1 py-3 text-left text-sm w-[12%]">New</th>
-                <th class="px-1 py-3 text-left text-sm w-[13%]">Total</th>
-                <th class="px-1 py-3 text-left text-sm w-[7%]">Created</th>
-                <th class="px-1 py-3 text-left text-sm w-[7%]">Updated</th>
-                <th class="px-5 py-3 text-left text-sm w-[22%]">Contracts</th>
-                <th class="px-5 py-3 text-left text-sm w-[20%]">Actions</th>
+                <th class="px-1 py-3 text-left text-sm w-[12%]">Total</th>
+                <th class="px-1 py-3 text-left text-sm w-[13%]">Created</th>
+                <th class="px-1 py-3 text-left text-sm w-[13%]">Updated</th>
+                <th class="px-5 py-3 text-left text-sm w-[10%]">Contracts</th>
+                <th class="px-5 py-3 text-left text-sm w-auto">Actions</th>
               </tr>
             </thead>
 
@@ -352,7 +392,58 @@ onMounted(() => {
                 <td class="px-1 py-1 text-sm">
                   <div v-if="l.count_schedule > 0" class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-6">
 
-                    <a
+
+                    <div :ref="(el) => setMenuRef(l.id, el as HTMLElement)" class="relative inline-block">
+                      <!-- Button -->
+                      <button @click.stop="toggleMenu(l.id)" type="button"
+                        class="inline-flex items-center gap-1 rounded-md bg-cyan-800 px-2 py-1 text-sm font-medium text-white shadow-sm transition hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400">
+                        <Printer class="w-3 h-3" />
+                        Print
+                        <ChevronDown class="w-4 h-4 transition-transform duration-200"
+                          :class="{ 'rotate-180': openId === l.id }" />
+                      </button>
+
+                      <!-- Dropdown -->
+                      <Transition enter-active-class="transition duration-150 ease-out"
+                        enter-from-class="opacity-0 scale-95 translate-y-1"
+                        enter-to-class="opacity-100 scale-100 translate-y-0"
+                        leave-active-class="transition duration-100 ease-in"
+                        leave-from-class="opacity-100 scale-100 translate-y-0"
+                        leave-to-class="opacity-0 scale-95 translate-y-1">
+                        <div v-if="openId === l.id"
+                          class="absolute right-0 z-50 mt-2 w-30 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl">
+                          <div class="p-1">
+                            <a :href="`/app/dashboard/schedules/prints/${l.id}/print-sched`" target="_blank"
+                              class="flex items-center rounded-lg px-4 py-2.5 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
+                              📄 Schedule
+                            </a>
+
+                            <a :href="`/app/dashboard/loanrecords/prints/${l.id}/print-atm`" target="_blank"
+                              class="flex items-center rounded-lg px-4 py-2.5 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
+                              💳 ATM
+                            </a>
+
+                            <a :href="`/app/dashboard/loanrecords/prints/${l.id}/print-landlayout`" target="_blank"
+                              class="flex items-center rounded-lg px-4 py-2.5 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
+                              🗺️ Land
+                            </a>
+
+                            <a :href="`/app/dashboard/schedules/prints/${l.id}/print-sched2`" target="_blank"
+                              class="flex items-center rounded-lg px-4 py-2.5 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
+                              📑 Schedule 2
+                            </a>
+
+                            <a :href="`/app/dashboard/loanrecords/prints/${l.id}/print-receipt2`" target="_blank"
+                              class="flex items-center rounded-lg px-4 py-2.5 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
+                              🧾 Receipt 2
+                            </a>
+                          </div>
+                        </div>
+                      </Transition>
+                    </div>
+
+
+                    <!-- <a
                       :href="`/app/dashboard/schedules/prints/${l.id}/print-sched`"
                       target="_blank" rel="noopener"
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-900 text-white text-sm"
@@ -390,7 +481,7 @@ onMounted(() => {
                       class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
                     >
                        Receip2
-                    </a>
+                    </a> -->
 
                     <!-- <a
                       :href="`/app/dashboard/loanrecords/prints/${l.id}/print-contract2`"
@@ -410,10 +501,10 @@ onMounted(() => {
                     <!-- loan_status_id -->
                     <button disabled
                       :class="[
-                        'px-1 py-1 rounded text-white text-sm',
+                        'px-1 py-0.1 rounded text-sm border',
                         l.loan_status_id == 1
-                          ? 'bg-indigo-600 hover:bg-indigo-700'
-                          : 'bg-slate-600 hover:bg-slate-700'
+                          ? 'text-indigo-700 border-indigo-600 bg-indigo-600/20 hover:bg-indigo-600/30'
+                          : 'text-slate-700 border-slate-500 bg-slate-500/20 hover:bg-slate-500/30'
                       ]"
                     >
                       {{ l.loan_status_id == 1 ? 'Current' : 'Bad' }}
@@ -422,9 +513,9 @@ onMounted(() => {
                     <!-- loan_check_status -->
                     <button disabled
                       :class="[
-                        'px-1 py-1 rounded text-sm border',
+                        'px-1 py-0.1 rounded text-sm border',
                         l.loan_check_status == 1
-                          ? 'text-lime-700 border-lime-600 bg-green-600/20 hover:bg-green-600/30'
+                          ? 'text-lime-700 border-lime-600 bg-lime-600/20 hover:bg-lime-600/30'
                           : 'text-yellow-700 border-yellow-500 bg-yellow-500/20 hover:bg-yellow-500/30'
                       ]"
                     >

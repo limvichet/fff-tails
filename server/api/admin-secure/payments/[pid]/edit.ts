@@ -6,6 +6,7 @@ export interface ApiResponse {
       schedule_next_paynumber: number
       invoice_number: string
       loantype_id: number
+      loantype: string
       od_loan_totalcash: number
       previous_outstanding: number
       loan_status: number

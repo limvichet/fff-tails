@@ -471,7 +471,7 @@ function calculateScheduleInterest(
               <td class="px-3 py-2">
                 <button 
                   @click="paymentCashinOpenModal(s.id)"
-                  type="button" class="text-xs rounded px-2 py-1 w-20" :class="[
+                  type="button" class="text-xs rounded px-2 py-1 w-auto" :class="[
                   // Color logic
                   s.schedule_totalpay > 0
                     ? (Number(s.schedule_totalpay) === Number(s.schedule_paidcash)
@@ -506,7 +506,7 @@ function calculateScheduleInterest(
               </td>
 
               <td class="px-3 py-2 text-red-500">
-                <button @click="paymentPrelessOpenModal(s.id)" type="button" class="text-xs rounded px-2 py-1 w-20"
+                <button @click="paymentPrelessOpenModal(s.id)" type="button" class="text-xs rounded px-2 py-1 w-auto"
                   :class="[
                     // Color logic
                     s.schedule_totalpay > 0
@@ -915,7 +915,7 @@ function calculateScheduleInterest(
             <span class="text-sm">
               #{{ paymentForm.id }}
               |
-              Loan#{{ paymentSchedule?.loan_id }}
+              Loan#{{ paymentSchedule?.loan_id }}({{ paymentItem?.loantype }})
               |
               Payment#{{ paymentForm.schedule_paymentnumber }}
             </span>
