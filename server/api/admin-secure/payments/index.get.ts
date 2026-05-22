@@ -25,6 +25,7 @@ type Schedule = {
     loan_check_status: string
     cust_name_1: string
     cust_name_2?: string
+    loan_tag?: string
     created_by: string
     created_at: string
     updated_by: string

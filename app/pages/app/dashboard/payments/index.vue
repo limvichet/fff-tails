@@ -36,6 +36,7 @@ type Schedule = {
   loan_check_status: number
   cust_name_1: string
   cust_name_2?: string
+  loan_tag?: string
   created_by: string
   created_at: string
   updated_by: string
@@ -252,7 +253,8 @@ const getPaymentStatus = (p: Schedule) => {
               <th class="px-2 py-2 text-left">Rate</th>
               <th class="px-2 py-2 text-left">Start</th>
               <th class="px-2 py-2 text-left">End</th>
-              <th class="px-2 py-2 text-center">DebtReturn</th>
+              <th class="px-2 py-2 text-left">Tag</th>
+              <th class="px-2 py-2 text-left">DebtReturn</th>
               <th class="px-2 py-2 text-left">Status</th>
               <th class="px-2 py-2 text-left">Actions</th>
             </tr>
@@ -294,11 +296,15 @@ const getPaymentStatus = (p: Schedule) => {
                 {{ formatDateForOutput(new Date(p.loan_enddate)) }}
               </td>
 
-              <td class="px-2 py-1 text-center">
+              <td class="px-2 py-1">
+                {{ p.loan_tag }}
+              </td>
+
+              <td class="px-2 py-1 text-left">
                 <span 
                   :class="Number(p.schedule_lessmoney_tt) < 0 
-                    ? 'bg-red-600 text-white text-xs font-normal rounded px-1 py-1' 
-                    : 'bg-blue-600 text-white text-xs font-normal rounded px-1 py-1'" 
+                    ? 'bg-red-600 text-white text-xs font-normal rounded px-2 py-1' 
+                    : 'bg-blue-600 text-white text-xs font-normal rounded px-2 py-1'" 
                 >
                   {{ formatNumber(Number(p.schedule_lessmoney_tt)) }}
                 </span>

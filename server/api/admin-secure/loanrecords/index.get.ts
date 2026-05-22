@@ -1,66 +1,66 @@
 import { getCookie, getQuery, createError, type H3Event } from "h3"
 
 type Employee = {
-  id: number;
-  surname: string;
-  first_name: string;
-  full_name: string;
+  id: number
+  surname: string
+  first_name: string
+  full_name: string
 }
 
 type Createdby = {
-  id: number;
-  emp_id: number;
-  employee: Employee;
+  id: number
+  emp_id: number
+  employee: Employee
 }
 
 type Updatedby = {
-  id: number;
-  emp_id: number;
-  employee: Employee;
+  id: number
+  emp_id: number
+  employee: Employee
 }
 
 type Currency = {
-    id:          number;
-    currency_en: string;
+    id:          number
+    currency_en: string
 }
 
 type Customer = {
-    id:           number;
-    cust_name_1:  string;
-    cust_title_1: number;
-    nametitle1:   Nametitle1;
+    id:           number
+    cust_name_1:  string
+    cust_title_1: number
+    nametitle1:   Nametitle1
 }
 
 type Nametitle1 = {
-    id:           number;
-    nametitle_kh: string;
+    id:           number
+    nametitle_kh: string
 }
 
 type Loantype = {
-    id:             number;
-    loantype_short: string;
+    id:             number
+    loantype_short: string
 }
 
 type Loarnrecord = {
-    id:                number;
-    loan_lastcash:     string;
-    loan_newcash:      string;
-    loan_totalcash:    string;
-    cust_id:           number;
-    loantype_id:       number;
-    loan_status_id:    number;
-    currency_id:       number;
-    loan_check_status: number;
-    customer:          Customer;
-    currency:          Currency;
-    loantype:          Loantype;
-    created_by: number;
-    created_at: string;
-    createdby: Createdby;
-    updated_by: string;
-    updated_at: string;
-    updatedby: Updatedby;
-    count_schedule: number;
+    id:                number
+    loan_lastcash:     string
+    loan_newcash:      string
+    loan_totalcash:    string
+    cust_id:           number
+    loantype_id:       number
+    loan_status_id:    number
+    currency_id:       number
+    loan_check_status: number
+    customer:          Customer
+    currency:          Currency
+    loantype:          Loantype
+    created_by: number
+    created_at: string
+    createdby: Createdby
+    updated_by: string
+    updated_at: string
+    updatedby: Updatedby
+    count_schedule: number
 }
 
 type LoarnrecordResponses = {

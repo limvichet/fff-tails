@@ -102,6 +102,7 @@ const form = reactive<any>({
     loan_collateral_doc_2:null,
     loan_collateral_doc_2_src: null as string | null,
     loan_collateral_doc_2_check: false,
+    loan_tag:"",
     loan_note:"",
 
     active:1,
@@ -180,6 +181,7 @@ watch(loanrecord,(l)=>{
     loan_collateral_doc_2_src: l.loan_collateral_doc_2_url ?? null,
     // loan_collateral_doc_2_check: !!l.loan_collateral_doc_2_url,
     loan_collateral_doc_2_check: l.loan_collateral_doc_2_url ? 1 : 0,
+    loan_tag:l.loan_tag ?? "",
     loan_note:l.loan_note ?? "",
   })
 
@@ -266,6 +268,7 @@ const schema = z.object({
         if (!f) return true
         return f.size <= MIN_FILE_SIZE
       }, { message: 'Size must be less than 2MB' }),
+  loan_tag:z.string().optional(),
   loan_note:z.string().optional()
 })
 
@@ -892,7 +895,7 @@ const onFileDocChange2 = (e: Event) => {
       <div class="flex items-center justify-between">
         <label class="label">Invoice ID</label>
       </div>
-      <input v-model.number="form.invoice_id" type="text" class="input" readonly/>
+      <input v-model.number="form.invoice_id" type="text" class="input bg-gray-100 cursor-not-allowed" readonly/>
     </div>
 
     <!-- loan_status_id -->
@@ -1079,6 +1082,15 @@ const onFileDocChange2 = (e: Event) => {
 
   <div class="border-b border-gray-100 dark:border-gray-800 pt-3"></div>
 
+    <!-- Tag -->
+  <div>
+    <label class="label">Tage</label>
+    <input 
+      v-model="form.loan_tag" 
+      class="input"
+    />
+  </div>
+  
   <!-- Note -->
   <div>
     <div class="flex items-center justify-between">
