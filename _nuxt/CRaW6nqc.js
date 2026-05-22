@@ -1,0 +1,1 @@
+import{_ as n,r as t,c,o as s,b as _}from"./CVlqxzez.js";const a={};function d(e,r){return t(e.$slots,"default")}const i=Object.assign(n(a,[["render",d]]),{__name:"LayoutPrintProvider"}),f={};function l(e,r){const o=i;return s(),c("div",null,[t(e.$slots,"default"),_(o)])}const m=n(f,[["render",l]]);export{m as default};
