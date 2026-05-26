@@ -974,6 +974,8 @@ function calculateScheduleInterest(
                     calculatePayment
                   }"
                   class="w-full text-sm border rounded px-3 py-2"
+                  :class="paymentItem?.loantype_id !== 14 ? 'bg-gray-100 dark:bg-gray-800' : ''"
+                  :readonly="paymentItem?.loantype_id !== 14"
                 />
               </div>
 
@@ -1074,7 +1076,7 @@ function calculateScheduleInterest(
             Cancel
           </button>
 
-          <!-- <button v-if="paymentShowSaveButton" @click="paymentSubmitForm" :disabled="paymentLoading"
+          <button v-if="paymentShowSaveButton" @click="paymentSubmitForm" :disabled="paymentLoading"
             class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition flex items-center justify-center gap-2">
             <Icon v-if="paymentLoading" name="svg-spinners:180-ring-with-bg" class="text-lg" />
 
@@ -1085,12 +1087,12 @@ function calculateScheduleInterest(
             <span v-else>
               Save
             </span>
-          </button> -->
+          </button>
 
-          <button
+          <!-- <button
             class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition flex items-center justify-center gap-2">
               Save
-          </button>
+          </button> -->
 
         </div>
 

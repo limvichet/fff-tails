@@ -170,15 +170,15 @@ onMounted(fetchData)
                  <div>
                      <div class="py-2">
                          <label class="label">Total Cash</label>
-                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_totalcash" readonly />
+                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="formatNumber(loan.loan_totalcash)" readonly />
                      </div>
                      <div class="py-2">
                          <label class="label">Principle</label>
-                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_principle" readonly />
+                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="formatNumber(loan.loan_principle)" readonly />
                      </div>
                      <div class="py-2">
                          <label class="label">Interest Rate</label>
-                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_interest_rate" readonly />
+                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="formatNumber(loan.loan_interest_rate)" readonly />
                      </div>
                  </div>
 
@@ -194,7 +194,7 @@ onMounted(fetchData)
                      </div>
                      <div class="py-2">
                          <label class="label">Over Draft</label>
-                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="loan.loan_over_draft" readonly />
+                         <input class="input bg-white text-black dark:bg-gray-800 dark:text-white dark:border-gray-700" :value="formatNumber(loan.loan_over_draft)" readonly />
                      </div>
                  </div>
             </div>

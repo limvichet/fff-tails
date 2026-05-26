@@ -497,8 +497,20 @@ onMounted(() => {
                 <!-- action -->
                 <td class="px-1 py-1 text-sm">
                   <div class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-6">
-                    
-                    <!-- loan_status_id -->
+                    <button
+                      @click="editLoan(l.id)"
+                      class="px-1 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      @click="openDeleteModal(l.id)"
+                      class="px-1 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-sm"
+                    >
+                      Delete
+                    </button>
+                      
+                                        <!-- loan_status_id -->
                     <button disabled
                       :class="[
                         'px-1 py-0.1 rounded text-sm border',
@@ -520,19 +532,6 @@ onMounted(() => {
                       ]"
                     >
                       {{ l.loan_check_status == 1 ? 'Approved' : 'Pending' }}
-                    </button>
-
-                    <button
-                      @click="editLoan(l.id)"
-                      class="px-1 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      @click="openDeleteModal(l.id)"
-                      class="px-1 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-sm"
-                    >
-                      Delete
                     </button>
                   </div>
                 </td>
