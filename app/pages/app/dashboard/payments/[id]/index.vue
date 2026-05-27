@@ -310,6 +310,11 @@ const calculatePayment = () => {
     String(paymentForm.schedule_totalpreless).replace(/,/g, '') || 0
   )
 
+  const cashin3 = Number(
+    String(paymentForm.schedule_cashin_3).replace(/,/g, '') || 0
+  )
+  
+
   // const interest = (rate / 100) * outstanding
   const interest = calculateScheduleInterest(paymentSchedule.value?.schedule_totaldays ?? 0, rate, outstanding, fixDouble)  
   const totalpay = interest + principle
@@ -331,9 +336,9 @@ function calculateScheduleInterest(
   fixDouble: (value: number, precision: number) => number
 ): number {
   if (totalDays >= 28 && totalDays <= 31) {
-    return rate * outstanding
+    return (rate/100) * outstanding
   } else {
-    return fixDouble((rate / 30) * outstanding * totalDays, 3)
+    return fixDouble(((rate / 100) / 30) * outstanding * totalDays, 3)
   }
 }
 
@@ -971,7 +976,7 @@ function calculateScheduleInterest(
                   :value="paymentForm.schedule_over_draft?.toLocaleString()"
                   @input="(e) => {
                     onInputNumber(e, 'schedule_over_draft', paymentForm) 
-                    calculatePayment
+                    calculatePayment()
                   }"
                   class="w-full text-sm border rounded px-3 py-2"
                   :class="paymentItem?.loantype_id !== 14 ? 'bg-gray-100 dark:bg-gray-800' : ''"
@@ -987,7 +992,7 @@ function calculateScheduleInterest(
                   :value="paymentForm.schedule_principle?.toLocaleString()"
                   @input="(e) => {
                     onInputNumber(e, 'schedule_principle', paymentForm)
-                    calculatePayment
+                    calculatePayment()
                   }"
                   class="w-full text-sm border rounded px-3 py-2"
                   :class="paymentItem?.loantype_id === 13 ? 'bg-gray-100 dark:bg-gray-800' : ''"
@@ -1017,7 +1022,7 @@ function calculateScheduleInterest(
                   :value="paymentForm.schedule_cashin_3?.toLocaleString()"
                   @input="(e) => {
                     onInputNumber(e, 'schedule_cashin_3', paymentForm) 
-                    calculatePayment
+                    calculatePayment()
                   }"
                   class="w-full text-sm border rounded px-3 py-2" />
               </div>
