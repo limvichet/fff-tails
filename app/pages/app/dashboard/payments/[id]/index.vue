@@ -995,12 +995,20 @@ function calculateScheduleInterest(
                     calculatePayment()
                   }"
                   class="w-full text-sm border rounded px-3 py-2"
-                  :class="paymentItem?.loantype_id === 13 &&
-                          paymentForm.schedule_outstanding !== paymentForm.schedule_cashin_3
-                          ? 'bg-gray-100 dark:bg-gray-800'
-                          : ''"
-                  :readonly="paymentItem?.loantype_id === 13 &&
-                            paymentForm.schedule_outstanding !== paymentForm.schedule_cashin_3"
+                  :class="
+                    paymentItem?.loantype_id === 13 &&
+                    (parseFloat(String(paymentForm.schedule_outstanding).replace(/,/g, '')) + parseFloat(String(paymentForm.schedule_interest).replace(/,/g, ''))) !== parseFloat(String(paymentForm.schedule_totalcashin).replace(/,/g, ''))
+                    ? 'bg-gray-100 dark:bg-gray-800'
+                    : ''
+                  "
+                  :readonly="
+                    paymentItem?.loantype_id === 13 &&
+                    (
+                      parseFloat(String(paymentForm.schedule_outstanding).replace(/,/g, '')) +
+                      parseFloat(String(paymentForm.schedule_interest).replace(/,/g, ''))
+                    ) !==
+                    parseFloat(String(paymentForm.schedule_totalcashin).replace(/,/g, ''))
+                  "
                 />
               </div>
 
