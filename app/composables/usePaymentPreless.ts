@@ -237,7 +237,7 @@ export const usePaymentPreless = () => {
     if (!confirm("Delete this item?")) return
 
     try {
-      await $fetch(`/api/admin-secure/payment-cashins/${id}`, {
+      await $fetch(`/api/admin-secure/payment-prelesses/${id}`, {
         method: "DELETE"
       })
 

@@ -194,7 +194,7 @@ const {
   getIndex,
   totalRecords,
   paginatedData
-} = usePagination(schedules, 10)
+} = usePagination(schedules, 30)
 
 // --------------------
 // Fetch Data
@@ -995,8 +995,12 @@ function calculateScheduleInterest(
                     calculatePayment()
                   }"
                   class="w-full text-sm border rounded px-3 py-2"
-                  :class="paymentItem?.loantype_id === 13 ? 'bg-gray-100 dark:bg-gray-800' : ''"
-                  :readonly="paymentItem?.loantype_id === 13"
+                  :class="paymentItem?.loantype_id === 13 &&
+                          paymentForm.schedule_outstanding !== paymentForm.schedule_cashin_3
+                          ? 'bg-gray-100 dark:bg-gray-800'
+                          : ''"
+                  :readonly="paymentItem?.loantype_id === 13 &&
+                            paymentForm.schedule_outstanding !== paymentForm.schedule_cashin_3"
                 />
               </div>
 
@@ -1024,7 +1028,7 @@ function calculateScheduleInterest(
                     onInputNumber(e, 'schedule_cashin_3', paymentForm) 
                     calculatePayment()
                   }"
-                  class="w-full text-sm border rounded px-3 py-2" />
+                  class="w-full text-sm border rounded px-3 py-2 bg-gray-100 dark:bg-gray-800" readonly/>
               </div>
 
               <!-- REMAIN CASH -->

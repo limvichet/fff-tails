@@ -39,7 +39,7 @@ const {
   getIndex,
   totalRecords,
   paginatedData: paginatedSchedules,
-} = usePagination(schedules, 10)
+} = usePagination(schedules, 30)
 
 // --------------------
 // Types
