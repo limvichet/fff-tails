@@ -671,7 +671,7 @@ function calculateScheduleInterest(
                     <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ formatDateForOutput(new Date(item.created_at)) }}</td>
                     <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ item.note }}</td>
                     <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 space-x-2">
-                      <button @click="paymentCashinEditItem(item)"
+                      <!-- <button @click="paymentCashinEditItem(item)"
                         class="inline-flex items-center gap-1 px-1 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm">
                         <component :is="PencilIcon" class="w-4 h-4" />
                       </button>
@@ -679,8 +679,8 @@ function calculateScheduleInterest(
                       <button @click="paymentCashinDeleteItem(Number(item.id))"
                         class="inline-flex items-center gap-0.5 px-1 py-1 rounded bg-red-400 hover:bg-red-600 text-white text-sm">
                         <component :is="TrashIcon" class="w-4 h-4" />
-                      </button>
-                      <!-- <button @click="paymentCashinEditItem(item)"
+                      </button> -->
+                      <button @click="paymentCashinEditItem(item)"
                         :disabled="user?.id !== item.created_by"
                         :class="['inline-flex items-center gap-1 px-1 py-1 rounded text-white text-sm',
                           user?.id === item.created_by
@@ -700,7 +700,7 @@ function calculateScheduleInterest(
                         ]"
                       >
                         <component :is="TrashIcon" class="w-4 h-4" />
-                      </button> -->
+                      </button>
                     </td>
                   </tr>
                 </tbody>
@@ -829,7 +829,7 @@ function calculateScheduleInterest(
                     <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ formatDateForOutput(new Date(item.created_at)) }}</td>
                     <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500">{{ item.note }}</td>
                     <td class="px-2 py-2 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 space-x-2">
-                      <button @click="paymentPrelessEditItem(item)"
+                      <!-- <button @click="paymentPrelessEditItem(item)"
                         class="inline-flex items-center gap-1 px-1 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm">
                         <component :is="PencilIcon" class="w-4 h-4" />
                       </button>
@@ -837,8 +837,8 @@ function calculateScheduleInterest(
                       <button @click="paymentPrelessDeleteItem(Number(item.id))"
                         class="inline-flex items-center gap-0.5 px-1 py-1 rounded bg-red-400 hover:bg-red-600 text-white text-sm">
                         <component :is="TrashIcon" class="w-4 h-4" />
-                      </button>
-                      <!-- <button @click="paymentPrelessEditItem(item)"
+                      </button> -->
+                      <button @click="paymentPrelessEditItem(item)"
                         :disabled="user?.id !== item.created_by"
                         :class="['inline-flex items-center gap-1 px-1 py-1 rounded text-white text-sm',
                           user?.id === item.created_by
@@ -858,7 +858,7 @@ function calculateScheduleInterest(
                         ]"
                       >
                         <component :is="TrashIcon" class="w-4 h-4" />
-                      </button> -->
+                      </button>
                     </td>
                   </tr>
                 </tbody>
