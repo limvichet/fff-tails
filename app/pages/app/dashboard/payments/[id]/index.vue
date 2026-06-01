@@ -680,7 +680,7 @@ function calculateScheduleInterest(
                         class="inline-flex items-center gap-0.5 px-1 py-1 rounded bg-red-400 hover:bg-red-600 text-white text-sm">
                         <component :is="TrashIcon" class="w-4 h-4" />
                       </button> -->
-                      <button @click="paymentCashinEditItem(item)"
+                      <button v-if="paymentCashinShowSaveButton" @click="paymentCashinEditItem(item)"
                         :disabled="user?.id !== item.created_by"
                         :class="['inline-flex items-center gap-1 px-1 py-1 rounded text-white text-sm',
                           user?.id === item.created_by
@@ -691,7 +691,7 @@ function calculateScheduleInterest(
                         <component :is="PencilIcon" class="w-4 h-4" />
                       </button>
               
-                      <button @click="paymentCashinDeleteItem(Number(item.id))"
+                      <button v-if="paymentCashinShowSaveButton" @click="paymentCashinDeleteItem(Number(item.id))"
                         :disabled="user?.id !== item.created_by"
                         :class="['inline-flex items-center gap-0.5 px-1 py-1 rounded text-white text-sm',
                           user?.id === item.created_by
@@ -838,7 +838,7 @@ function calculateScheduleInterest(
                         class="inline-flex items-center gap-0.5 px-1 py-1 rounded bg-red-400 hover:bg-red-600 text-white text-sm">
                         <component :is="TrashIcon" class="w-4 h-4" />
                       </button> -->
-                      <button @click="paymentPrelessEditItem(item)"
+                      <button v-if="paymentPrelessShowSaveButton" @click="paymentPrelessEditItem(item)"
                         :disabled="user?.id !== item.created_by"
                         :class="['inline-flex items-center gap-1 px-1 py-1 rounded text-white text-sm',
                           user?.id === item.created_by
@@ -849,7 +849,7 @@ function calculateScheduleInterest(
                         <component :is="PencilIcon" class="w-4 h-4" />
                       </button>
               
-                      <button @click="paymentPrelessDeleteItem(Number(item.id))"
+                      <button v-if="paymentPrelessShowSaveButton" @click="paymentPrelessDeleteItem(Number(item.id))"
                         :disabled="user?.id !== item.created_by"
                         :class="['inline-flex items-center gap-0.5 px-1 py-1 rounded text-white text-sm',
                           user?.id === item.created_by
