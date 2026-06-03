@@ -337,6 +337,8 @@ function calculateScheduleInterest(
 ): number {
   if (totalDays >= 28 && totalDays <= 31) {
     return (rate/100) * outstanding
+  } else if (totalDays == 1) {
+    return fixDouble((rate / 100) * outstanding * totalDays, 3)
   } else {
     return fixDouble(((rate / 100) / 30) * outstanding * totalDays, 3)
   }
