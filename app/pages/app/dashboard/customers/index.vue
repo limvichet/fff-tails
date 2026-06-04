@@ -95,7 +95,7 @@ const searchInput = ref("")
 const searchQuery = ref("")
 
 const page = ref(1)
-const perPage = 10
+const perPage = 30
 const total = ref(0)
 const lastPageValue = ref(1)
 

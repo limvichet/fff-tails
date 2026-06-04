@@ -34,7 +34,7 @@ const {
   paginatedData: paginatedSchedules,
   nextPage,
   prevPage
-} = usePagination(schedules, 10)
+} = usePagination(schedules, 30)
 
 const { successMsg, errorMsg } = useMessage()
 const loading = ref(false)
