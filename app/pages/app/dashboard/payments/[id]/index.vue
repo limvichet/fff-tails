@@ -18,6 +18,7 @@ import { formatDateForOutput } from '~/utils/date'
 import { formatNumber } from "@/utils/number"
 import { PencilIcon, TrashIcon} from "@/icons";
 import {onInputNumber} from "~/utils/number"
+import { PER_PAGE } from '~/constants/pagination';
 
 const { user } = useAuth()
 
@@ -194,7 +195,7 @@ const {
   getIndex,
   totalRecords,
   paginatedData
-} = usePagination(schedules, 30)
+} = usePagination(schedules, PER_PAGE)
 
 // --------------------
 // Fetch Data

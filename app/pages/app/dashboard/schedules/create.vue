@@ -14,9 +14,10 @@ useHead({
 
 import { ref, reactive, onMounted, onActivated, watch } from "vue"
 import ComponentCard from "@/components/common/ComponentCard.vue"
-import ComponentSubmitCard from "@/components/common/ComponentSubmitCard.vue"
+// import ComponentSubmitCard from "@/components/common/ComponentSubmitCard.vue"
 import CommonCustomerSelect2 from "@/components/common/CommonCustomerSelect2.vue"
 import ComponentGrowCard from "@/components/common/ComponentGrowCard.vue"
+import { PER_PAGE } from '~/constants/pagination';
 
 
 import { useSchedule } from "@/composables/useSchedule"
@@ -34,7 +35,7 @@ const {
   paginatedData: paginatedSchedules,
   nextPage,
   prevPage
-} = usePagination(schedules, 30)
+} = usePagination(schedules, PER_PAGE)
 
 const { successMsg, errorMsg } = useMessage()
 const loading = ref(false)

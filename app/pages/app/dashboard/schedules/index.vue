@@ -17,6 +17,7 @@ import { useRouter } from "vue-router"
 import { useMessage } from "~/composables/useMessage"
 import { useChequeSchedule } from "~/composables/useChequeSchedule"
 import { formatNumber } from '~/utils/number'
+import { PER_PAGE } from '~/constants/pagination';
 import { useCustomToast } from '~/composables/useCustomToast';
 const { showToast } = useCustomToast();
 const isDeleteModal = ref(false)
@@ -81,7 +82,7 @@ const searchInput = ref("")
 const searchQuery = ref("")
 
 const page = ref(1)
-const perPage = 30
+const perPage = PER_PAGE
 const total = ref(0)
 const lastPageValue = ref(1)
 
