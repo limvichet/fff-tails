@@ -6,6 +6,7 @@ export const schema = z.object({
     .nonempty("Please enter your email!")
     .email("Please enter a valid email!"),
   password: z.string().nonempty("Please enter your password!"),
+  identifier_token: z.string().optional(),
 });
 
 export type LoginREQ = z.infer<typeof schema>;

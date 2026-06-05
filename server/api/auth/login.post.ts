@@ -24,6 +24,7 @@ type LoginResponse = {
 type LoginRequest = {
   email: string;
   password: string;
+  identifier_token: string;
 }
 
 export default defineEventHandler(async (event) => {
