@@ -347,14 +347,15 @@ onMounted(() => {
               <tr class="border-b border-gray-200 dark:border-gray-700">
                 <th class="px-2 py-3 text-left text-sm w-[2%]">#</th>
                 <th class="px-1 py-3 text-left text-sm w-[3%]">Loan</th>
-                <th class="px-1 py-3 text-left text-sm w-[12%]">Customer</th>
-                <th class="px-1 py-3 text-left text-sm w-[12%]">New</th>
-                <th class="px-1 py-3 text-left text-sm w-[12%]">Total</th>
-                <th class="px-1 py-3 text-left text-sm w-[12%]">Tag</th>
-                <th class="px-1 py-3 text-left text-sm w-[13%]">Created</th>
-                <th class="px-1 py-3 text-left text-sm w-[13%]">Updated</th>
-                <th class="px-5 py-3 text-left text-sm w-[10%]">Contracts</th>
-                <th class="px-5 py-3 text-left text-sm w-auto">Actions</th>
+                <th class="px-1 py-3 text-left text-sm w-[10%]">Customer</th>
+                <th class="px-1 py-3 text-left text-sm w-[10%]">New</th>
+                <th class="px-1 py-3 text-left text-sm w-[10%]">Total</th>
+                <th class="px-1 py-3 text-left text-sm w-[8%]">Tag</th>
+                <th class="px-1 py-3 text-left text-sm w-[10%]">Created</th>
+                <th class="px-1 py-3 text-left text-sm w-[10%]">Updated</th>
+                <th class="px-1 py-3 text-left text-sm w-[7%]">Contracts</th>
+                <th class="px-1 py-3 text-left text-sm w-[13%]">Status</th>
+                <th class="px-1 py-3 text-left text-sm w-[12%]">Actions</th>
               </tr>
             </thead>
 
@@ -395,15 +396,15 @@ onMounted(() => {
                     <span>{{ l.updatedby.employee.full_name }} - {{ formatDateForOutput(new Date(l.updated_at)) }} </span> 
                   </td>
 
-                <!-- contacts -->
+                <!-- contracts -->
                 <td class="px-1 py-1 text-sm">
-                  <div v-if="l.count_schedule > 0" class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-6">
+                  <div v-if="l.count_schedule > 0" class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-2">
 
 
                     <div :ref="(el) => setMenuRef(l.id, el as HTMLElement)" class="relative inline-block">
                       <!-- Button -->
                       <button @click.stop="toggleMenu(l.id)" type="button"
-                        class="inline-flex items-center gap-1 rounded-md bg-cyan-800 px-2 py-1 text-sm font-medium text-white shadow-sm transition hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400">
+                        class="inline-flex items-center gap-1 rounded-md bg-cyan-800 px-2 py-1 text-[10px] font-medium text-white shadow-sm transition hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-400">
                         <Printer class="w-3 h-3" />
                         Print
                         <ChevronDown class="w-4 h-4 transition-transform duration-200"
@@ -501,26 +502,13 @@ onMounted(() => {
                   </div>
                 </td>
 
-                <!-- action -->
+                <!-- status -->
                 <td class="px-1 py-1 text-sm">
-                  <div class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-6">
-                    <button
-                      @click="editLoan(l.id)"
-                      class="px-1 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      @click="openDeleteModal(l.id)"
-                      class="px-1 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-sm"
-                    >
-                      Delete
-                    </button>
-                      
-                                        <!-- loan_status_id -->
+                  <div class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-2">
+                    <!-- loan_status_id -->
                     <button disabled
                       :class="[
-                        'px-1 py-0.1 rounded text-sm border',
+                        'px-1 py-0.1 rounded text-[10px] border',
                         l.loan_status_id == 1
                           ? 'text-indigo-700 border-indigo-600 bg-indigo-600/20 hover:bg-indigo-600/30'
                           : 'text-slate-700 border-slate-500 bg-slate-500/20 hover:bg-slate-500/30'
@@ -532,13 +520,31 @@ onMounted(() => {
                     <!-- loan_check_status -->
                     <button disabled
                       :class="[
-                        'px-1 py-0.1 rounded text-sm border',
+                        'px-1 py-0.1 rounded text-[10px] border',
                         l.loan_check_status == 1
                           ? 'text-lime-700 border-lime-600 bg-lime-600/20 hover:bg-lime-600/30'
                           : 'text-yellow-700 border-yellow-500 bg-yellow-500/20 hover:bg-yellow-500/30'
                       ]"
                     >
                       {{ l.loan_check_status == 1 ? 'Approved' : 'Pending' }}
+                    </button>
+                  </div>
+                </td>
+
+                <!-- action -->
+                <td class="px-1 py-1 text-sm">
+                  <div class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-2">
+                    <button
+                      @click="editLoan(l.id)"
+                      class="px-1 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      @click="openDeleteModal(l.id)"
+                      class="px-1 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-sm"
+                    >
+                      Delete
                     </button>
                   </div>
                 </td>
