@@ -166,6 +166,7 @@ const submitForm = handleSubmit(
 
                       <!-- identifier_token -->
                       <input
+                        id="identifier_token"
                         type="hidden"
                         v-model="fields.identifier_token.model.value"
                       />                      

@@ -117,6 +117,7 @@ type LoanRecord = {
     loan_lastcash:     string;
     loan_newcash:      string;
     loan_totalcash:    string;
+    loan_tag:          string;
     cust_id:           number;
     loantype_id?:       number;
     loan_status_id:    number;
@@ -349,6 +350,7 @@ onMounted(() => {
                 <th class="px-1 py-3 text-left text-sm w-[12%]">Customer</th>
                 <th class="px-1 py-3 text-left text-sm w-[12%]">New</th>
                 <th class="px-1 py-3 text-left text-sm w-[12%]">Total</th>
+                <th class="px-1 py-3 text-left text-sm w-[12%]">Tag</th>
                 <th class="px-1 py-3 text-left text-sm w-[13%]">Created</th>
                 <th class="px-1 py-3 text-left text-sm w-[13%]">Updated</th>
                 <th class="px-5 py-3 text-left text-sm w-[10%]">Contracts</th>
@@ -380,6 +382,10 @@ onMounted(() => {
 
                 <td class="px-1 py-1 text-sm">
                   {{ formatNumber(Number(l.loan_totalcash || 0)) }}
+                </td>
+
+                <td class="px-1 py-1 text-sm">
+                  {{ l.loan_tag }}
                 </td>
 
                   <td class="px-1 py-2 text-sm">

@@ -46,6 +46,7 @@ type Loarnrecord = {
     loan_lastcash:     string
     loan_newcash:      string
     loan_totalcash:    string
+    loan_tag:          string
     cust_id:           number
     loantype_id:       number
     loan_status_id:    number

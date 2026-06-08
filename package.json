@@ -7,7 +7,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "dev": "NODE_OPTIONS=--max-old-space-size=4096 nuxt dev"
+    "dev": "TMPDIR=/tmp nuxi dev"
   },
   "dependencies": {
     "@nuxt/fonts": "0.12.1",
