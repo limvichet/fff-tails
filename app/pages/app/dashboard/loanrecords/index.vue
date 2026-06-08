@@ -351,11 +351,11 @@ onMounted(() => {
                 <th class="px-1 py-3 text-left text-sm w-[10%]">New</th>
                 <th class="px-1 py-3 text-left text-sm w-[10%]">Total</th>
                 <th class="px-1 py-3 text-left text-sm w-[8%]">Tag</th>
-                <th class="px-1 py-3 text-left text-sm w-[10%]">Created</th>
-                <th class="px-1 py-3 text-left text-sm w-[10%]">Updated</th>
+                <th class="px-1 py-3 text-left text-sm w-[15%]">Created</th>
+                <th class="px-1 py-3 text-left text-sm w-[15%]">Updated</th>
                 <th class="px-1 py-3 text-left text-sm w-[7%]">Contracts</th>
-                <th class="px-1 py-3 text-left text-sm w-[13%]">Status</th>
-                <th class="px-1 py-3 text-left text-sm w-[12%]">Actions</th>
+                <th class="px-1 py-3 text-left text-sm w-[10%]">Status</th>
+                <th class="px-1 py-3 text-left text-sm w-[10%]">Actions</th>
               </tr>
             </thead>
 
@@ -398,7 +398,7 @@ onMounted(() => {
 
                 <!-- contracts -->
                 <td class="px-1 py-1 text-sm">
-                  <div v-if="l.count_schedule > 0" class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-2">
+                  <div v-if="l.count_schedule > 0" class="flex flex-wrap items-center justify-center gap-1">
 
 
                     <div :ref="(el) => setMenuRef(l.id, el as HTMLElement)" class="relative inline-block">
@@ -504,7 +504,7 @@ onMounted(() => {
 
                 <!-- status -->
                 <td class="px-1 py-1 text-sm">
-                  <div class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-2">
+                  <div class="flex flex-wrap items-center justify-left gap-1 py-1">
                     <!-- loan_status_id -->
                     <button disabled
                       :class="[
@@ -533,7 +533,7 @@ onMounted(() => {
 
                 <!-- action -->
                 <td class="px-1 py-1 text-sm">
-                  <div class="flex flex-wrap items-center justify-left gap-1 py-1 sm:px-2">
+                  <div class="flex flex-wrap items-center justify-left gap-1 py-1">
                     <button
                       @click="editLoan(l.id)"
                       class="px-1 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm"
