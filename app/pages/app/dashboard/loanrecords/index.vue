@@ -419,31 +419,37 @@ onMounted(() => {
                         leave-from-class="opacity-100 scale-100 translate-y-0"
                         leave-to-class="opacity-0 scale-95 translate-y-1">
                         <div v-if="openId === l.id"
-                          class="absolute right-0 z-50 mt-2 w-30 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl">
+                          class="absolute right-0 z-50 mt-2 w-26 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl">
                           <div class="p-1">
                             <a :href="`/app/dashboard/schedules/prints/${l.id}/print-sched`" target="_blank"
-                              class="flex items-center rounded-lg px-4 py-2.5 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
+                              class="flex items-center rounded-lg px-2 py-2 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
                               📄 Schedule
                             </a>
 
                             <a :href="`/app/dashboard/loanrecords/prints/${l.id}/print-atm`" target="_blank"
-                              class="flex items-center rounded-lg px-4 py-2.5 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
+                              class="flex items-center rounded-lg px-2 py-2 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
                               💳 ATM
                             </a>
 
                             <a :href="`/app/dashboard/loanrecords/prints/${l.id}/print-landlayout`" target="_blank"
-                              class="flex items-center rounded-lg px-4 py-2.5 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
+                              class="flex items-center rounded-lg px-2 py-2 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
                               🗺️ Land
                             </a>
 
                             <a :href="`/app/dashboard/schedules/prints/${l.id}/print-sched2`" target="_blank"
-                              class="flex items-center rounded-lg px-4 py-2.5 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
+                              class="flex items-center rounded-lg px-2 py-2 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
                               📑 Schedule 2
                             </a>
 
                             <a :href="`/app/dashboard/loanrecords/prints/${l.id}/print-receipt2`" target="_blank"
-                              class="flex items-center rounded-lg px-4 py-2.5 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
+                              class="flex items-center rounded-lg px-2 py-2 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
                               🧾 Receipt 2
+                            </a>
+
+                            <a
+                              :href="`/app/dashboard/loanrecords/prints/${l.id}/print-contract2`" target="_blank"
+                              class="flex items-center rounded-lg px-2 py-2 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
+                              📄 Contract2
                             </a>
                           </div>
                         </div>
