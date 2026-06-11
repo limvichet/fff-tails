@@ -17,7 +17,7 @@
   }>()
 
   import { numUnicode, formatNumber } from "~/utils/number"
-  import { formatFullDate, formatYear } from "~/utils/date"
+  import { formatFullDate, formatYear,formatDayOnly  } from "~/utils/date"
   import { UnicodeHelper } from '~/utils/unicodeHelper'
 
 
@@ -117,7 +117,9 @@
               ({{UnicodeHelper.spellkhmer(loan2.contract_schedule_totalpay_first)}}{{loanrecord.currency.currency_kh}}គត់)</b> 
               គិតចាប់ពី<b>{{formatFullDate(loan2.contract_schedule_totalpay_first_date) }}
               ដល់ថ្ងៃទី{{formatFullDate(loan2.contract_schedule_totalpay_last_date) }}</b>
-              ហើយភាគី “ខ”  យល់ព្រមបង់រំលោះប្រាក់ដើមរាល់ថ្ងៃទី១ <b>ឬយ៉ាងយូរត្រឹមថ្ងៃទី៤</b>រៀងរាល់ខែ<b>ជាថ្ងៃកំណត់នៃការបង់រំលោះប្រាក់ដើម</b>ដោយមិនអាចឲ្យខកខានបានឡើយ។
+              ហើយភាគី “ខ”  យល់ព្រមបង់រំលោះប្រាក់ដើម
+              <b>យ៉ាងយូរ{{ formatDayOnly(loan2.contract_schedule_first_paid_date) }}</b>
+              រាល់ខែ<b>ជាថ្ងៃកំណត់នៃការបង់រំលោះប្រាក់ដើម</b>ដោយមិនអាចឲ្យខកខានបានឡើយ។
               ចំពោះទឹកប្រាក់ដើមដែលនៅសល់ចំនួន <b>{{numUnicode(formatNumber(loan2.contract_schedule_totalpay_last))}}{{loanrecord.currency.currency_kh }}
               ({{UnicodeHelper.spellkhmer(loan2.contract_schedule_totalpay_last)}}{{loanrecord.currency.currency_kh}}គត់)</b>
               ភាគី “ខ” សន្យាបង់នៅ<b>{{formatFullDate(loan2.contract_schedule_totalpay_last_date) }}</b> ជាកំហិត។

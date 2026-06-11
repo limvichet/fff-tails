@@ -90,3 +90,21 @@ export function formatFullDate(dateInput: string) {
 
   return `ថ្ងៃទី${day} ខែ${month} ឆ្នាំ${year}`
 }
+
+
+export function formatDayOnly(dateInput: string) {
+  if (!dateInput) return ""
+
+  let date: Date
+
+  if (dateInput.includes("/")) {
+    const [d, m, y] = dateInput.split("/")
+    date = new Date(`${y}-${m}-${d}`)
+  } else {
+    date = new Date(dateInput)
+  }
+
+  const day = numUnicode(date.getDate())
+
+  return `ថ្ងៃទី${day}`
+}

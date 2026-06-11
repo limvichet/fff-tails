@@ -141,6 +141,7 @@ type Loan2 = {
   contract_schedule_totalpay_first_date: string
   contract_schedule_totalpay_last: string
   contract_schedule_totalpay_last_date: string
+  contract_schedule_first_paid_date: string
   bank: string
 }
 type Cheque = {
