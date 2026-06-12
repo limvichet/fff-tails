@@ -208,6 +208,24 @@ const waitImageLoad = () => {
         </span>
         <span v-else>ថ្ងៃទី......................</span>
 
+        <!-- customer2 -->
+        <span v-if="loanrecord!.customer.cust_name_2">
+          និង{{ loanrecord!.customer.nametitle2?.nametitle_kh }}
+          <strong>{{ loanrecord!.customer.cust_name_2 }}</strong>
+
+          កើតឆ្នាំ{{ numUnicode(formatYear(loanrecord!.customer.cust_dob_2)) }}
+
+          កាន់{{ loanrecord!.customer.identification2?.identification_kh }}
+
+          លេខ{{ numUnicode(loanrecord!.customer.cust_idcardnum_2) }}
+
+          ចុះ
+          <span v-if="loanrecord!.customer.cust_idcardnum_date_2">
+            {{ formatFullDate(loanrecord!.customer.cust_idcardnum_date_2) }}
+          </span>
+          <span v-else>ថ្ងៃទី......................</span>
+        </span>
+
         <!-- ADDRESS -->
         <span v-if="loanrecord!.customer.cust_address">
           មានអាសយដ្ឋានស្ថិតនៅ{{ loanrecord!.customer.cust_address }}
@@ -260,7 +278,7 @@ const waitImageLoad = () => {
       </div>
 
       <!-- SIGNATURE GRID -->
-      <div class="row between mt">
+      <div class="row around mt">
 
         <!-- CAPITAL -->
         <div>
