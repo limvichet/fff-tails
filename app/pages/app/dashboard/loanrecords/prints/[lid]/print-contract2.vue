@@ -21,7 +21,7 @@ import ContractType10 from '~/components/loanrecords/contracts2/ContractType10.v
 function getComponent(type: number) {
   switch (type) {
     case 1: return ContractType1
-    // case 3: return ContractType3
+    case 3: return ContractType3
     // case 4: return ContractType4
     // case 5: return ContractType5
     // case 6: return ContractType6
