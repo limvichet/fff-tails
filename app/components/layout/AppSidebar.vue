@@ -75,8 +75,7 @@ const menuGroups = [
         icon: PieChartIcon,
         name: "Reports",
         subItems: [
-          { name: "Create", path: "/app/dashboard/s/create", pro: false, icon: PencilIcon  },
-          { name: "Search", path: "/app/dashboard/s", pro: false, icon: SearchIcon  },
+          { name: "Filter", path: "/app/dashboard/reports", pro: false, icon: SearchIcon  },
         ],
       },
 

@@ -895,7 +895,7 @@
             <div v-if="form.img1_src" class="mt-4">
               <div class="relative group w-full">
                 <a :href="form.img1_src" target="_blank" rel="noopener noreferrer" class="block">
-                  <img :src="form.img1_src" @click="openImg1" @contextmenu.prevent
+                  <img :src="form.img1_src" @click="openImg1"
                     class="w-full h-50 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
                 </a>
                 <div
@@ -917,7 +917,7 @@
             <div v-if="form.img2_src" class="mt-4">
               <div class="relative group w-full">
                 <a :href="form.img2_src" target="_blank" rel="noopener noreferrer" class="block">
-                  <img :src="form.img2_src" @click="openImg2" @contextmenu.prevent
+                  <img :src="form.img2_src" @click="openImg2"
                     class="w-full h-50 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
                 </a>
                 <div
@@ -961,7 +961,7 @@
             <div v-if="form.photo2_src" class="mt-4">
               <div class="relative group w-1/2">
                 <a :href="form.photo2_src" target="_blank" rel="noopener noreferrer" class="block">
-                  <img :src="form.photo2_src" @click="openPhoto2" @contextmenu.prevent
+                  <img :src="form.photo2_src" @click="openPhoto2"
                     class="w-full h-52 object-cover rounded-xl border shadow-md transition duration-300 hover:scale-[1.02] cursor-pointer" />
                 </a>
                 <div
