@@ -83,10 +83,10 @@
 
            <!-- ភាគី ក -->
           <p class="justify inden">
-            លោកស្រី <span class="muol fs-11">{{ capital.name }}</span> កើតឆ្នាំ {{ numUnicode(capital.birth_year) }}
+            លោកស្រី <span class="muol fs-10">{{ capital.name }}</span> កើតឆ្នាំ {{ numUnicode(capital.birth_year) }}
             កាន់អត្តសញ្ញាណប័ណ្ណសញ្ចាតិខ្មែរលេខ១៥០៩៧៧៨៨៩ ចុះថ្ងៃទី ២៥/១២/២០២០ មានទីលំនៅស្ថិតនៅភូមិកំពង់ក្របៅ
             សង្កាត់កំពង់ក្របៅ ក្រុងស្ទឹងសែន ខេត្តកំពង់ធំ ជាអ្នកឲ្យខ្ចី<span class="muol fs-10">(ម្ចាស់បំណុល)</span>
-            តទៅហៅកាត់ថា <span>ភាគី “ក”</span> ។
+            តទៅហៅកាត់ថា <span class="muol fs-10">ភាគី “ក”</span> ។
           </p>
 
            <!-- និង -->
@@ -109,16 +109,16 @@
           <!-- ភាគី គ -->
           <section>
             <p class="justify inden">
-              {{loanrecord!.guarantor.nametitle1?.nametitle_kh}} <b>{{ loanrecord!.guarantor.cust_name_1 }}</b> 
+              {{loanrecord!.guarantor.nametitle1?.nametitle_kh}} <span class="muol fs-10">{{ loanrecord!.guarantor.cust_name_1 }}</span> 
               កើតឆ្នាំ{{ numUnicode(formatYear(loanrecord!.guarantor.cust_dob_1)) }}
               កាន់{{ loanrecord!.guarantor.identification1.identification_kh }}លេខ{{ numUnicode(loanrecord!.guarantor.cust_idcardnum_1) }}
               ចុះ{{ formatFullDate(loanrecord!.guarantor.cust_idcardnum_date_1) }}
               សព្វថ្ងៃរស់នៅ{{loanrecord!.guarantor.cust_address ? loanrecord!.guarantor.cust_address : '' }}
-              ជាអ្នកធានាលើបំណុលហៅកាត់ថា <span class="muol fs-10 bold">ភាគី “គ”</span>។
+              ជាអ្នកធានាលើបំណុលហៅកាត់ថា <span class="muol fs-10">ភាគី “គ”</span>។
             </p>
           </section>
 
-          <p class="justify inden muol fs-10">ក្រោយពីបានពិភាក្សាគា្នយ៉ាងល្អិតល្អន់រួចមក ភាគីទាំងពីរបានព្រមពៀងគ្នាដូចខាងក្រោមៈ</p>
+          <p class="justify inden muol fs-10">ក្រោយពីបានពិភាក្សាគា្នយ៉ាងល្អិតល្អន់រួចមក ភាគីទាំងបីបានព្រមពៀងគ្នាដូចខាងក្រោមៈ</p>
          
           <!-- ប្រការ១ -->
           <section>
@@ -127,7 +127,7 @@
               ភាគី “ក” យល់ព្រមឲ្យភាគី “ខ”  ខ្ចីប្រាក់ចំនួន 
               <b>{{numUnicode(formatNumber(loan2.contract_schedule_totalpay_all))}}{{ loanrecord.currency.currency_kh }}
               ({{UnicodeHelper.spellkhmer(loan2.contract_schedule_totalpay_all)}}{{loanrecord.currency.currency_kh}}គត់)</b>
-              ដោយមិនគិតការប្រាក់ហើយភាគី “ខ”  ស្នើសុំបង់រំលោះសម្រាប់រយៈពេលចំនួន<b>{{ numUnicode(formatNumber(loanrecord.loan_peroid)) }}{{ loanrecord.loantype.loantype_shortcut }}</b> 
+              ដោយមិនគិតការប្រាក់ហើយភាគី “ខ”  ស្នើសុំបង់រំលោះសម្រាប់រយៈពេលចំនួន<b>{{ numUnicode(loanrecord.loan_peroid) }}{{ loanrecord.loantype.loantype_shortcut }}</b> 
               ក្នុង១ខែចំនួន <b>{{numUnicode(formatNumber(loan2.contract_schedule_totalpay_first))}}{{ loanrecord.currency.currency_kh }}
               ({{UnicodeHelper.spellkhmer(loan2.contract_schedule_totalpay_first)}}{{loanrecord.currency.currency_kh}}គត់)</b> 
               គិតចាប់ពី<b>{{formatFullDate(loan2.contract_schedule_totalpay_first_date) }}
@@ -214,7 +214,7 @@
           <section>
             <p class="mt muol fs-10">ប្រការ៣_</p>
             <p class="justify inden margin-l-40">
-              ភាគី “ខ” ព្រមដាក់ធានាមូលប្បទានប័ត្រធនាគារភ្នំពេញពាណិជ្ជ<b>ចំនួន៣សន្លឹក</b> សម្រាប់ទូទាត់ការបង់រំលោះប្រចាំខែ <b>ហើយ១សន្លឹក</b>ទៀតសម្រាប់ធានាឲ្យការមិនអនុវត្តកាតព្វកិច្ចដែលរហូតដល់សងប្រាក់អស់ដូចក្នុងប្រការ១ ដោយមូលប្បទានប័ត្រនេះចេញឡើងក្នុងគោលបំណងទូទាត់ប្រាក់ប្រចាំថ្ងៃតែប៉ុណ្ណោះ    មូលប្បទានប័ត្រទី៤ ដូចប្រការ២នេះអនុវត្តបានលុះត្រាតែភាគី “ខ”  មិនបានអនុវត្តសងប្រាក់ឲ្យបានត្រឹមត្រូវដូចប្រការ១។
+              ភាគី “ខ” ព្រមដាក់ធានាមូលប្បទានប័ត្រធនាគារ{{ loan2.bank }}<b>ចំនួន៣សន្លឹក</b> សម្រាប់ទូទាត់ការបង់រំលោះប្រចាំខែ <b>ហើយ១សន្លឹក</b>ទៀតសម្រាប់ធានាឲ្យការមិនអនុវត្តកាតព្វកិច្ចដែលរហូតដល់សងប្រាក់អស់ដូចក្នុងប្រការ១ ដោយមូលប្បទានប័ត្រនេះចេញឡើងក្នុងគោលបំណងទូទាត់ប្រាក់ប្រចាំថ្ងៃតែប៉ុណ្ណោះ    មូលប្បទានប័ត្រទី៤ ដូចប្រការ២នេះអនុវត្តបានលុះត្រាតែភាគី “ខ”  មិនបានអនុវត្តសងប្រាក់ឲ្យបានត្រឹមត្រូវដូចប្រការ១។
             </p>
           </section>
 
@@ -222,7 +222,7 @@
           <section>
             <p class="mt muol fs-10">ប្រការ៤_</p>
             <p class="justify inden margin-l-40">
-              ទោះបីមូលប្បទានប័ត្រទាំង៤ សន្លឹកដូចក្នុងប្រការ២ ចេញតែឈ្មោះ <b>{{loanrecord.customer.cust_name_1 }}</b> ឬឈ្មោះ <b>{{loanrecord.guarantor.cust_name_1}}</b>
+              ទោះបីមូលប្បទានប័ត្រទាំង៤ សន្លឹកដូចក្នុងប្រការ២ ចេញតែឈ្មោះ <b>{{loanrecord.customer.cust_name_1 }}</b> ឬឈ្មោះ <b>{{loanrecord.customer.cust_name_2}}</b> ឬឈ្មោះ <b>{{loanrecord.guarantor.cust_name_1}}</b>
               តែភាគី ខ ទាំងអស់បានព្រមព្រៀងគ្នាសហការទទួលខុសត្រូវរួមផ្លូវច្បាប់លើការចេញមូលប្បទានប័ត្រធនាគារនេះ។ 
             </p>
           </section>
@@ -341,6 +341,8 @@
           <span>ស្នាមមេដៃស្ដាំភាគី"ខ”</span>
           <div class="v-space"></div>
           <span>{{ loanrecord!.customer.cust_name_1 }}</span>
+          &nbsp;  &nbsp; &nbsp;
+          <span>{{ loanrecord!.customer.cust_name_2 }}</span>
         </div>
 
         <!-- guarantor -->

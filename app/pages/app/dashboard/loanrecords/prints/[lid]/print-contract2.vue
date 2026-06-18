@@ -20,14 +20,22 @@ import ContractType10 from '~/components/loanrecords/contracts2/ContractType10.v
 
 function getComponent(type: number) {
   switch (type) {
-    case 1: return ContractType1
-    case 3: return ContractType3
-    case 4: return ContractType4
-    case 5: return ContractType5
-    case 6: return ContractType6
-    case 7: return ContractType7
-    case 8: return ContractType8
+    /* cust_name_1 & cust_name_2 & guarantor & loan_collateral_1 */
     case 10: return ContractType10
+    /* cust_name_1 & guarantor & loan_collateral_1 */
+    case 8: return ContractType8
+    /* cust_name_1 & cust_name_2 & loan_collateral_1*/
+    case 7: return ContractType7
+    /* cust_name_1 & cust_name_2 & guarantor */
+    case 6: return ContractType6
+    /* cust_name_1 & loan_collateral_1 */
+    case 5: return ContractType5
+    /* cust_name_1 & guarantor */
+    case 4: return ContractType4
+    /* cust_name_1 & cust_name_2 */
+    case 3: return ContractType3
+    /* cust_name_1 */
+    case 1: return ContractType1
     default: return ContractType1
   }
 }
