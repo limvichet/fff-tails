@@ -30,6 +30,7 @@
   const customerName1 = ref<any[]>([])
   const currencies = ref<any[]>([])
   const loanTypes = ref<any[]>([])
+  const collateraltypes = ref<any[]>([])
   const sourceMoneys = ref<any[]>([])
   const paybacks = ref<any[]>([])
   const loanStatuses = ref<any[]>([])
@@ -53,6 +54,7 @@
       customerName1.value = map(data.customerName1)
       currencies.value = map(data.currencies)
       loanTypes.value = map(data.loanTypes)
+      collateraltypes.value = map(data.collateraltypes)
       sourceMoneys.value = data.sourceMoneys
       paybacks.value = map(data.paybacks)
       loanStatuses.value = map(data.loanStatuses)
@@ -75,6 +77,7 @@
     loan_principle:0,
     source_money:"",
     loantype_id:-1,
+    loan_collateraltype_id:-1,
     loan_over_draft:0,
     payback_id:1,
     loan_peroid:1,
@@ -166,6 +169,7 @@ const baseSchema = z.object({
   loan_principle:z.coerce.number().min(0,"Required"),
   source_money:z.string().nonempty("Required"),
   loantype_id:z.number().min(1,"Required"),
+  loan_collateraltype_id:z.number().optional(),
   loan_over_draft: z.coerce.number().optional(),
   payback_id:z.number().min(1,"Required"),
   loan_peroid:z.coerce.number().min(1,"Required"),
@@ -264,6 +268,7 @@ Object.keys(baseSchema.shape).forEach((field) => {
         "loan_peroid",
         "currency_id",
         "loantype_id",
+        "loan_collateraltype_id",
         "payback_id",
         "loan_status_id",
         "loan_check_status",
@@ -683,7 +688,7 @@ watch(form, () => {
         <span class="text-red-500 text-sm">{{ errors.loantype_id }}</span>
       </div>
       <select v-model.number="form.loantype_id" class="input">
-        <option value="-1">Choose...</option>
+        <option value="-1" disabled>Choose...</option>
         <option v-for="l in loanTypes" :key="l.id" :value="l.id">
           {{ l.label }}
         </option>
@@ -883,6 +888,21 @@ watch(form, () => {
 
   <!-- RIGHT -->
 <ComponentGrowCard title="3. Collateral/Note" class="h-full">
+
+  <!-- loan_collateraltype_id -->
+  <div>
+    <div class="flex items-center justify-between">
+      <label class="label">Type</label>
+      <span class="text-red-500 text-sm">{{ errors.loan_collateraltype_id }}</span>
+    </div>
+    <select v-model.number="form.loan_collateraltype_id" class="input">
+      <option value="-1">Choose...</option>
+      <option v-for="l in collateraltypes" :key="l.id" :value="l.id">
+        {{ l.label }}
+      </option>
+    </select>
+  </div>
+
   <!-- Collateral 1 -->
   <div>
     <div class="flex items-center justify-between">

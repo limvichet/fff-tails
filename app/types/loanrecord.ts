@@ -15,6 +15,7 @@ export interface LoanrecordFormDataResponse {
   // customerName2: Record<string, string | null>;
   currencies: Record<string, string>;
   loanTypes: Record<string, string>;
+  collateraltypes: Record<string, string>;
   paybacks: Record<string, string>;
   loanGroupPositions: Record<string, string>;
   loanStatuses: Record<string, string>;
