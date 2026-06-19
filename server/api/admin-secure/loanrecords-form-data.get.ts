@@ -1,7 +1,7 @@
 import { LoanrecordFormDataResponse } from "~/types/loanrecord";
 import { getCookie, createError } from "h3"
 
-const CACHE_TTL = 60 * 60 * 12; // 12 hours
+// const CACHE_TTL = 60 * 60 * 12; // 12 hours
 
 export default defineEventHandler(async (event) => {
   const { apiBaseUrl } = useRuntimeConfig(event);
@@ -24,16 +24,17 @@ export default defineEventHandler(async (event) => {
         headers: {
           Accept: "application/json",
           Authorization: `Bearer ${token}`,
+          'cache-control': 'no-cache'   // ✅ prevent upstream cache
         },
       }
     );
 
     // Caching for performance
-    setResponseHeader(
-      event,
-      "Cache-Control",
-      `public, max-age=${CACHE_TTL}, stale-while-revalidate=60`
-    );
+    // setResponseHeader(
+    //   event,
+    //   "Cache-Control",
+    //   `public, max-age=${CACHE_TTL}, stale-while-revalidate=60`
+    // );
 
     return res;
   } catch (error: any) {
