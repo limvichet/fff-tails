@@ -398,7 +398,7 @@ onMounted(() => {
 
                 <!-- contracts -->
                 <td class="px-1 py-1 text-sm">
-                  <div v-if="l.count_schedule > 0" class="flex flex-wrap items-center justify-center gap-1">
+                  <div v-if="l.count_schedule > 0" class="flex flex-wrap items-center justify-center gap-1 z-50">
 
 
                     <div :ref="(el) => setMenuRef(l.id, el as HTMLElement)" class="relative inline-block">
@@ -419,8 +419,8 @@ onMounted(() => {
                         leave-from-class="opacity-100 scale-100 translate-y-0"
                         leave-to-class="opacity-0 scale-95 translate-y-1">
                         <div v-if="openId === l.id"
-                          class="absolute right-0 z-50 mt-2 w-26 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl">
-                          <div class="p-1">
+                          class="fixed z-50 mt-2 w-26 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl">
+                          <div class="p-1 z-50">
                             <a :href="`/app/dashboard/schedules/prints/${l.id}/print-sched`" target="_blank"
                               class="flex items-center rounded-lg px-2 py-2 text-sm text-gray-700 transition hover:bg-cyan-50 hover:text-cyan-700">
                               📄 Schedule
@@ -456,54 +456,6 @@ onMounted(() => {
                       </Transition>
                     </div>
 
-
-                    <!-- <a
-                      :href="`/app/dashboard/schedules/prints/${l.id}/print-sched`"
-                      target="_blank" rel="noopener"
-                      class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-900 text-white text-sm"
-                    >
-                      Sched
-                    </a>
-
-                    <a
-                      :href="`/app/dashboard/loanrecords/prints/${l.id}/print-atm`"
-                      target="_blank" rel="noopener"
-                      class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-900 text-white text-sm"
-                    >
-                       ATM
-                    </a>
-
-                    <a
-                      :href="`/app/dashboard/loanrecords/prints/${l.id}/print-landlayout`"
-                      target="_blank" rel="noopener"
-                      class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-900 text-white text-sm"
-                    >
-                       Land
-                    </a>
-
-                    <a
-                      :href="`/app/dashboard/schedules/prints/${l.id}/print-sched2`"
-                      target="_blank" rel="noopener"
-                      class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
-                    >
-                       Sched2
-                    </a>
-
-                    <a
-                      :href="`/app/dashboard/loanrecords/prints/${l.id}/print-receipt2`"
-                      target="_blank" rel="noopener"
-                      class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
-                    >
-                       Receip2
-                    </a> -->
-
-                    <!-- <a
-                      :href="`/app/dashboard/loanrecords/prints/${l.id}/print-contract2`"
-                      target="_blank" rel="noopener"
-                      class="px-1 py-1 rounded bg-cyan-600 hover:bg-cyan-700 text-white text-sm"
-                    >
-                       Contract2
-                    </a> -->
                     
                   </div>
                 </td>

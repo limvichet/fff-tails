@@ -83,10 +83,10 @@
 
            <!-- ភាគី ក -->
           <p class="justify inden">
-            លោកស្រី <span class="muol fs-11">{{ capital.name }}</span> កើតឆ្នាំ {{ numUnicode(capital.birth_year) }}
+            លោកស្រី <span class="muol fs-10">{{ capital.name }}</span> កើតឆ្នាំ {{ numUnicode(capital.birth_year) }}
             កាន់អត្តសញ្ញាណប័ណ្ណសញ្ចាតិខ្មែរលេខ១៥០៩៧៧៨៨៩ ចុះថ្ងៃទី ២៥/១២/២០២០ មានទីលំនៅស្ថិតនៅភូមិកំពង់ក្របៅ
             សង្កាត់កំពង់ក្របៅ ក្រុងស្ទឹងសែន ខេត្តកំពង់ធំ ជាអ្នកឲ្យខ្ចី<span class="muol fs-10">(ម្ចាស់បំណុល)</span>
-            តទៅហៅកាត់ថា <span>ភាគី “ក”</span> ។
+            តទៅហៅកាត់ថា <span class="muol fs-10">ភាគី “ក”</span> ។
           </p>
 
            <!-- និង -->
@@ -109,16 +109,16 @@
           <!-- ភាគី គ -->
           <section>
             <p class="justify inden">
-              {{loanrecord!.guarantor.nametitle1?.nametitle_kh}} <b>{{ loanrecord!.guarantor.cust_name_1 }}</b> 
+              {{loanrecord!.guarantor.nametitle1?.nametitle_kh}} <span class="muol fs-10">{{ loanrecord!.guarantor.cust_name_1 }}</span> 
               កើតឆ្នាំ{{ numUnicode(formatYear(loanrecord!.guarantor.cust_dob_1)) }}
               កាន់{{ loanrecord!.guarantor.identification1.identification_kh }}លេខ{{ numUnicode(loanrecord!.guarantor.cust_idcardnum_1) }}
               ចុះ{{ formatFullDate(loanrecord!.guarantor.cust_idcardnum_date_1) }}
               សព្វថ្ងៃរស់នៅ{{loanrecord!.guarantor.cust_address ? loanrecord!.guarantor.cust_address : '' }}
-              ជាអ្នកធានាលើបំណុលហៅកាត់ថា <span class="muol fs-10 bold">ភាគី “គ”</span>។
+              ជាអ្នកធានាលើបំណុលហៅកាត់ថា <span class="muol fs-10">ភាគី “គ”</span>។
             </p>
           </section>
 
-          <p class="justify inden muol fs-10">ក្រោយពីបានពិភាក្សាគា្នយ៉ាងល្អិតល្អន់រួចមក ភាគីទាំងពីរបានព្រមពៀងគ្នាដូចខាងក្រោមៈ</p>
+          <p class="justify inden muol fs-10">ក្រោយពីបានពិភាក្សាគា្នយ៉ាងល្អិតល្អន់រួចមក ភាគីទាំងបីបានព្រមពៀងគ្នាដូចខាងក្រោមៈ</p>
          
           <!-- ប្រការ១ -->
           <section>
@@ -324,6 +324,8 @@
           <span>ស្នាមមេដៃស្ដាំភាគី"ខ”</span>
           <div class="v-space"></div>
           <span>{{ loanrecord!.customer.cust_name_1 }}</span>
+            &nbsp;  &nbsp; &nbsp;
+          <span>{{ loanrecord!.customer.cust_name_2 }}</span>
         </div>
 
         <!-- guarantor -->
