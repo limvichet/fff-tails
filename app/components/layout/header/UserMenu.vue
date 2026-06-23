@@ -1,3 +1,85 @@
+<script setup lang="ts">
+import { UserCircleIcon, ChevronDownIcon, LogoutIcon, SettingsIcon, InfoCircleIcon } from '@/icons'
+import { RouterLink } from 'vue-router'
+import { ref, onMounted, onUnmounted } from 'vue'
+import ModalChangePassword from './ModalChangePassword.vue';
+import ModalUserInformation from './ModalUserInformation.vue';
+import ModalSupport from './ModalSupport.vue';
+import { useAuth } from '@/composables/useAuth';
+
+const { user, logout } = useAuth();
+const route = useRoute();
+const loggingOut = async () => {
+  await logout()
+  closeDropdown()
+  await navigateTo('/app/signin') // or '/signin'
+}
+
+const dropdownOpen = ref(false)
+const dropdownRef = ref<HTMLElement | null>(null)
+
+type MenuItem = {
+  icon: any
+  text: string
+  href?: string
+  action?: string
+}
+
+const menuItems: MenuItem[] = [
+  { icon: UserCircleIcon, text: 'Account Information' },
+  { icon: SettingsIcon, text: 'Change Password', action: 'modal' },
+  { icon: InfoCircleIcon, text: 'Support' },
+  // { href: '/profile', icon: InfoCircleIcon, text: 'Support' },
+]
+
+const toggleDropdown = () => {
+  dropdownOpen.value = !dropdownOpen.value
+}
+
+const closeDropdown = () => {
+  dropdownOpen.value = false
+}
+
+const signOut = () => {
+  // Implement sign out logic here
+  // console.log('Signing out...')
+  loggingOut();
+  closeDropdown()
+}
+
+const handleClickOutside = (event: MouseEvent) => {
+  if (dropdownRef.value && !dropdownRef.value.contains(event.target as Node)) {
+    closeDropdown()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
+
+
+// Add a ref to control the modal
+const isPasswordModalOpen = ref(false)
+const isUserInformationOpen = ref(false)
+const isSupportOpen = ref(false)
+const handleMenuClick = (item: any) => {
+  if (item.action === 'modal') {
+    isPasswordModalOpen.value = true
+    closeDropdown()
+  } else if (item.text === 'Account Information') {
+    isUserInformationOpen.value = true
+    closeDropdown()
+  } else if (item.text === 'Support') {
+    isSupportOpen.value = true
+    closeDropdown()
+  }
+}
+</script>
+
 <template>
   <div class="relative" ref="dropdownRef">
     <button
@@ -76,75 +158,9 @@
       :is-open="isUserInformationOpen"
       @close="isUserInformationOpen = false"
     />
+
+    <ModalSupport
+      :is-open="isSupportOpen"
+      @close="isSupportOpen = false"
+    />
 </template>
-
-<script setup lang="ts">
-import { UserCircleIcon, ChevronDownIcon, LogoutIcon, SettingsIcon, InfoCircleIcon } from '@/icons'
-import { RouterLink } from 'vue-router'
-import { ref, onMounted, onUnmounted } from 'vue'
-import ModalChangePassword from './ModalChangePassword.vue';
-import ModalUserInformation from './ModalUserInformation.vue';
-import { useAuth } from '@/composables/useAuth';
-
-const { user, logout } = useAuth();
-const route = useRoute();
-const loggingOut = async () => {
-  await logout()
-  closeDropdown()
-  await navigateTo('/app/signin') // or '/signin'
-}
-
-const dropdownOpen = ref(false)
-const dropdownRef = ref(null)
-
-const menuItems = [
-  { icon: UserCircleIcon, text: 'Account Information' },
-  { icon: SettingsIcon, text: 'Change Password', action: 'modal' },
-  { icon: InfoCircleIcon, text: 'Support' },
-  // { href: '/profile', icon: InfoCircleIcon, text: 'Support' },
-]
-
-const toggleDropdown = () => {
-  dropdownOpen.value = !dropdownOpen.value
-}
-
-const closeDropdown = () => {
-  dropdownOpen.value = false
-}
-
-const signOut = () => {
-  // Implement sign out logic here
-  // console.log('Signing out...')
-  loggingOut();
-  closeDropdown()
-}
-
-const handleClickOutside = (event) => {
-  if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
-    closeDropdown()
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-})
-
-
-// Add a ref to control the modal
-const isPasswordModalOpen = ref(false)
-const isUserInformationOpen = ref(false)
-
-const handleMenuClick = (item: any) => {
-  if (item.action === 'modal') {
-    isPasswordModalOpen.value = true
-    closeDropdown()
-  } else if (item.text === 'Account Information') {
-    isUserInformationOpen.value = true
-    closeDropdown()
-  }
-}
-</script>
