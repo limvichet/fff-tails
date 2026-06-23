@@ -71,6 +71,11 @@
       :isOpen="isPasswordModalOpen" 
       @close="isPasswordModalOpen = false" 
     />
+
+    <ModalUserInformation
+      :is-open="isUserInformationOpen"
+      @close="isUserInformationOpen = false"
+    />
 </template>
 
 <script setup lang="ts">
@@ -78,6 +83,7 @@ import { UserCircleIcon, ChevronDownIcon, LogoutIcon, SettingsIcon, InfoCircleIc
 import { RouterLink } from 'vue-router'
 import { ref, onMounted, onUnmounted } from 'vue'
 import ModalChangePassword from './ModalChangePassword.vue';
+import ModalUserInformation from './ModalUserInformation.vue';
 import { useAuth } from '@/composables/useAuth';
 
 const { user, logout } = useAuth();
@@ -92,9 +98,10 @@ const dropdownOpen = ref(false)
 const dropdownRef = ref(null)
 
 const menuItems = [
-  { href: '/chat', icon: UserCircleIcon, text: 'Account settings' },
+  { icon: UserCircleIcon, text: 'Account Information' },
   { icon: SettingsIcon, text: 'Change Password', action: 'modal' },
-  { href: '/profile', icon: InfoCircleIcon, text: 'Support' },
+  { icon: InfoCircleIcon, text: 'Support' },
+  // { href: '/profile', icon: InfoCircleIcon, text: 'Support' },
 ]
 
 const toggleDropdown = () => {
@@ -129,10 +136,14 @@ onUnmounted(() => {
 
 // Add a ref to control the modal
 const isPasswordModalOpen = ref(false)
+const isUserInformationOpen = ref(false)
 
 const handleMenuClick = (item: any) => {
   if (item.action === 'modal') {
     isPasswordModalOpen.value = true
+    closeDropdown()
+  } else if (item.text === 'Account Information') {
+    isUserInformationOpen.value = true
     closeDropdown()
   }
 }
