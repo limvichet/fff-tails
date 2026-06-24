@@ -253,18 +253,6 @@ const deleteCustomer = async () => {
           class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
           <div class="max-w-full overflow-x-auto custom-scrollbar"> 
             <table class="min-w-full">
-              <!-- <thead>
-                <tr class="border-b border-gray-200 dark:border-gray-700">
-                  <th class="px-4 py-2 text-sm font-semibold text-left w-[5%]">#</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[15%] w-[30%]">Name1</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[15%] w-[30%]">Name2</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[15%]">Phone1</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[0%] hidden sm:table-cell">DOB</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[0%] hidden sm:table-cell">Created At</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[10%] w-[0%] hidden sm:table-cell">Updated At</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-center sm:w-[25%] w-[20%]">Actions</th>
-                </tr>
-              </thead> -->
               <thead>
                 <tr class="border-b border-gray-200 dark:border-gray-700">
                   <th class="px-4 py-2 text-sm font-semibold text-left w-[3%]">#</th>

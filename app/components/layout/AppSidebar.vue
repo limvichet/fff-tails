@@ -85,6 +85,16 @@ const menuGroups = [
     title: "Administrative Tools",
     items: [
       {
+        icon: SettingsIcon,
+        name: "Data Administration",
+        subItems: [
+          { name: "Titles", path: "/app/dashboard/sys-titles", pro: false, icon: PlugInIcon  },
+          { name: "Identities", path: "/app/dashboard/identities", pro: false, icon: PlugInIcon  },
+          { name: "Identifications", path: "/app/dashboard/identifications", pro: false, icon: PlugInIcon  },
+          { name: "Occupations", path: "/app/dashboard/occupations", pro: false, icon: PlugInIcon  },
+        ],
+      },
+      {
         icon: UserShildIcon,
         name: "Employees",
         subItems: [

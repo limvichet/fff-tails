@@ -24,6 +24,7 @@ interface UserResponse {
     }
   }
   roles: string[]
+  roles_name: string[]
   permissions: string[]
 }
 
@@ -72,7 +73,7 @@ const groupedPermissions = computed(() => {
 
   return userInfo.value.permissions.reduce(
     (acc: Record<string, string[]>, permission) => {
-      const [action, ...moduleParts] = permission.split("-")
+      const [action = "", ...moduleParts] = permission.split("-")
 
       const module = moduleParts
         .join(" ")
@@ -110,17 +111,17 @@ const actionClass = (action: string) => {
       @click.self="handleClose"
     >
       <div
-        class="relative w-full max-w-4xl mx-4 bg-white rounded-[2rem] shadow-2xl overflow-hidden"
+        class="relative w-full max-w-4xl mx-4 bg-white rounded-xl shadow-2xl overflow-hidden"
       >
         <!-- HEADER -->
         <div
-          class="px-8 py-6 border-b border-gray-100 flex items-center justify-between"
+          class="px-8 py-2 border-b border-gray-100 flex items-center justify-between"
         >
-          <h2 class="text-3xl text-blue-800">User Information</h2>
+          <h2 class="text-2xl text-blue-800">User Information</h2>
 
           <button
             @click="handleClose"
-            class="text-gray-400 hover:text-gray-600 text-3xl"
+            class="text-gray-400 hover:text-gray-600 text-2xl"
           >
             &times;
           </button>
@@ -140,13 +141,13 @@ const actionClass = (action: string) => {
           <!-- CONTENT -->
           <template v-else-if="userInfo">
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
 
               <!-- LEFT -->
               <div class="lg:col-span-2">
 
                 <!-- PROFILE -->
-                <div class="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8">
+                <div class="flex flex-col md:flex-row items-center md:items-start gap-6 mb-4">
 
                   <img
                     :src="userInfo.user.photo_url"
@@ -154,7 +155,7 @@ const actionClass = (action: string) => {
                   />
 
                   <div>
-                    <h3 class="text-2xl font-semibold text-gray-800">
+                    <h3 class="text-lg font-semibold text-gray-800">
                       {{ userInfo.employee.full_name }}
                     </h3>
 
@@ -164,7 +165,7 @@ const actionClass = (action: string) => {
 
                     <div class="flex flex-wrap gap-2 mt-3">
                       <span
-                        v-for="role in userInfo.roles"
+                        v-for="role in userInfo.roles_name"
                         :key="role"
                         class="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700"
                       >
@@ -256,7 +257,7 @@ const actionClass = (action: string) => {
               <!-- RIGHT -->
               <div class="lg:col-span-1">
 
-                <label class="block text-sm text-gray-500 mb-3">
+                <label class="block text-md text-blue-800 mb-3">
                   Permissions
                 </label>
 
@@ -267,7 +268,7 @@ const actionClass = (action: string) => {
                     :key="module"
                     class="p-4 border rounded-xl bg-white shadow-sm"
                   >
-                    <div class="font-semibold text-gray-800 capitalize mb-2">
+                    <div class="font-semibold text-gray-800 capitalize mb-1">
                       {{ module }}
                     </div>
 
