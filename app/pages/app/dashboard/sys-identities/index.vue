@@ -10,13 +10,13 @@ import { useCustomToast } from "~/composables/useCustomToast"
 definePageMeta({
   layout: "auth",
   requiresAuth: true,
-  breadcrumb: { title: "Data Administration", subTitle: "Titles" },
+  breadcrumb: { title: "Data Administration", subTitle: "Identities" },
   ssr: false,
 })
 
 useHead({
-  title: "System Titles",
-  meta: [{ name: "description", content: "System titles administration" }],
+  title: "System Identities",
+  meta: [{ name: "description", content: "System identities administration" }],
 })
 
 /* =========================
@@ -35,10 +35,10 @@ interface UserInfo {
   employee: Employee
 }
 
-interface SysTitle {
+interface SysIdentity {
   id: number
-  nametitle_kh: string
-  nametitle_en: string
+  identification_kh: string
+  identification_en: string
   active: number | string
   created_by: number
   created_at: string
@@ -52,7 +52,7 @@ interface ApiResponse {
   success: boolean
   data: {
     current_page: number
-    data: SysTitle[]
+    data: SysIdentity[]
     per_page: number
     total: number
     last_page: number
@@ -65,7 +65,7 @@ interface ApiResponse {
 const { errorMsg, successMsg } = useMessage()
 const { showToast } = useCustomToast()
 
-const sysTitles = ref<SysTitle[]>([])
+const sysIdentities = ref<SysIdentity[]>([])
 const loading = ref(false)
 const formLoading = ref(false)
 const isEditMode = ref(false)
@@ -82,14 +82,14 @@ const lastPageValue = ref(1)
 
 // Form Management
 const form = ref({
-  nametitle_kh: "",
-  nametitle_en: "",
+  identification_kh: "",
+  identification_en: "",
   active: 1,
 })
 
 const formErrors = ref({
-  nametitle_kh: "",
-  nametitle_en: "",
+  identification_kh: "",
+  identification_en: "",
 })
 
 /* =========================
@@ -100,7 +100,7 @@ const fetchSysTitles = async () => {
   errorMsg.value = null
 
   try {
-    const res = await $fetch<ApiResponse>("/api/admin-secure/sys-titles", {
+    const res = await $fetch<ApiResponse>("/api/admin-secure/sys-identities", {
       method: "GET",
       query: {
         page: page.value,
@@ -108,12 +108,12 @@ const fetchSysTitles = async () => {
       },
     })
 
-    sysTitles.value = res.data.data ?? []
+    sysIdentities.value = res.data.data ?? []
     total.value = res.data.total ?? 0
     lastPageValue.value = res.data.last_page ?? 1
   } catch (err: any) {
     errorMsg.value = err?.statusMessage || "Failed to fetch titles"
-    sysTitles.value = []
+    sysIdentities.value = []
   } finally {
     loading.value = false
   }
@@ -138,26 +138,26 @@ const changePage = async (newPage: number) => {
 
 const validateForm = () => {
   formErrors.value = {
-    nametitle_kh: "",
-    nametitle_en: "",
+    identification_kh: "",
+    identification_en: "",
   }
 
   let valid = true
 
-  if (!form.value.nametitle_kh?.trim()) {
-    formErrors.value.nametitle_kh = "Required"
+  if (!form.value.identification_kh?.trim()) {
+    formErrors.value.identification_kh = "Required"
     valid = false
   }
 
-  if (!form.value.nametitle_en?.trim()) {
-    formErrors.value.nametitle_en = "Required"
+  if (!form.value.identification_en?.trim()) {
+    formErrors.value.identification_en = "Required"
     valid = false
   }
 
   return valid
 }
 
-const saveSysTitle = async () => {
+const saveSysIdentity = async () => {
   if (!validateForm()) return
 
   formLoading.value = true
@@ -165,19 +165,19 @@ const saveSysTitle = async () => {
 
   try {
     const formData = new FormData()
-    formData.append("nametitle_kh", form.value.nametitle_kh.trim())
-    formData.append("nametitle_en", form.value.nametitle_en.trim())
+    formData.append("identification_kh", form.value.identification_kh.trim())
+    formData.append("identification_en", form.value.identification_en.trim())
     formData.append("active", String(form.value.active))
 
     if (isEditMode.value && selectedId.value) {
       formData.append("_method", "PUT")
-      await $fetch(`/api/admin-secure/sys-titles/${selectedId.value}`, {
+      await $fetch(`/api/admin-secure/sys-identities/${selectedId.value}`, {
         method: "POST",
         body: formData,
       })
       showToast("Update successful", "Data updated successfully", "success")
     } else {
-      await $fetch("/api/admin-secure/sys-titles", {
+      await $fetch("/api/admin-secure/sys-identities", {
         method: "POST",
         body: formData,
       })
@@ -194,10 +194,10 @@ const saveSysTitle = async () => {
   }
 }
 
-const openEditModal = (item: SysTitle) => {
+const openEditModal = (item: SysIdentity) => {
   formErrors.value = {
-    nametitle_kh: "",
-    nametitle_en: "",
+    identification_kh: "",
+    identification_en: "",
   }
 
   isEditMode.value = true
@@ -205,15 +205,15 @@ const openEditModal = (item: SysTitle) => {
   selectedId.value = item.id
 
   form.value = {
-    nametitle_kh: item.nametitle_kh ?? "",
-    nametitle_en: item.nametitle_en ?? "",
+    identification_kh: item.identification_kh ?? "",
+    identification_en: item.identification_en ?? "",
     active: Number(item.active),
   }
 }
 
 const resetForm = () => {
-  form.value = { nametitle_kh: "", nametitle_en: "", active: 1 }
-  formErrors.value = { nametitle_kh: "", nametitle_en: "" }
+  form.value = { identification_kh: "", identification_en: "", active: 1 }
+  formErrors.value = { identification_kh: "", identification_en: "" }
   selectedId.value = null
   isEditMode.value = false
 }
@@ -228,7 +228,7 @@ onMounted(fetchSysTitles)
 
 <template>
   <div class="grid grid-cols-1">
-    <ComponentCardPlus title="System Titles" :hasAdd="true" @add="isCreateModal = true">
+    <ComponentCardPlus title="System Identities" :hasAdd="true" @add="isCreateModal = true">
 
       <div class="relative">
         <!-- Icon -->
@@ -277,13 +277,13 @@ onMounted(fetchSysTitles)
             </thead>
 
             <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
-              <tr v-for="(item, i) in sysTitles" :key="item.id"
+              <tr v-for="(item, i) in sysIdentities" :key="item.id"
                 class="border-t border-gray-100 dark:border-gray-800 hover:bg-blue-300/20 transition">
                 <td class="px-4 py-3 text-sm font-medium">
                   {{ (page - 1) * perPage + i + 1 }}
                 </td>
-                <td class="px-4 py-3 text-sm">{{ item.nametitle_kh }}</td>
-                <td class="px-4 py-3 text-sm">{{ item.nametitle_en }}</td>
+                <td class="px-4 py-3 text-sm">{{ item.identification_kh }}</td>
+                <td class="px-4 py-3 text-sm">{{ item.identification_en }}</td>
                 <td class="px-4 py-3 text-sm">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
                     :class="Number(item.active) === 1 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'">
@@ -308,7 +308,7 @@ onMounted(fetchSysTitles)
                 </td>
               </tr>
 
-              <tr v-if="sysTitles.length === 0">
+              <tr v-if="sysIdentities.length === 0">
                 <td colspan="7" class="text-center py-12 text-sm text-gray-400">
                   No records found.
                 </td>
@@ -350,19 +350,19 @@ onMounted(fetchSysTitles)
             <div>
               <div class="flex items-center justify-between">
                 <label class="label">Title (KH) <span class="text-red-500 text-sm"> *</span></label>
-                <span v-if="formErrors.nametitle_kh" class="text-red-500 text-xs mt-1">{{ formErrors.nametitle_kh
+                <span v-if="formErrors.identification_kh" class="text-red-500 text-xs mt-1">{{ formErrors.identification_kh
                   }}</span>
               </div>
-              <input v-model="form.nametitle_kh" placeholder="Enter text ..." class="input" />
+              <input v-model="form.identification_kh" placeholder="Enter text ..." class="input" />
             </div>
 
             <div>
               <div class="flex items-center justify-between">
                 <label class="label">Title (EN) <span class="text-red-500 text-sm"> *</span></label>
-                <span v-if="formErrors.nametitle_en" class="text-red-500 text-xs mt-1">{{ formErrors.nametitle_en
+                <span v-if="formErrors.identification_en" class="text-red-500 text-xs mt-1">{{ formErrors.identification_en
                   }}</span>
               </div>
-              <input v-model="form.nametitle_en" placeholder="Enter text ..." class="input" />
+              <input v-model="form.identification_en" placeholder="Enter text ..." class="input" />
             </div>
 
             <div>
@@ -379,7 +379,7 @@ onMounted(fetchSysTitles)
               class="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-200 font-medium rounded-lg hover:opacity-90 transition text-sm">
               Cancel
             </button>
-            <button @click="saveSysTitle" :disabled="formLoading"
+            <button @click="saveSysIdentity" :disabled="formLoading"
               class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition text-sm">
               {{ formLoading ? "Saving..." : (isEditMode ? "Update" : "Save") }}
             </button>

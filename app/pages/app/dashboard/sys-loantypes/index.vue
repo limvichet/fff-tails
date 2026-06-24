@@ -10,13 +10,13 @@ import { useCustomToast } from "~/composables/useCustomToast"
 definePageMeta({
   layout: "auth",
   requiresAuth: true,
-  breadcrumb: { title: "Data Administration", subTitle: "Titles" },
+  breadcrumb: { title: "Data Administration", subTitle: "Loantypes" },
   ssr: false,
 })
 
 useHead({
-  title: "System Titles",
-  meta: [{ name: "description", content: "System titles administration" }],
+  title: "System Loantypes",
+  meta: [{ name: "description", content: "System loantypes administration" }],
 })
 
 /* =========================
@@ -35,10 +35,13 @@ interface UserInfo {
   employee: Employee
 }
 
-interface SysTitle {
+interface SysLoantype {
   id: number
-  nametitle_kh: string
-  nametitle_en: string
+  loantype_kh: string
+  loantype_en: string
+    loantype_detail: string;
+    loantype_short: string;
+    loantype_shortcut: string;
   active: number | string
   created_by: number
   created_at: string
@@ -52,7 +55,7 @@ interface ApiResponse {
   success: boolean
   data: {
     current_page: number
-    data: SysTitle[]
+    data: SysLoantype[]
     per_page: number
     total: number
     last_page: number
@@ -65,7 +68,7 @@ interface ApiResponse {
 const { errorMsg, successMsg } = useMessage()
 const { showToast } = useCustomToast()
 
-const sysTitles = ref<SysTitle[]>([])
+const sysLoantypes = ref<SysLoantype[]>([])
 const loading = ref(false)
 const formLoading = ref(false)
 const isEditMode = ref(false)
@@ -82,25 +85,31 @@ const lastPageValue = ref(1)
 
 // Form Management
 const form = ref({
-  nametitle_kh: "",
-  nametitle_en: "",
+  loantype_kh: "",
+  loantype_en: "",
+    loantype_detail: "",
+    loantype_short: "",
+    loantype_shortcut: "",
   active: 1,
 })
 
 const formErrors = ref({
-  nametitle_kh: "",
-  nametitle_en: "",
+  loantype_kh: "",
+  loantype_en: "",
+    loantype_detail: "",
+    loantype_short: "",
+    loantype_shortcut: "",
 })
 
 /* =========================
    METHODS
 ========================= */
-const fetchSysTitles = async () => {
+const fetchSysLoantypes = async () => {
   loading.value = true
   errorMsg.value = null
 
   try {
-    const res = await $fetch<ApiResponse>("/api/admin-secure/sys-titles", {
+    const res = await $fetch<ApiResponse>("/api/admin-secure/sys-loantypes", {
       method: "GET",
       query: {
         page: page.value,
@@ -108,12 +117,12 @@ const fetchSysTitles = async () => {
       },
     })
 
-    sysTitles.value = res.data.data ?? []
+    sysLoantypes.value = res.data.data ?? []
     total.value = res.data.total ?? 0
     lastPageValue.value = res.data.last_page ?? 1
   } catch (err: any) {
-    errorMsg.value = err?.statusMessage || "Failed to fetch titles"
-    sysTitles.value = []
+    errorMsg.value = err?.statusMessage || "Failed to fetch loantypes"
+    sysLoantypes.value = []
   } finally {
     loading.value = false
   }
@@ -126,38 +135,56 @@ watch(searchInput, (newVal) => {
   debounceTimer = setTimeout(() => {
     searchQuery.value = newVal
     page.value = 1
-    fetchSysTitles()
+    fetchSysLoantypes()
   }, 400)
 })
 
 const changePage = async (newPage: number) => {
   if (newPage < 1 || newPage > lastPageValue.value) return
   page.value = newPage
-  await fetchSysTitles()
+  await fetchSysLoantypes()
 }
 
 const validateForm = () => {
   formErrors.value = {
-    nametitle_kh: "",
-    nametitle_en: "",
+    loantype_kh: "",
+    loantype_en: "",
+    loantype_detail: "",
+    loantype_short: "",
+    loantype_shortcut: "",
   }
 
   let valid = true
 
-  if (!form.value.nametitle_kh?.trim()) {
-    formErrors.value.nametitle_kh = "Required"
+  if (!form.value.loantype_kh?.trim()) {
+    formErrors.value.loantype_kh = "Required"
     valid = false
   }
 
-  if (!form.value.nametitle_en?.trim()) {
-    formErrors.value.nametitle_en = "Required"
+  if (!form.value.loantype_en?.trim()) {
+    formErrors.value.loantype_en = "Required"
+    valid = false
+  }
+
+  if (!form.value.loantype_detail?.trim()) {
+    formErrors.value.loantype_detail = "Required"
+    valid = false
+  }
+
+  if (!form.value.loantype_short?.trim()) {
+    formErrors.value.loantype_short = "Required"
+    valid = false
+  }
+
+  if (!form.value.loantype_shortcut?.trim()) {
+    formErrors.value.loantype_shortcut = "Required"
     valid = false
   }
 
   return valid
 }
 
-const saveSysTitle = async () => {
+const saveSysLoantype = async () => {
   if (!validateForm()) return
 
   formLoading.value = true
@@ -165,19 +192,22 @@ const saveSysTitle = async () => {
 
   try {
     const formData = new FormData()
-    formData.append("nametitle_kh", form.value.nametitle_kh.trim())
-    formData.append("nametitle_en", form.value.nametitle_en.trim())
+    formData.append("loantype_kh", form.value.loantype_kh.trim())
+    formData.append("loantype_en", form.value.loantype_en.trim())
+    formData.append("loantype_detail", form.value.loantype_detail.trim())
+    formData.append("loantype_short", form.value.loantype_short.trim())
+    formData.append("loantype_shortcut", form.value.loantype_shortcut.trim())
     formData.append("active", String(form.value.active))
 
     if (isEditMode.value && selectedId.value) {
       formData.append("_method", "PUT")
-      await $fetch(`/api/admin-secure/sys-titles/${selectedId.value}`, {
+      await $fetch(`/api/admin-secure/sys-loantypes/${selectedId.value}`, {
         method: "POST",
         body: formData,
       })
       showToast("Update successful", "Data updated successfully", "success")
     } else {
-      await $fetch("/api/admin-secure/sys-titles", {
+      await $fetch("/api/admin-secure/sys-loantypes", {
         method: "POST",
         body: formData,
       })
@@ -185,7 +215,7 @@ const saveSysTitle = async () => {
     }
 
     closeModal()
-    await fetchSysTitles()
+    await fetchSysLoantypes()
   } catch (err: any) {
     errorMsg.value = err?.statusMessage || "Save failed"
     showToast("Error", "Something went wrong", "error")
@@ -194,10 +224,13 @@ const saveSysTitle = async () => {
   }
 }
 
-const openEditModal = (item: SysTitle) => {
+const openEditModal = (item: SysLoantype) => {
   formErrors.value = {
-    nametitle_kh: "",
-    nametitle_en: "",
+    loantype_kh: "",
+    loantype_en: "",
+    loantype_detail: "",
+    loantype_short: "",
+    loantype_shortcut: "",
   }
 
   isEditMode.value = true
@@ -205,15 +238,31 @@ const openEditModal = (item: SysTitle) => {
   selectedId.value = item.id
 
   form.value = {
-    nametitle_kh: item.nametitle_kh ?? "",
-    nametitle_en: item.nametitle_en ?? "",
+    loantype_kh: item.loantype_kh ?? "",
+    loantype_en: item.loantype_en ?? "",
+    loantype_detail: item.loantype_detail ?? "",
+    loantype_short: item.loantype_short ?? "",
+    loantype_shortcut: item.loantype_shortcut ?? "",
     active: Number(item.active),
   }
 }
 
 const resetForm = () => {
-  form.value = { nametitle_kh: "", nametitle_en: "", active: 1 }
-  formErrors.value = { nametitle_kh: "", nametitle_en: "" }
+  form.value = { 
+    loantype_kh: "", 
+    loantype_en: "",     
+    loantype_detail: "",
+    loantype_short: "",
+    loantype_shortcut: "",
+    active: 1 
+  }
+  formErrors.value = { 
+    loantype_kh: "", 
+    loantype_en: "",
+    loantype_detail: "",
+    loantype_short: "",
+    loantype_shortcut: "",
+  }
   selectedId.value = null
   isEditMode.value = false
 }
@@ -223,12 +272,12 @@ const closeModal = () => {
   resetForm()
 }
 
-onMounted(fetchSysTitles)
+onMounted(fetchSysLoantypes)
 </script>
 
 <template>
   <div class="grid grid-cols-1">
-    <ComponentCardPlus title="System Titles" :hasAdd="true" @add="isCreateModal = true">
+    <ComponentCardPlus title="System Loan Types" :hasAdd="true" @add="isCreateModal = true">
 
       <div class="relative">
         <!-- Icon -->
@@ -259,46 +308,50 @@ onMounted(fetchSysTitles)
           <table class="min-w-full">
             <thead>
               <tr class="border-b border-gray-200 dark:border-gray-700">
-                <th scope="col" class="px-4 py-2 text-left text-sm font-semibold uppercase tracking-wider w-[5%]">#
+                <th scope="col" class="px-2 py-2 text-left text-sm font-semibold uppercase tracking-wider w-[2%]">#
                 </th>
-                <th scope="col" class="px-4 py-2 text-left text-sm font-semibold uppercase tracking-wider w-[25%]">Khmer
-                </th>
-                <th scope="col" class="px-4 py-2 text-left text-sm font-semibold uppercase tracking-wider w-[25%]">
-                  English</th>
-                <th scope="col" class="px-4 py-2 text-left text-sm font-semibold uppercase tracking-wider w-[5%]">
+                <th scope="col" class="px-2 py-2 text-left text-sm font-semibold uppercase tracking-wider w-[15%]">Khmer</th>
+                <th scope="col" class="px-2 py-2 text-left text-sm font-semibold uppercase tracking-wider w-[10%]">English</th>
+                <th scope="col" class="px-2 py-2 text-left text-sm font-semibold uppercase tracking-wider w-[20%]">Details</th>
+                <th scope="col" class="px-2 py-2 text-left text-sm font-semibold uppercase tracking-wider w-[5%]">Short</th>
+                <th scope="col" class="px-2 py-2 text-left text-sm font-semibold uppercase tracking-wider w-[5%]">Shortcut</th>
+                <th scope="col" class="px-2 py-2 text-left text-sm font-semibold uppercase tracking-wider w-[5%]">
                   Status</th>
-                <th scope="col" class="px-4 py-2 text-left text-sm font-semibold uppercase tracking-wider w-[15%]">
+                <th scope="col" class="px-2 py-2 text-left text-sm font-semibold uppercase tracking-wider w-[15%]">
                   Created</th>
-                <th scope="col" class="px-4 py-2 text-left text-sm font-semibold uppercase tracking-wider w-[15%]">
+                <th scope="col" class="px-2 py-2 text-left text-sm font-semibold uppercase tracking-wider w-[15%]">
                   Updated</th>
-                <th scope="col" class="px-4 py-2 text-center text-sm font-semibold uppercase tracking-wider w-[10%]">
+                <th scope="col" class="px-2 py-2 text-center text-sm font-semibold uppercase tracking-wider w-[5%]">
                   Actions</th>
               </tr>
             </thead>
 
             <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
-              <tr v-for="(item, i) in sysTitles" :key="item.id"
+              <tr v-for="(item, i) in sysLoantypes" :key="item.id"
                 class="border-t border-gray-100 dark:border-gray-800 hover:bg-blue-300/20 transition">
                 <td class="px-4 py-3 text-sm font-medium">
                   {{ (page - 1) * perPage + i + 1 }}
                 </td>
-                <td class="px-4 py-3 text-sm">{{ item.nametitle_kh }}</td>
-                <td class="px-4 py-3 text-sm">{{ item.nametitle_en }}</td>
-                <td class="px-4 py-3 text-sm">
+                <td class="px-2 py-3 text-sm">{{ item.loantype_kh }}</td>
+                <td class="px-2 py-3 text-sm">{{ item.loantype_en }}</td>
+                <td class="px-2 py-3 text-sm">{{ item.loantype_detail }}</td>
+                <td class="px-2 py-3 text-sm">{{ item.loantype_short }}</td>
+                <td class="px-2 py-3 text-sm">{{ item.loantype_shortcut }}</td>
+                <td class="px-2 py-3 text-sm">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
                     :class="Number(item.active) === 1 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'">
                     {{ Number(item.active) === 1 ? 'Active' : 'Inactive' }}
                   </span>
                 </td>
-                <td class="px-4 py-3 text-xs">
+                <td class="px-2 py-3 text-xs">
                   <span class="font-medium text-gray-700 dark:text-gray-300">{{ item.createdby?.employee?.full_name ||
                     'N/A' }}</span> - <span class="mt-0.5">{{ formatDateForOutput(new Date(item.created_at)) }}</span>
                 </td>
-                <td class="px-4 py-3 text-xs">
+                <td class="px-2 py-3 text-xs">
                   <span class="font-medium text-gray-700 dark:text-gray-300">{{ item.updatedby?.employee?.full_name ||
                     'N/A' }}</span> - <span class="mt-0.5">{{ formatDateForOutput(new Date(item.updated_at)) }}</span>
                 </td>
-                <td class="px-4 py-3 text-center">
+                <td class="px-2 py-3 text-center">
                   <button @click="openEditModal(item)"
                     class="inline-flex items-center gap-1 px-1 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm">
 
@@ -308,7 +361,7 @@ onMounted(fetchSysTitles)
                 </td>
               </tr>
 
-              <tr v-if="sysTitles.length === 0">
+              <tr v-if="sysLoantypes.length === 0">
                 <td colspan="7" class="text-center py-12 text-sm text-gray-400">
                   No records found.
                 </td>
@@ -350,19 +403,42 @@ onMounted(fetchSysTitles)
             <div>
               <div class="flex items-center justify-between">
                 <label class="label">Title (KH) <span class="text-red-500 text-sm"> *</span></label>
-                <span v-if="formErrors.nametitle_kh" class="text-red-500 text-xs mt-1">{{ formErrors.nametitle_kh
+                <span v-if="formErrors.loantype_kh" class="text-red-500 text-xs mt-1">{{ formErrors.loantype_kh
                   }}</span>
               </div>
-              <input v-model="form.nametitle_kh" placeholder="Enter text ..." class="input" />
+              <input v-model="form.loantype_kh" placeholder="Enter text ..." class="input" />
             </div>
 
             <div>
               <div class="flex items-center justify-between">
                 <label class="label">Title (EN) <span class="text-red-500 text-sm"> *</span></label>
-                <span v-if="formErrors.nametitle_en" class="text-red-500 text-xs mt-1">{{ formErrors.nametitle_en
-                  }}</span>
+                <span v-if="formErrors.loantype_en" class="text-red-500 text-xs mt-1">{{ formErrors.loantype_en }}</span>
               </div>
-              <input v-model="form.nametitle_en" placeholder="Enter text ..." class="input" />
+              <input v-model="form.loantype_en" placeholder="Enter text ..." class="input" />
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between">
+                <label class="label">Details <span class="text-red-500 text-sm"> *</span></label>
+                <span v-if="formErrors.loantype_detail" class="text-red-500 text-xs mt-1">{{ formErrors.loantype_detail }}</span>
+              </div>
+              <input v-model="form.loantype_detail" placeholder="Enter text ..." class="input" />
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between">
+                <label class="label">Short <span class="text-red-500 text-sm"> *</span></label>
+                <span v-if="formErrors.loantype_short" class="text-red-500 text-xs mt-1">{{ formErrors.loantype_short }}</span>
+              </div>
+              <input v-model="form.loantype_short" placeholder="Enter text ..." class="input" />
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between">
+                <label class="label">Shortcut <span class="text-red-500 text-sm"> *</span></label>
+                <span v-if="formErrors.loantype_shortcut" class="text-red-500 text-xs mt-1">{{ formErrors.loantype_shortcut }}</span>
+              </div>
+              <input v-model="form.loantype_shortcut" placeholder="Enter text ..." class="input" />
             </div>
 
             <div>
@@ -379,7 +455,7 @@ onMounted(fetchSysTitles)
               class="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-200 font-medium rounded-lg hover:opacity-90 transition text-sm">
               Cancel
             </button>
-            <button @click="saveSysTitle" :disabled="formLoading"
+            <button @click="saveSysLoantype" :disabled="formLoading"
               class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition text-sm">
               {{ formLoading ? "Saving..." : (isEditMode ? "Update" : "Save") }}
             </button>

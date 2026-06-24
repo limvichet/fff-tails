@@ -16,15 +16,16 @@ type DataResponses = {
 
 type Data = {
     id:           number;
-    nametitle_kh: string;
-    nametitle_en: string;
+    loantype_kh: string;
+    loantype_en: string;
+    loantype_detail: string;
+    loantype_short: string;
+    loantype_shortcut: string;
     active: number | string;
     created_by: number;
     created_at: string;
-    createdby: Createdby;
     updated_by: string;
     updated_at: string;
-    updatedby: Updatedby;
 }
 
 type Createdby = {
@@ -72,7 +73,7 @@ export default defineEventHandler(async (event) => {
       
   try {
 
-    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/sys-titles?page=${page}&param=${param}`, {
+    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/sys-loantypes?page=${page}&param=${param}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -83,7 +84,7 @@ export default defineEventHandler(async (event) => {
 
     return res
   } catch (err: any) {
-    const message = err?.data?.message || err?.message || "Failed to fetch titles"
+    const message = err?.data?.message || err?.message || "Failed to fetch loantypes"
     throw createError({
       statusCode: err?.status || 500,
       statusMessage: message,

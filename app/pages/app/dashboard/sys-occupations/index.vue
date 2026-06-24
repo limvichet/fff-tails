@@ -10,13 +10,13 @@ import { useCustomToast } from "~/composables/useCustomToast"
 definePageMeta({
   layout: "auth",
   requiresAuth: true,
-  breadcrumb: { title: "Data Administration", subTitle: "Titles" },
+  breadcrumb: { title: "Data Administration", subTitle: "Occupations" },
   ssr: false,
 })
 
 useHead({
-  title: "System Titles",
-  meta: [{ name: "description", content: "System titles administration" }],
+  title: "System Occupations",
+  meta: [{ name: "description", content: "System occupations administration" }],
 })
 
 /* =========================
@@ -35,10 +35,10 @@ interface UserInfo {
   employee: Employee
 }
 
-interface SysTitle {
+interface SysOccupation {
   id: number
-  nametitle_kh: string
-  nametitle_en: string
+  occupation_kh: string
+  occupation_en: string
   active: number | string
   created_by: number
   created_at: string
@@ -52,7 +52,7 @@ interface ApiResponse {
   success: boolean
   data: {
     current_page: number
-    data: SysTitle[]
+    data: SysOccupation[]
     per_page: number
     total: number
     last_page: number
@@ -65,7 +65,7 @@ interface ApiResponse {
 const { errorMsg, successMsg } = useMessage()
 const { showToast } = useCustomToast()
 
-const sysTitles = ref<SysTitle[]>([])
+const sysOccupations = ref<SysOccupation[]>([])
 const loading = ref(false)
 const formLoading = ref(false)
 const isEditMode = ref(false)
@@ -82,25 +82,25 @@ const lastPageValue = ref(1)
 
 // Form Management
 const form = ref({
-  nametitle_kh: "",
-  nametitle_en: "",
+  occupation_kh: "",
+  occupation_en: "",
   active: 1,
 })
 
 const formErrors = ref({
-  nametitle_kh: "",
-  nametitle_en: "",
+  occupation_kh: "",
+  occupation_en: "",
 })
 
 /* =========================
    METHODS
 ========================= */
-const fetchSysTitles = async () => {
+const fetchSysOccupations = async () => {
   loading.value = true
   errorMsg.value = null
 
   try {
-    const res = await $fetch<ApiResponse>("/api/admin-secure/sys-titles", {
+    const res = await $fetch<ApiResponse>("/api/admin-secure/sys-occupations", {
       method: "GET",
       query: {
         page: page.value,
@@ -108,12 +108,12 @@ const fetchSysTitles = async () => {
       },
     })
 
-    sysTitles.value = res.data.data ?? []
+    sysOccupations.value = res.data.data ?? []
     total.value = res.data.total ?? 0
     lastPageValue.value = res.data.last_page ?? 1
   } catch (err: any) {
-    errorMsg.value = err?.statusMessage || "Failed to fetch titles"
-    sysTitles.value = []
+    errorMsg.value = err?.statusMessage || "Failed to fetch occupations"
+    sysOccupations.value = []
   } finally {
     loading.value = false
   }
@@ -126,38 +126,38 @@ watch(searchInput, (newVal) => {
   debounceTimer = setTimeout(() => {
     searchQuery.value = newVal
     page.value = 1
-    fetchSysTitles()
+    fetchSysOccupations()
   }, 400)
 })
 
 const changePage = async (newPage: number) => {
   if (newPage < 1 || newPage > lastPageValue.value) return
   page.value = newPage
-  await fetchSysTitles()
+  await fetchSysOccupations()
 }
 
 const validateForm = () => {
   formErrors.value = {
-    nametitle_kh: "",
-    nametitle_en: "",
+    occupation_kh: "",
+    occupation_en: "",
   }
 
   let valid = true
 
-  if (!form.value.nametitle_kh?.trim()) {
-    formErrors.value.nametitle_kh = "Required"
+  if (!form.value.occupation_kh?.trim()) {
+    formErrors.value.occupation_kh = "Required"
     valid = false
   }
 
-  if (!form.value.nametitle_en?.trim()) {
-    formErrors.value.nametitle_en = "Required"
+  if (!form.value.occupation_en?.trim()) {
+    formErrors.value.occupation_en = "Required"
     valid = false
   }
 
   return valid
 }
 
-const saveSysTitle = async () => {
+const saveSysOccupation = async () => {
   if (!validateForm()) return
 
   formLoading.value = true
@@ -165,19 +165,19 @@ const saveSysTitle = async () => {
 
   try {
     const formData = new FormData()
-    formData.append("nametitle_kh", form.value.nametitle_kh.trim())
-    formData.append("nametitle_en", form.value.nametitle_en.trim())
+    formData.append("occupation_kh", form.value.occupation_kh.trim())
+    formData.append("occupation_en", form.value.occupation_en.trim())
     formData.append("active", String(form.value.active))
 
     if (isEditMode.value && selectedId.value) {
       formData.append("_method", "PUT")
-      await $fetch(`/api/admin-secure/sys-titles/${selectedId.value}`, {
+      await $fetch(`/api/admin-secure/sys-occupations/${selectedId.value}`, {
         method: "POST",
         body: formData,
       })
       showToast("Update successful", "Data updated successfully", "success")
     } else {
-      await $fetch("/api/admin-secure/sys-titles", {
+      await $fetch("/api/admin-secure/sys-occupations", {
         method: "POST",
         body: formData,
       })
@@ -185,7 +185,7 @@ const saveSysTitle = async () => {
     }
 
     closeModal()
-    await fetchSysTitles()
+    await fetchSysOccupations()
   } catch (err: any) {
     errorMsg.value = err?.statusMessage || "Save failed"
     showToast("Error", "Something went wrong", "error")
@@ -194,10 +194,10 @@ const saveSysTitle = async () => {
   }
 }
 
-const openEditModal = (item: SysTitle) => {
+const openEditModal = (item: SysOccupation) => {
   formErrors.value = {
-    nametitle_kh: "",
-    nametitle_en: "",
+    occupation_kh: "",
+    occupation_en: "",
   }
 
   isEditMode.value = true
@@ -205,15 +205,15 @@ const openEditModal = (item: SysTitle) => {
   selectedId.value = item.id
 
   form.value = {
-    nametitle_kh: item.nametitle_kh ?? "",
-    nametitle_en: item.nametitle_en ?? "",
+    occupation_kh: item.occupation_kh ?? "",
+    occupation_en: item.occupation_en ?? "",
     active: Number(item.active),
   }
 }
 
 const resetForm = () => {
-  form.value = { nametitle_kh: "", nametitle_en: "", active: 1 }
-  formErrors.value = { nametitle_kh: "", nametitle_en: "" }
+  form.value = { occupation_kh: "", occupation_en: "", active: 1 }
+  formErrors.value = { occupation_kh: "", occupation_en: "" }
   selectedId.value = null
   isEditMode.value = false
 }
@@ -223,12 +223,12 @@ const closeModal = () => {
   resetForm()
 }
 
-onMounted(fetchSysTitles)
+onMounted(fetchSysOccupations)
 </script>
 
 <template>
   <div class="grid grid-cols-1">
-    <ComponentCardPlus title="System Titles" :hasAdd="true" @add="isCreateModal = true">
+    <ComponentCardPlus title="System Occupations" :hasAdd="true" @add="isCreateModal = true">
 
       <div class="relative">
         <!-- Icon -->
@@ -277,13 +277,13 @@ onMounted(fetchSysTitles)
             </thead>
 
             <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
-              <tr v-for="(item, i) in sysTitles" :key="item.id"
+              <tr v-for="(item, i) in sysOccupations" :key="item.id"
                 class="border-t border-gray-100 dark:border-gray-800 hover:bg-blue-300/20 transition">
                 <td class="px-4 py-3 text-sm font-medium">
                   {{ (page - 1) * perPage + i + 1 }}
                 </td>
-                <td class="px-4 py-3 text-sm">{{ item.nametitle_kh }}</td>
-                <td class="px-4 py-3 text-sm">{{ item.nametitle_en }}</td>
+                <td class="px-4 py-3 text-sm">{{ item.occupation_kh }}</td>
+                <td class="px-4 py-3 text-sm">{{ item.occupation_en }}</td>
                 <td class="px-4 py-3 text-sm">
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
                     :class="Number(item.active) === 1 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'">
@@ -308,7 +308,7 @@ onMounted(fetchSysTitles)
                 </td>
               </tr>
 
-              <tr v-if="sysTitles.length === 0">
+              <tr v-if="sysOccupations.length === 0">
                 <td colspan="7" class="text-center py-12 text-sm text-gray-400">
                   No records found.
                 </td>
@@ -343,26 +343,26 @@ onMounted(fetchSysTitles)
         <div class="bg-white dark:bg-gray-900 w-full max-w-md p-6 rounded-xl shadow-xl">
 
           <h2 class="text-xl font-semibold mb-4 text-blue-800 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
-            {{ isEditMode ? "Edit" : "Create" }}
+            {{ isEditMode ? "Edit System" : "Create" }}
           </h2>
 
           <div class="space-y-4">
             <div>
               <div class="flex items-center justify-between">
                 <label class="label">Title (KH) <span class="text-red-500 text-sm"> *</span></label>
-                <span v-if="formErrors.nametitle_kh" class="text-red-500 text-xs mt-1">{{ formErrors.nametitle_kh
+                <span v-if="formErrors.occupation_kh" class="text-red-500 text-xs mt-1">{{ formErrors.occupation_kh
                   }}</span>
               </div>
-              <input v-model="form.nametitle_kh" placeholder="Enter text ..." class="input" />
+              <input v-model="form.occupation_kh" placeholder="Enter text ..." class="input" />
             </div>
 
             <div>
               <div class="flex items-center justify-between">
                 <label class="label">Title (EN) <span class="text-red-500 text-sm"> *</span></label>
-                <span v-if="formErrors.nametitle_en" class="text-red-500 text-xs mt-1">{{ formErrors.nametitle_en
+                <span v-if="formErrors.occupation_en" class="text-red-500 text-xs mt-1">{{ formErrors.occupation_en
                   }}</span>
               </div>
-              <input v-model="form.nametitle_en" placeholder="Enter text ..." class="input" />
+              <input v-model="form.occupation_en" placeholder="Enter text ..." class="input" />
             </div>
 
             <div>
@@ -379,7 +379,7 @@ onMounted(fetchSysTitles)
               class="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-200 font-medium rounded-lg hover:opacity-90 transition text-sm">
               Cancel
             </button>
-            <button @click="saveSysTitle" :disabled="formLoading"
+            <button @click="saveSysOccupation" :disabled="formLoading"
               class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition text-sm">
               {{ formLoading ? "Saving..." : (isEditMode ? "Update" : "Save") }}
             </button>

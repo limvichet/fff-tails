@@ -89,9 +89,12 @@ const menuGroups = [
         name: "Data Administration",
         subItems: [
           { name: "Titles", path: "/app/dashboard/sys-titles", pro: false, icon: PlugInIcon  },
-          { name: "Identities", path: "/app/dashboard/identities", pro: false, icon: PlugInIcon  },
-          { name: "Identifications", path: "/app/dashboard/identifications", pro: false, icon: PlugInIcon  },
-          { name: "Occupations", path: "/app/dashboard/occupations", pro: false, icon: PlugInIcon  },
+          { name: "Identities", path: "/app/dashboard/sys-identities", pro: false, icon: PlugInIcon  },
+          { name: "Identifications", path: "/app/dashboard/sys-identifications", pro: false, icon: PlugInIcon  },
+          { name: "Occupations", path: "/app/dashboard/sys-occupations", pro: false, icon: PlugInIcon  },
+          { name: "Source Moneys", path: "/app/dashboard/sys-sourcemoneys", pro: false, icon: PlugInIcon  },
+          { name: "Paybacks", path: "/app/dashboard/sys-paybacks", pro: false, icon: PlugInIcon  },
+          { name: "Loan Types", path: "/app/dashboard/sys-loantypes", pro: false, icon: PlugInIcon  },
         ],
       },
       {

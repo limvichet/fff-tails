@@ -16,8 +16,8 @@ type DataResponses = {
 
 type Data = {
     id:           number;
-    nametitle_kh: string;
-    nametitle_en: string;
+    occupation_kh: string;
+    occupation_en: string;
     active: number | string;
     created_by: number;
     created_at: string;
@@ -72,7 +72,7 @@ export default defineEventHandler(async (event) => {
       
   try {
 
-    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/sys-titles?page=${page}&param=${param}`, {
+    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/sys-occupations?page=${page}&param=${param}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -83,7 +83,7 @@ export default defineEventHandler(async (event) => {
 
     return res
   } catch (err: any) {
-    const message = err?.data?.message || err?.message || "Failed to fetch titles"
+    const message = err?.data?.message || err?.message || "Failed to fetch occupations"
     throw createError({
       statusCode: err?.status || 500,
       statusMessage: message,
