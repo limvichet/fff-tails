@@ -20,13 +20,22 @@ export function formatYear(date: string) {
 }
 
 
-export function formatDateForOutput(date: Date): string {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, "0")
-  const d = String(date.getDate()).padStart(2, "0")
+export function formatDateForOutput(dateInput: Date | string | null | undefined): string {
+  // 1. Guard against null, undefined, or empty strings
+  if (!dateInput) return ""; 
 
-  // return `${d}-${m}-${y}`
-  return `${d}/${m}/${y}`
+  // 2. Convert string inputs to Date objects safely
+  const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+
+  // 3. Guard against "Invalid Date" objects (e.g., new Date(""))
+  if (isNaN(date.getTime())) return "";
+
+  // 4. Extract and format pieces
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+
+  return `${d}/${m}/${y}`;
 }
 
 /* DATE FORMAT HELPER */

@@ -27,13 +27,20 @@ type Status = {
   id: number;
   status_kh: string;
 }
+type Role = {
+  id: number;
+  name: string;
+}
 
 type Employee = {
     id: number;
     full_name: string;
-    dob:  string;
+    dob:  null | string;
     phone: string;
+    hire_date: string;
     status_id: number;
+    role_id: number;
+    role: Role;
     gender: Gender;
     status: Status;
 }
