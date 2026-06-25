@@ -299,7 +299,7 @@ const getPaymentStatus = (p: Schedule) => {
               </td>
 
               <td class="px-2 py-1">
-                {{ formatDateForOutput(new Date(p.latest_schedule_paid_date)) }}
+                {{ p.latest_schedule_paid_date ? formatDateForOutput(new Date(p.latest_schedule_paid_date)) : "" }}              
               </td>
 
               <td class="px-2 py-1">
