@@ -120,16 +120,7 @@ watchEffect(() => {
   form.loan_totalcash = lastCash + newCash
 })
 
-// watch(
-//   () => [form.loan_startdate, form.loan_peroid],
-//   ([start, period]) => {
-//     if (!start || !period) return
 
-//     const d = new Date(start)
-//     d.setMonth(d.getMonth() + Number(period))
-//     form.loan_enddate = d.toISOString().split("T")[0] ?? ""
-//   }
-// )
 
 watch(
   () => [form.loan_startdate, form.loan_first_paid_date, form.loan_peroid, form.loantype_id],

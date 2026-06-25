@@ -15,7 +15,7 @@ definePageMeta({
 
 useHead({
   title: "Search Employees",
-  meta: [{ name: "loanrecords", content: "search employees" }],
+  meta: [{ name: "descrription", content: "search employees" }],
 })
 
 const router = useRouter()
@@ -163,9 +163,9 @@ const deleteEmployee = async () => {
                 <tr class="bg-gray-50 dark:bg-white/[0.02] border-b border-gray-200 dark:border-gray-700 text-left">
                   <th class="px-4 py-3 text-xs font-bold uppercase w-[5%]">#</th>
                   <th class="px-2 py-3 text-xs font-bold uppercase w-[20%]">Name</th>
-                  <th class="px-2 py-3 text-xs font-bold uppercase w-[10%]">Gender</th>
+                  <th class="px-2 py-3 text-xs font-bold uppercase w-[5%]">Gender</th>
                   <th class="px-2 py-3 text-xs font-bold uppercase w-[15%]">Dob</th>
-                  <th class="px-2 py-3 text-xs font-bold uppercase w-[15%]">Position</th>
+                  <th class="px-2 py-3 text-xs font-bold uppercase w-[20%]">Position</th>
                   <th class="px-2 py-3 text-xs font-bold uppercase w-[15%]">Phone</th>
                   <th class="px-2 py-3 text-xs font-bold uppercase w-[15%]">Hire Date</th>
                   <th class="px-2 py-3 text-xs font-bold uppercase w-[10%]">Status</th>

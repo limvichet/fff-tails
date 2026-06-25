@@ -195,7 +195,7 @@ const nextPage = () => {
           Prev
         </button>
 
-        <span class="text-sm text-gray-500">
+        <span class="text-sm text-blue-500">
           Page {{ page }} / {{ lastPageValue }}
         </span>
 

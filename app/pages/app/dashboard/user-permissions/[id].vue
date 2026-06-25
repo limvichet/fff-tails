@@ -4,16 +4,20 @@ definePageMeta({
   requiresAuth: true,
 })
 
+import { z } from "zod"
 import { reactive, ref, onMounted, watch } from "vue"
 import ComponentCard from "@/components/common/ComponentCard.vue"
 import PermissionTable from "@/components/forms/PermissionTable.vue"
 
-const { success, errorMsg } = useMessage()
+const { success, errorMsg, successMsg } = useMessage()
 const route = useRoute()
 const userId = route.params.id
 
 const loading = ref(false)
 const isReady = ref(false)
+
+  errorMsg.value = null
+  successMsg.value = null
 
 type Permission = { id: number; name: string; slug: string }
 
@@ -73,7 +77,7 @@ const initializePermissions = () => {
 // =============================
 const fetchFormData = async () => {
   const res = await $fetch<APIResponse>(
-    "/api/admin-secure/user-permissions-form-data"
+    "/api/admin-secure/user-permissions-form-data-all"
   )
 
   const map = (obj: Record<string, string>) =>
@@ -116,27 +120,7 @@ const resetPermissions = () => {
   })
 }
 
-// =============================
-// ROLE CHANGE
-// =============================
-// watch(() => form.role_id, (id, oldId) => {
-//   // 🚫 block initial hydration
-//   if (isHydrating.value) return
 
-//   // 🚫 ignore invalid
-//   if (id === -1) return
-
-//   // 🚫 avoid same value re-trigger
-//   if (id === oldId) return
-
-//   resetPermissions()
-
-//   const role = rolePermissionsData.value.find(r => r.id === id)
-
-//   role?.permissions.forEach(p => {
-//     form.permissions[p.slug] = 1
-//   })
-// })
 
 
 // =============================
@@ -204,11 +188,53 @@ const applyRolePermissions = (roleId: number) => {
 
 
 // =============================
+// VALIDATION
+// =============================
+const errors = reactive<Record<string, string>>({})
+const schema = z.object({
+  emp_id: z.number().min(1, "Please select an employee"),
+  role_id: z.number().min(1, "Please select a role"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  active: z.boolean(),
+  identifier_token: z.string().optional(),
+  permissions: z.record(z.string(), z.number()).optional()
+})
+
+const validateField = (field: keyof typeof schema.shape) => {
+  try {
+    const part = schema.pick({ [field]: true } as any)
+    part.parse({ [field]: form[field as keyof typeof form] })
+    errors[field as string] = ""
+  } catch (err: any) {
+    errors[field as string] = err.errors?.[0]?.message || ""
+  }
+}
+
+// Watch validation
+watch(() => form.email, () => validateField("email"))
+watch(() => form.password, () => validateField("password"))
+watch(() => form.emp_id, () => validateField("emp_id"))
+watch(() => form.role_id, () => validateField("role_id"))
+
+// =============================
 // SUBMIT
 // =============================
 const submitForm = async () => {
   loading.value = true
   errorMsg.value = ""
+
+  Object.keys(errors).forEach(k => errors[k] = "")
+
+  const parsed = schema.safeParse(form)
+
+  if (!parsed.success) {
+    parsed.error.errors.forEach(e => {
+      errors[e.path[0] as string] = e.message
+    })
+    loading.value = false
+    return
+  }
 
   try {
     const payload = {
@@ -230,7 +256,7 @@ const submitForm = async () => {
       }
     )
 
-    success("Updated successfully")
+    successMsg.value = "Data updated successfully!"
 
     navigateTo(
       `/app/dashboard/user-permissions/${userId}`
@@ -247,19 +273,25 @@ const submitForm = async () => {
 <template>
   <div class="max-w-4xl mx-auto p-4">
 
-    <div v-if="errorMsg" class="mb-4 p-3 bg-red-100 text-red-600 rounded">
+    <!-- Messages -->
+    <div v-if="errorMsg" class="mb-3 p-2 rounded bg-red-500/20 text-red-300 text-sm">
       {{ errorMsg }}
+    </div>
+    <div v-if="successMsg" class="mb-3 p-2 rounded bg-emerald-500/20 text-emerald-300 text-sm">
+      {{ successMsg }}
     </div>
 
     <div class="grid grid-cols-2 gap-6">
 
       <ComponentCard title="Account">
-        <select v-model.number="form.emp_id" class="input">
+        <select v-model.number="form.emp_id" class="input bg-gray-100 cursor-not-allowed" disabled>
           <option :value="-1">Choose</option>
           <option v-for="e in employees" :key="e.id" :value="e.id">
             {{ e.label }}
           </option>
         </select>
+        <p class="error">{{ errors.emp_id }}</p>
+
 
         <select v-model.number="form.role_id" @change="applyRolePermissions(form.role_id)"
           class="input mt-2">
@@ -268,9 +300,13 @@ const submitForm = async () => {
             {{ r.label }}
           </option>
         </select>
+        <p class="error">{{ errors.role_id }}</p>
 
         <input v-model="form.email" class="input mt-2" placeholder="Email" />
+        <p class="error">{{ errors.email }}</p>
+
         <input v-model="form.password" class="input mt-2" placeholder="Password" />
+        <p class="error">{{ errors.password }}</p>
 
       </ComponentCard>
 
@@ -294,7 +330,9 @@ const submitForm = async () => {
     </ComponentCard>
 
     <div class="mt-6 text-right">
-      <button @click="submitForm" class="btn-primary">
+      <button @click="submitForm" 
+        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+      >
         {{ loading ? "Saving..." : "Update" }}
       </button>
     </div>

@@ -36,8 +36,7 @@ const { hasRole } = useAuth()
 const route = useRoute();
 const { isExpanded, isMobileOpen, isHovered, openSubmenu } = useSidebar();
 
-// 💡 menuGroups converted to a computed static configuration array
-const menuGroups = computed(() => [
+const menuGroups = [
   {
     title: "Loan Managements",
     items: [
@@ -79,6 +78,7 @@ const menuGroups = computed(() => [
           { name: "Filter", path: "/app/dashboard/reports", pro: false, icon: SearchIcon  },
         ],
       },
+
     ],
   },
   {
@@ -105,28 +105,26 @@ const menuGroups = computed(() => [
           { name: "Search", path: "/app/dashboard/employees", pro: false, icon: SearchIcon  },
         ],
       },
-      // Using JS spread (...) conditional format to cleanly insert/remove items natively
-      ...(hasRole('admin') || hasRole('ceo') ? [
-        {
-          icon: UserSettingIcon,
-          name: "Users & Permissions",
-          subItems: [
-            { name: "Create", path: "/app/dashboard/user-permissions/create", pro: false, icon: PencilIcon  },
-            { name: "Search", path: "/app/dashboard/user-permissions", pro: false, icon: SearchIcon  },
-          ],
-        },
-        {
-          icon: UserLockIcon,
-          name: "Roles & Permission",
-          subItems: [
-            { name: "Roles", path: "/app/dashboard/roles", pro: false, icon: SearchIcon  },
-            { name: "Permissions", path: "/app/dashboard/permissions", pro: false, icon: SearchIcon  },
-          ],
-        },
-      ] : []),
+      {
+        icon: UserSettingIcon,
+        name: "Users & Permissions",
+        subItems: [
+          { name: "Create", path: "/app/dashboard/user-permissions/create", pro: false, icon: PencilIcon  },
+          { name: "Search", path: "/app/dashboard/user-permissions", pro: false, icon: SearchIcon  },
+        ],
+      },
+      {
+        icon: UserLockIcon,
+        name: "Roles & Permission",
+        subItems: [
+          { name: "Roles", path: "/app/dashboard/roles", pro: false, icon: SearchIcon  },
+          { name: "Permissions", path: "/app/dashboard/permissions", pro: false, icon: SearchIcon  },
+        ],
+      },
+      // ... Add other menu items here
     ],
   },
-]);
+];
 
 const isActive = (path) => route.path === path;
 
@@ -136,8 +134,7 @@ const toggleSubmenu = (groupIndex, itemIndex) => {
 };
 
 const isAnySubmenuRouteActive = computed(() => {
-  // 🔑 Added .value here
-  return menuGroups.value.some((group) =>
+  return menuGroups.some((group) =>
     group.items.some(
       (item) =>
         item.subItems && item.subItems.some((subItem) => isActive(subItem.path))
@@ -150,8 +147,7 @@ const isSubmenuOpen = (groupIndex, itemIndex) => {
   return (
     openSubmenu.value === key ||
     (isAnySubmenuRouteActive.value &&
-      // 🔑 Added .value here
-      menuGroups.value[groupIndex].items[itemIndex].subItems?.some((subItem) =>
+      menuGroups[groupIndex].items[itemIndex].subItems?.some((subItem) =>
         isActive(subItem.path)
       ))
   );

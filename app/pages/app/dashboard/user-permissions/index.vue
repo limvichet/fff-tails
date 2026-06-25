@@ -15,6 +15,7 @@ import { ref, computed, onMounted, watch } from "vue"
 import { useMessage } from "~/composables/useMessage"
 
 const { errorMsg, successMsg } = useMessage()
+const router = useRouter()
 
 // TYPES
 type User = {
@@ -115,6 +116,10 @@ const getStatusClass = (active: number) => {
     ? "bg-green-100 text-green-600"
     : "bg-red-100 text-red-600"
 }
+
+const edit = (id: number) => {
+  router.push(`/app/dashboard/user-permissions/${id}`)
+}
 </script>
 
 <template>
@@ -150,6 +155,7 @@ const getStatusClass = (active: number) => {
               <th class="px-3 py-2 text-left">Employee</th>
               <th class="px-3 py-2 text-left">Role</th>
               <th class="px-3 py-2 text-left">Status</th>
+              <th class="px-3 py-2 text-left">Action</th>
             </tr>
           </thead>
 
@@ -170,15 +176,22 @@ const getStatusClass = (active: number) => {
               <td class="px-3 py-2">
                 {{ u.role_name }}
               </td>
-
+              
               <td class="px-3 py-2">
                 <span
-                  class="px-2 py-1 rounded text-xs font-semibold"
-                  :class="getStatusClass(u.active)"
+                class="px-2 py-1 rounded text-xs font-semibold"
+                :class="getStatusClass(u.active)"
                 >
-                  {{ u.active === 1 ? "Active" : "Inactive" }}
-                </span>
-              </td>
+                {{ u.active === 1 ? "Active" : "Inactive" }}
+              </span>
+            </td>
+            
+            <td class="px-3 py-2">
+                <button @click="edit(u.id)"
+                  class="px-1 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white text-sm"> Edit
+                </button>
+            </td>
+              
             </tr>
 
             <tr v-if="paginated.length === 0">

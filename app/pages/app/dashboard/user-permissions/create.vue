@@ -139,19 +139,7 @@ const resetPermissions = () => {
   })
 }
 
-// watch(() => form.role_id, (newRoleId) => {
-//   if (newRoleId === -1) return
 
-//   resetPermissions()
-
-//   const role = rolePermissionsData.value.find(r => r.id === newRoleId)
-
-//   if (role) {
-//     role.permissions.forEach(p => {
-//       form.permissions[p.slug] = 1
-//     })
-//   }
-// })
 
 const applyRolePermissions = (roleId: number) => {
   if (!rolePermissionsData.value.length) return
@@ -192,11 +180,6 @@ const submitForm = async () => {
   }
 
   try {
-    // const fd = new FormData()
-
-    // Object.entries(form.permissions).forEach(([k, v]) => {
-    //   fd.append(k, String(v))
-    // })
 
     const payload = {
       emp_id: form.emp_id,
@@ -293,7 +276,9 @@ const submitForm = async () => {
 
     <!-- ACTION -->
     <div class="mt-6 text-right">
-      <button @click="submitForm" class="btn-primary">
+      <button @click="submitForm" 
+        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+      >
         {{ loading ? "Saving..." : "Save User" }}
       </button>
     </div>
