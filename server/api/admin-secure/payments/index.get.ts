@@ -30,6 +30,8 @@ type Schedule = {
     created_at: string
     updated_by: string
     updated_at: string
+    latest_schedule_paid_date: string
+    latest_schedule_outstanding: number
     schedule_principle_payment_tt: string;
     schedule_principle_tt: string;
     schedule_totalpay_tt: string;

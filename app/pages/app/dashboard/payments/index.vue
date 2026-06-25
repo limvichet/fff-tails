@@ -43,6 +43,8 @@ type Schedule = {
   updated_by: string
   updated_at: string
 
+  latest_schedule_paid_date: string
+  latest_schedule_outstanding: number
   schedule_principle_payment_tt: string
   schedule_principle_tt: string
   schedule_totalpay_tt: string
@@ -157,6 +159,8 @@ const showPayment = (id: number) => {
 const getPaymentStatus = (p: Schedule) => {
   const loantype_id = Number(p.loan_id) // or p.loanrecord.loantype_id if nested
   const loan_totalcash = Number(p.loan_totalcash)
+  const latest_schedule_paid_date = Number(p.latest_schedule_paid_date)
+  const latest_schedule_outstanding = Number(p.latest_schedule_outstanding)
   const schedule_principle_payment_tt = Number(p.schedule_principle_payment_tt)
   const schedule_principle_tt = Number(p.schedule_principle_tt)
   const schedule_totalpay_tt = Number(p.schedule_totalpay_tt)
@@ -252,7 +256,8 @@ const getPaymentStatus = (p: Schedule) => {
               <th class="px-2 py-2 text-left">Customer</th>
               <th class="px-2 py-2 text-left">Total Loan</th>
               <th class="px-2 py-2 text-left">Rate</th>
-              <th class="px-2 py-2 text-left">Start</th>
+              <th class="px-2 py-2 text-left">Outstanding</th>
+              <th class="px-2 py-2 text-left">LastPaided</th>
               <th class="px-2 py-2 text-left">End</th>
               <th class="px-2 py-2 text-left">Tag</th>
               <th class="px-2 py-2 text-left">DebtReturn</th>
@@ -290,7 +295,11 @@ const getPaymentStatus = (p: Schedule) => {
               </td>
 
               <td class="px-2 py-1">
-                {{ formatDateForOutput(new Date(p.loan_startdate)) }}
+                {{ formatNumber(p.latest_schedule_outstanding) }}
+              </td>
+
+              <td class="px-2 py-1">
+                {{ formatDateForOutput(new Date(p.latest_schedule_paid_date)) }}
               </td>
 
               <td class="px-2 py-1">
