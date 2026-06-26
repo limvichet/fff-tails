@@ -150,7 +150,12 @@ const nextPage = () => {
 
 const router = useRouter()
 const showPayment = (id: number) => {
-  router.push(`/app/dashboard/payments/${id}`)
+  // router.push(`/app/dashboard/payments/${id}`)
+  // Construct your URL here
+  const url = `/app/dashboard/payments/${id}`; 
+  
+  // 'url' is the page to open, '_blank' forces a new tab
+  window.open(url, '_blank');
 }
 
 // =====================

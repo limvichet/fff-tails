@@ -998,17 +998,17 @@ function calculateScheduleInterest(
                     calculatePayment()
                   }"
                   class="w-full text-sm border rounded px-3 py-2"
-                  :class="
-                    paymentItem?.loantype_id === 13 &&
-                    (
+                  :class="{
+                    'border-red-500': paymentItem?.loantype_id === 13 &&
                       (
-                        parseFloat(String(paymentForm.schedule_outstanding).replace(/,/g, '')) +
-                        parseFloat(String(paymentForm.schedule_interest).replace(/,/g, ''))
-                      ).toFixed(2)
-                      !==
-                      parseFloat(String(paymentForm.schedule_totalcashin).replace(/,/g, '')).toFixed(2)
-                    )
-                  "
+                        (
+                          parseFloat(String(paymentForm.schedule_outstanding).replace(/,/g, '')) +
+                          parseFloat(String(paymentForm.schedule_interest).replace(/,/g, ''))
+                        ).toFixed(2)
+                        !==
+                        parseFloat(String(paymentForm.schedule_totalcashin).replace(/,/g, '')).toFixed(2)
+                      )
+                  }"
                   :readonly="
                     paymentItem?.loantype_id === 13 &&
                     (
