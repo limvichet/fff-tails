@@ -208,19 +208,19 @@ const edit = (id: number) => {
         <button
           @click="prevPage"
           :disabled="page === 1"
-          class="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50"
+          class="btn-pagination disabled:opacity-50"
         >
           Prev
         </button>
 
         <span class="text-sm">
-          Page {{ page }} / {{ lastPage }}
+          Page {{ page }} / {{ lastPage }} Total Records: <b>{{ total }}</b>
         </span>
 
         <button
           @click="nextPage"
           :disabled="page === lastPage"
-          class="px-3 py-1 bg-blue-500 text-white rounded disabled:opacity-50"
+          class="btn-pagination disabled:opacity-50"
         >
           Next
         </button>
@@ -239,4 +239,19 @@ const edit = (id: number) => {
 }
 /* Fix date input */
 input[type="date"] { appearance: none; -webkit-appearance: none;}
+.btn-pagination {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 12px;
+  background-color: transparent;
+  cursor: pointer;
+}
+.btn-pagination:not(:disabled):hover {
+  background-color: #f5f5f5;
+  border-color: #ccc;
+}
+.btn-pagination:disabled {
+  cursor: not-allowed;
+}
 </style>

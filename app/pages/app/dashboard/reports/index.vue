@@ -169,4 +169,20 @@ const submitFilter = () => {
   border-radius: 8px;
   cursor: pointer;
 }
+
+.btn-pagination {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 12px;
+  background-color: transparent;
+  cursor: pointer;
+}
+.btn-pagination:not(:disabled):hover {
+  background-color: #f5f5f5;
+  border-color: #ccc;
+}
+.btn-pagination:disabled {
+  cursor: not-allowed;
+}
 </style>

@@ -335,16 +335,17 @@ const deleteCustomer = async () => {
         <!-- Pagination -->
         <div class="mt-6 flex items-center justify-between">
           <button @click="prevPage" :disabled="page === 1"
-            class="px-4 py-2 rounded-lg text-sm text-white border border-blue-700 bg-blue-500/60 disabled:opacity-50 hover:bg-blue-700/40 transition cursor-pointer">
+            class="btn-pagination disabled:opacity-50">
             Prev
           </button>
 
-          <span class="text-sm text-blue-400">
+          <span class="text-sm">
             Page {{ page }} / {{ lastPageValue }}
+            Total Records: <b>{{ total }}</b>
           </span>
 
           <button @click="nextPage" :disabled="page === lastPageValue"
-            class="px-4 py-2 rounded-lg text-sm text-white border border-blue-700 bg-blue-500/60 disabled:opacity-50 hover:bg-blue-700/40 transition">
+            class="btn-pagination disabled:opacity-50">
             Next
           </button>
 
@@ -428,5 +429,21 @@ const deleteCustomer = async () => {
 
 .text-sm {
   font-size: 12px;
+}
+
+.btn-pagination {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 12px;
+  background-color: transparent;
+  cursor: pointer;
+}
+.btn-pagination:not(:disabled):hover {
+  background-color: #f5f5f5;
+  border-color: #ccc;
+}
+.btn-pagination:disabled {
+  cursor: not-allowed;
 }
 </style>

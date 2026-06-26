@@ -523,7 +523,7 @@ onMounted(() => {
         <button
           @click="prevPage"
           :disabled="page === 1"
-          class="px-4 py-2 rounded-lg text-sm text-white border border-blue-700 bg-blue-500/60 disabled:opacity-50"
+          class="btn-pagination disabled:opacity-50"
         >
           Prev
         </button>
@@ -536,7 +536,7 @@ onMounted(() => {
         <button
           @click="nextPage"
           :disabled="page === lastPageValue"
-          class="px-4 py-2 rounded-lg text-sm text-white border border-blue-700 bg-blue-500/60 disabled:opacity-50"
+          class="btn-pagination disabled:opacity-50"
         >
           Next
         </button>
@@ -616,4 +616,19 @@ onMounted(() => {
 }
 input[type="date"] { appearance: none; -webkit-appearance: none;}
 
+.btn-pagination {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 12px;
+  background-color: transparent;
+  cursor: pointer;
+}
+.btn-pagination:not(:disabled):hover {
+  background-color: #f5f5f5;
+  border-color: #ccc;
+}
+.btn-pagination:disabled {
+  cursor: not-allowed;
+}
 </style>

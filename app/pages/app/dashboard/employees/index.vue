@@ -214,7 +214,7 @@ const deleteEmployee = async () => {
 
         <div class="mt-6 flex items-center justify-between">
           <button @click="changePage(page - 1)" :disabled="page === 1" class="btn-pagination disabled:opacity-50">Prev</button>
-          <span class="text-sm font-medium text-blue-500">Page {{ page }} / {{ lastPageValue }}</span>
+          <span class="text-sm">Page {{ page }} / {{ lastPageValue }} Total Records: <b>{{ total }}</b></span>
           <button @click="changePage(page + 1)" :disabled="page === lastPageValue" class="btn-pagination disabled:opacity-50">Next</button>
         </div>
 
@@ -246,9 +246,13 @@ const deleteEmployee = async () => {
   padding: 6px 12px;
   border: 1px solid #ddd;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 12px;
   background-color: transparent;
   cursor: pointer;
+}
+.btn-pagination:not(:disabled):hover {
+  background-color: #f5f5f5;
+  border-color: #ccc;
 }
 .btn-pagination:disabled {
   cursor: not-allowed;
