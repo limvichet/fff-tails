@@ -12,7 +12,7 @@ definePageMeta({
 })
 
 useHead({
-  title: "Reports Filter",
+  title: "Generate Reports",
 })
 
 interface ReportsFormDataResponse {
@@ -20,11 +20,49 @@ interface ReportsFormDataResponse {
   loanstatus: Record<string, string>
 }
 
+const reports = [
+  {
+    name: "Income",
+    url: "/app/dashboard/reports/income",
+  },
+  {
+    name: "Cash In",
+    // url: "/app/dashboard/reports/cash-in",
+    url: "/app/dashboard/reports/income",
+  },
+  {
+    name: "Preless",
+    // url: "/app/dashboard/reports/preless",
+    url: "/app/dashboard/reports/income",
+  },
+  {
+    name: "Optional",
+    // url: "/app/dashboard/reports/optional",
+    url: "/app/dashboard/reports/income",
+  },
+  {
+    name: "Debt",
+    // url: "/app/dashboard/reports/debt",
+    url: "/app/dashboard/reports/income",
+  },
+]
+
+const router = useRouter()
+
+function getCurrentDate() {
+  const date = new Date()
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+
+  return `${year}-${month}-${day}`
+}
+
 const filters = reactive({
-  loan_startdate: "",
-  loan_enddate: "",
+  loan_startdate: getCurrentDate(),
+  loan_enddate: getCurrentDate(),
   loantype_id: "",
-  loan_status_id: "1", // Current loan selected by default
+  loan_status_id: "1",
 })
 
 const {
@@ -46,45 +84,51 @@ const {
   }
 )
 
-const submitFilter = () => {
-  console.log(filters)
-
-  // Example:
-  // navigateTo({
-  //   path: '/reports/result',
-  //   query: filters
-  // })
+function openReport(url: string) {
+  const reportUrl = router.resolve({
+    path: url,
+    query: {
+      loan_startdate: filters.loan_startdate,
+      loan_enddate: filters.loan_enddate,
+      loan_status_id: filters.loan_status_id || undefined,
+      loantype_id: filters.loantype_id || undefined,
+    },
+  }).href
+  window.open(reportUrl, "_blank")
 }
+
+
+
 </script>
 
 <template>
   <div class="grid grid-cols-1">
-    <ComponentCard title="Filter">
+    <ComponentCard title="Income Report Filter">
 
       <!-- Loading -->
-      <div v-if="pending" class="py-8 text-center text-gray-500">
+      <div v-if="pending" class="py-10 text-center text-gray-500">
         Loading report data...
       </div>
 
       <!-- Error -->
-      <div v-else-if="error" class="py-8 text-center">
-        <p class="mb-3 text-red-500">
+      <div v-else-if="error" class="py-10 text-center">
+        <p class="mb-4 text-red-500">
           Failed to load report data.
         </p>
 
-        <button class="btn" @click="refresh()">
+        <a href="#" class="btn" @click.prevent="() => refresh()">
           Retry
-        </button>
+        </a>
       </div>
 
       <!-- Form -->
-      <form v-else class="space-y-4" @submit.prevent="submitFilter">
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div v-else class="space-y-6">
+        <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
           <!-- Start Date -->
           <div>
             <label class="label">
-              Start Date
-              <span class="text-red-500">*</span>
+              Start
+              <span class="required">*</span>
             </label>
 
             <input v-model="filters.loan_startdate" type="date" class="input" />
@@ -93,8 +137,8 @@ const submitFilter = () => {
           <!-- End Date -->
           <div>
             <label class="label">
-              End Date
-              <span class="text-red-500">*</span>
+              End
+              <span class="required">*</span>
             </label>
 
             <input v-model="filters.loan_enddate" type="date" class="input" />
@@ -103,13 +147,12 @@ const submitFilter = () => {
           <!-- Loan Type -->
           <div>
             <label class="label">
-              Loan Type
-              <span class="text-red-500">*</span>
+              Type
             </label>
 
             <select v-model="filters.loantype_id" class="input">
-              <option value="" disabled>
-                Choose...
+              <option value="">
+                All Loan Types
               </option>
 
               <option v-for="(label, id) in formData.loantype" :key="id" :value="id">
@@ -118,16 +161,15 @@ const submitFilter = () => {
             </select>
           </div>
 
-          <!-- Status -->
+          <!-- Loan Status -->
           <div>
             <label class="label">
               Status
-              <span class="text-red-500">*</span>
             </label>
 
             <select v-model="filters.loan_status_id" class="input">
-              <option value="" disabled>
-                Choose...
+              <option value="">
+                All Status
               </option>
 
               <option v-for="(label, id) in formData.loanstatus" :key="id" :value="id">
@@ -136,16 +178,19 @@ const submitFilter = () => {
             </select>
           </div>
         </div>
-
-        <!-- Actions -->
-        <div class="flex justify-end">
-          <button type="submit" class="btn">
-            Generate Report
-          </button>
-        </div>
-      </form>
+      </div>
 
     </ComponentCard>
+
+    <CommonComponentCard title="Generate Reports" class="mt-2">
+      <div class="flex flex-row  justify-between gap-3 px-5">
+        <a v-for="report in reports" :key="report.name" :href="report.url" target="_blank" rel="noopener noreferrer"
+          @click="openReport(report.url)" class="flex cursor-pointer items-center gap-2 text-primary hover:underline">
+          <span>📊 {{ report.name }}</span>
+        </a>
+      </div>
+    </CommonComponentCard>
+
   </div>
 </template>
 
@@ -153,36 +198,61 @@ const submitFilter = () => {
 .label {
   display: block;
   margin-bottom: 6px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.required {
+  color: #ef4444;
 }
 
 .input {
   width: 100%;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
+  transition: border-color 0.2s ease;
 }
 
-.btn {
-  padding: 8px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  cursor: pointer;
+.input:focus {
+  outline: none;
+  border-color: #3b82f6;
 }
 
-.btn-pagination {
-  padding: 6px 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 12px;
-  background-color: transparent;
-  cursor: pointer;
+.generate-reports {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
 }
-.btn-pagination:not(:disabled):hover {
-  background-color: #f5f5f5;
-  border-color: #ccc;
+
+.generate-reports h2 {
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
 }
-.btn-pagination:disabled {
-  cursor: not-allowed;
+
+.generate-reports a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.generate-reports a:hover {
+  background-color: #eff6ff;
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.generate-reports a span {
+  font-weight: 500;
 }
 </style>
