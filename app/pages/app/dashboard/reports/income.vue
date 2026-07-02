@@ -47,7 +47,7 @@ const { data, pending, error } = await useAsyncData(
       </div>
       <!-- Table -->
       <div v-else
-        class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] -mt-5">
         <div class="max-w-full overflow-x-auto custom-scrollbar">
           <table class="min-w-full">
             <thead class="py-2">
@@ -90,8 +90,8 @@ const { data, pending, error } = await useAsyncData(
                 <td class="px-1 py-1 text-sm">{{ row.cust_name_1 }}</td>
                 <td class="px-1 py-1 text-sm">{{ row.currency_en }}</td>
                 <td class="px-1 py-1 text-sm">{{ formatNumber(row.loan_totalcash) }}</td>
-                <td class="px-1 py-1 text-sm">{{ formatDateForOutput(new Date(row.schedule_enddate)) }}</td>
-                <td class="px-1 py-1 text-sm">{{ formatNumber(row.schedule_outstanding) }}</td>
+                <td class="px-1 py-1 text-sm">{{ formatDateForOutput(new Date(row.latest_schedule_paid_date)) }}</td>
+                <td class="px-1 py-1 text-sm">{{ formatNumber(row.latest_schedule_outstanding) }}</td>
                 <td class="px-1 py-1 text-sm">{{ row.loan_tag }}</td>
                 <td class="px-1 py-1 text-sm">{{ formatNumber(row.schedule_principle) }}</td>
                 <td class="px-1 py-1 text-sm">{{ formatNumber(row.schedule_interest) }}</td>
