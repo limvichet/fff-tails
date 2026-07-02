@@ -252,22 +252,22 @@ const getPaymentStatus = (p: Schedule) => {
       </div>
 
       <!-- Table -->
-      <div v-else class="overflow-x-auto border rounded-xl">
+      <div v-else class="overflow-x-auto rounded-xl border mt-3 border-gray-200 dark:border-gray-800">
         <table class="min-w-full text-sm">
-          <thead class="border-b">
+          <thead class="bg-gray-100 dark:bg-gray-800 border-b text-left">
             <tr>
-              <th class="px-2 py-2 text-left">#</th>
-              <th class="px-2 py-2 text-left">Loan</th>
-              <th class="px-2 py-2 text-left">Customer</th>
-              <th class="px-2 py-2 text-left">Total Loan</th>
-              <th class="px-2 py-2 text-left">Rate</th>
-              <th class="px-2 py-2 text-left">Outstanding</th>
-              <th class="px-2 py-2 text-left">LastPaided</th>
-              <th class="px-2 py-2 text-left">End</th>
-              <th class="px-2 py-2 text-left">Tag</th>
-              <th class="px-2 py-2 text-left">DebtReturn</th>
-              <th class="px-2 py-2 text-left">Status</th>
-              <th class="px-2 py-2 text-left">Actions</th>
+              <th class="px-2 py-2">#</th>
+              <th class="px-2 py-2">Loan</th>
+              <th class="px-2 py-2">Customer</th>
+              <th class="px-2 py-2">Total Loan</th>
+              <th class="px-2 py-2">Rate</th>
+              <th class="px-2 py-2">Outstanding</th>
+              <th class="px-2 py-2">LastPaided</th>
+              <th class="px-2 py-2">End</th>
+              <th class="px-2 py-2">Tag</th>
+              <th class="px-2 py-2">DebtReturn</th>
+              <th class="px-2 py-2">Status</th>
+              <th class="px-2 py-2">Actions</th>
             </tr>
           </thead>
 

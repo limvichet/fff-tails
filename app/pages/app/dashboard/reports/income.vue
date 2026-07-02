@@ -37,7 +37,7 @@ const { data, pending, error } = await useAsyncData(
 
 
   <div class="grid grid-cols-1">
-    <ComponentCard title="Income Report">
+    <ComponentCard title="Income Report" :desc="`${query.loan_startdate} - ${query.loan_enddate}/ Records: ${data?.count ?? 0}`">
       <div v-if="pending">
         Loading...
       </div>
@@ -50,21 +50,22 @@ const { data, pending, error } = await useAsyncData(
         class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] -mt-5">
         <div class="max-w-full overflow-x-auto custom-scrollbar">
           <table class="min-w-full">
-            <thead class="py-2">
+            <thead class="bg-slate-50 dark:bg-gray-800 text-slate-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 text-sm">
               <tr class="border-b border-gray-200 dark:border-gray-700">
-                <th class="px-1 pt-3 text-left text-sm">ល.រ</th>
-                <th class="px-1 pt-3 text-left text-sm">កម្ចី</th>
-                <th class="px-1 pt-3 text-left text-sm">អតិថិជន</th>
-                <th class="px-1 pt-3 text-left text-sm">រូបិយប័ណ្ណ</th>
-                <th class="px-1 pt-3 text-left text-sm">ប្រាក់ដើមខ្ចីដំបូង</th>
-                <th class="px-1 pt-3 text-left text-sm">ថ្ងៃខែឆ្នាំបង់ប្រាក់</th>
-                <th class="px-1 pt-3 text-left text-sm">ប្រាក់ដើមមិនទាន់សងត្រឡប់</th>
-                <th class="px-1 pt-3 text-left text-sm">ស្លាក</th>
-                <th class="px-1 pt-3 text-left text-sm">ប្រាក់ដើមខែនេះ</th>
-                <th class="px-1 pt-3 text-left text-sm">ការប្រាក់ខែនេះ</th>
-                <th class="px-1 pt-3 text-left text-sm">សរុប</th>
-                <th class="px-1 pt-3 text-left text-sm">ស.រប្រាក់បានបង់</th>
-                <th class="px-1 pt-3 text-left text-sm">ស.រប្រាក់អតិថិជនទទួលទៅវិញ</th>
+                <th class="px-1 pt-3 text-left">ល.រ</th>
+                <th class="px-1 pt-3 text-left">កម្ចី</th>
+                <th class="px-1 pt-3 text-left">អតិថិជន</th>
+                <th class="px-1 pt-3 text-left">រូបិយប័ណ្ណ</th>
+                <th class="px-1 pt-3 text-left">ប្រាក់ដើមខ្ចីដំបូង</th>
+                <th class="px-1 pt-3 text-left">ថ្ងៃខែឆ្នាំបង់ប្រាក់</th>
+                <th class="px-1 pt-3 text-left">ប្រាក់ដើមមិនទាន់សងត្រឡប់</th>
+                <th class="px-1 pt-3 text-left">ស្លាក</th>
+                <th class="px-1 pt-3 text-left">ប្រាក់ដើមខែនេះ</th>
+                <th class="px-1 pt-3 text-left">ការប្រាក់ខែនេះ</th>
+                <th class="px-1 pt-3 text-left">សរុប</th>
+                <th class="px-1 pt-3 text-left">ស.របានបង់</th>
+                <th class="px-1 pt-3 text-left">ស.រប្រាក់អតិ.ទទួលទៅវិញ</th>
+                <th class="px-1 pt-3 text-left">សមតុល្យ</th>
               </tr>
               <tr class="border-b border-gray-200 dark:border-gray-700">
                 <th class="px-1 py-1 pb-3 text-left text-sm">#</th>
@@ -80,6 +81,7 @@ const { data, pending, error } = await useAsyncData(
                 <th class="px-1 py-1 pb-3 text-left text-sm">Total</th>
                 <th class="px-1 py-1 pb-3 text-left text-sm">Cashin</th>
                 <th class="px-1 py-1 pb-3 text-left text-sm">Preless</th>
+                <th class="px-1 py-1 pb-3 text-left text-sm">Balance</th>
               </tr>
             </thead>
 
@@ -98,6 +100,7 @@ const { data, pending, error } = await useAsyncData(
                 <td class="px-1 py-1 text-sm">{{ formatNumber(row.schedule_totalpay) }}</td>
                 <td class="px-1 py-1 text-sm">{{ formatNumber(row.schedule_totalcashin) }}</td>
                 <td class="px-1 py-1 text-sm">{{ formatNumber(row.schedule_totalpreless) }}</td>
+                <td class="px-1 py-1 text-sm">{{ formatNumber(row.schedule_lessmoney) }}</td>
               </tr>
             </tbody>
           </table>

@@ -22,6 +22,7 @@ type DataResponses = {
   schedule_totalpay: number
   schedule_totalcashin: number
   schedule_totalpreless: number
+  schedule_lessmoney: number
 }
 
 export default defineEventHandler(async (event) => {
