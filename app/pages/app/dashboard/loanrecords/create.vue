@@ -773,17 +773,7 @@ watch(form, () => {
       :error="errors.cust_comission_id"
       :options="customerName1"
     />
-      <!-- <div>
-        <label class="label">Comission Customer<span class="text-red-500 text-sm"> *</span></label>
-        <span class="text-red-500 text-sm">{{ errors.cust_comission_id }}</span>
-        <select v-model.number="form.cust_comission_id" class="input">
-          <option value="-1">Choose ...</option>
-          <option v-for="c in customerName1" :key="c.id" :value="c.id">
-            {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
-          </option>
-        </select>
-      </div> -->
-  
+
       <!-- cust_comission_interest_rate -->
       <div>
         <label class="label">Comission Interest Rate (%)<span class="text-red-500 text-sm"> *</span></label>
@@ -799,16 +789,7 @@ watch(form, () => {
         :error="errors.cust_loangroup_id"
         :options="customerName1"
       />
-       <!-- <div>
-        <label class="label">Loan Group<span class="text-red-500 text-sm"> *</span></label>
-        <span class="text-red-500 text-sm">{{ errors.cust_loangroup_id }}</span>
-        <select v-model.number="form.cust_loangroup_id" class="input">
-          <option value="-1">Choose ...</option>
-          <option v-for="c in customerName1" :key="c.id" :value="c.id">
-            {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
-          </option>
-        </select>
-      </div> -->
+
 
       <!-- cust_guarantor_id -->
       <CommonCustomerSelect2
@@ -817,16 +798,9 @@ watch(form, () => {
         :required=false
         :error="errors.cust_guarantor_id"
         :options="customerName1"
+        :showPlaceholder=true
       />
-      <!-- <div>
-        <label class="label">Guarantor Customer</label>
-        <select v-model.number="form.cust_guarantor_id" class="input">
-          <option value="-1">Choose ...</option>
-          <option v-for="c in customerName1" :key="c.id" :value="c.id">
-            {{ String(c.id).padStart(8, '0') }} - {{ c.label }}
-          </option>
-        </select>
-      </div> -->
+
 
       <!-- cust_position_loangroup_id -->
       <div>

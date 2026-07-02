@@ -6,8 +6,10 @@ const props = withDefaults(defineProps<{
   required?: boolean;
   error?: string;
   options?: { id: number; label: string }[];
+  showPlaceholder?: boolean; // 👈 add this
 }>(), {
-  options: () => []
+  options: () => [],
+    showPlaceholder: false, // default = show it
 })
 
 const emit = defineEmits(["update:modelValue"])
@@ -16,14 +18,6 @@ const search = ref("")
 const isOpen = ref(false)
 const highlightedIndex = ref(0)
 
-// const filtered = computed(() => {
-//   if (!search.value) return props.options
-//   const term = search.value.toLowerCase()
-//   return props.options.filter((c: any) =>
-//     String(c.id).includes(term) ||
-//     c.label.toLowerCase().includes(term)
-//   )
-// })
 
 const filtered = computed(() => {
   let list = props.options
@@ -97,7 +91,8 @@ onMounted(() => {
       @change="$emit('update:modelValue', Number(($event.target as HTMLSelectElement).value))"      
       @click.prevent="isOpen = true"
     >
-        <option disabled value="-1" class="hidden">Choose ...</option>
+        <!-- <option disabled value="-1" class="hidden">Choose ...</option> -->
+        <option v-if="showPlaceholder" :value="-1">Choose ... </option>
         <option v-for="c in options" :key="c.id" :value="c.id" class="hidden">
         {{ c.label }}
         </option>
