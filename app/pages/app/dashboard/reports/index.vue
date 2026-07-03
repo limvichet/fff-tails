@@ -22,31 +22,37 @@ interface ReportsFormDataResponse {
 
 const reports = [
   {
-    icon: "📊",
+    icon: "💵",
     name: "Income",
     url: "/app/dashboard/reports/income",
   },
   {
-    icon: "💰",
-    name: "Cash In",
+    icon: "💳",
+    name: "Cashin",
     url: "/app/dashboard/reports/cashin",
   },
   {
-    icon: "📝",
+    icon: "🏦",
     name: "Preless",
     url: "/app/dashboard/reports/preless",
   },
   {
-    icon: "📋",
+    icon: "📄",
     name: "Optional",
-    // url: "/app/dashboard/reports/optional",
-    url: "/app/dashboard/reports/income",
+    url: "/app/dashboard/reports/optional",
   },
   {
-    icon: "💸",
+    icon: "📉",
     name: "Debt",
-    // url: "/app/dashboard/reports/debt",
-    url: "/app/dashboard/reports/income",
+    url: "/app/dashboard/reports/debt",
+  },
+]
+
+const private_reports = [
+  {
+    icon: "📉",
+    name: "Net Outstanding",
+    url: "/app/dashboard/reports/netoutstanding",
   },
 ]
 
@@ -185,11 +191,21 @@ function openReport(url: string) {
 
     </ComponentCard>
 
-    <CommonComponentCard title="Generate Reports" class="mt-2">
+    <CommonComponentCard title="Generate Reports" class="mt-5">
       <div class="flex flex-row  justify-between gap-3 px-5">
         <a v-for="report in reports" :key="report.name" :href="report.url" target="_blank" rel="noopener noreferrer"
           @click="openReport(report.url)" class="flex cursor-pointer items-center gap-2 text-primary hover:underline">
-          <span class="text-xl">{{ report.icon }}</span>
+          <span class="text-2xl">{{ report.icon }}</span>
+          <span>{{ report.name }}</span>
+        </a>
+      </div>
+    </CommonComponentCard>
+
+    <CommonComponentCard title="Private Reports" class="mt-5">
+      <div class="flex flex-row  justify-between gap-3 px-5">
+        <a v-for="report in private_reports" :key="report.name" :href="report.url" target="_blank" rel="noopener noreferrer"
+          @click="openReport(report.url)" class="flex cursor-pointer items-center gap-2 text-primary hover:underline">
+          <span class="text-2xl">{{ report.icon }}</span>
           <span>{{ report.name }}</span>
         </a>
       </div>
