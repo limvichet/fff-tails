@@ -69,7 +69,7 @@ const { data, pending, error } = await useAsyncData(
 
   <div class="grid grid-cols-1" ref="reportRef">
     <ComponentCard4Report 
-      title="Income Report" 
+      title="Net Outstanding Report" 
       :desc="`${formatDateForOutput(new Date(query.loan_startdate))} - ${formatDateForOutput(new Date(query.loan_enddate))} | Records: ${data?.count ?? 0}`" 
       @click="copyAll"
       >
