@@ -6,13 +6,13 @@
     ]"
   >
     <!-- Card Header -->
-    <div class="px-6 py-2">
-      <h3 class="">
-        <span class="text-base font-medium text-blue-900 dark:text-white/90">{{ title }}</span> 
+    <div class="px-6 py-2 cursor-pointer">
+      <h3 @click="$emit('click')">
+        <span class="text-lg font-medium text-blue-900 dark:text-white/90">{{ title }}</span> &nbsp;
+        <span v-if="desc" class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          {{ desc }}
+        </span>
       </h3>
-      <p v-if="desc" class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-        {{ desc }}
-      </p>
     </div>
 
     <!-- Card Body -->
@@ -33,4 +33,9 @@ interface Props {
 }
 
 defineProps<Props>()
+
+defineEmits<{
+  (e: "click"): void
+}>()
+
 </script>

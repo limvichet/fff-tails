@@ -6,7 +6,7 @@ definePageMeta({
 })
 
 useHead({
-  title: "Generate Incone Reports",
+  title: "Generate Cashin Reports",
 })
 
 import ComponentCard4Report from "@/components/common/ComponentCard4Report.vue"
@@ -53,9 +53,9 @@ const query = computed(() => ({
 }))
 
 const { data, pending, error } = await useAsyncData(
-  "income-report",
+  "cashin-report",
   () =>
-    $fetch("/api/admin-secure/reports/income", {
+    $fetch("/api/admin-secure/reports/cashin", {
       query: query.value,
     }),
   {
@@ -69,7 +69,7 @@ const { data, pending, error } = await useAsyncData(
 
   <div class="grid grid-cols-1" ref="reportRef">
     <ComponentCard4Report 
-      title="Income Report" 
+      title="Cashin Report" 
       :desc="`${formatDateForOutput(new Date(query.loan_startdate))} - ${formatDateForOutput(new Date(query.loan_enddate))} | Records: ${data?.count ?? 0}`" 
       @click="copyAll"
       >
@@ -89,54 +89,45 @@ const { data, pending, error } = await useAsyncData(
             <thead class="bg-slate-50 dark:bg-gray-800 text-slate-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 text-sm text-left">
               <tr class="border-b border-gray-200 dark:border-gray-700">
                 <th class="px-1 pt-3">ល.រ</th>
-                <th class="px-1 pt-3">កម្ចី</th>
                 <th class="px-1 pt-3">អតិថិជន</th>
+                <th class="px-1 pt-3">កម្ចី</th>
                 <th class="px-1 pt-3">រូបិយប័ណ្ណ</th>
-                <th class="px-1 pt-3">ប្រាក់ដើមខ្ចីដំបូង</th>
-                <th class="px-1 pt-3">ថ្ងៃខែឆ្នាំបង់ប្រាក់</th>
-                <th class="px-1 pt-3">ប្រាក់ដើមមិនទាន់សងត្រឡប់</th>
-                <th class="px-1 pt-3">ស្លាក</th>
-                <th class="px-1 pt-3">ប្រាក់ដើមខែនេះ</th>
-                <th class="px-1 pt-3">ការប្រាក់ខែនេះ</th>
-                <th class="px-1 pt-3">សរុប</th>
-                <th class="px-1 pt-3">ស.របានបង់</th>
-                <th class="px-1 pt-3">ស.រប្រាក់អតិ.ទទួលទៅវិញ</th>
-                <th class="px-1 pt-3">សមតុល្យ</th>
+                <th class="px-1 pt-3">ថ្ងៃខែឆ្នាំត្រូវបង់ប្រាក់</th>
+                <th class="px-1 pt-3">វិក្កយត្រ</th>
+                <th class="px-1 pt-3">សាច់ប្រាក់</th>
+                <th class="px-1 pt-3">អ្នកទទួលប្រាក់</th>
+                <th class="px-1 pt-3">អ្នកបញ្ចូលទិន្ន័យ</th>
+                <th class="px-1 pt-3">ថ្ងៃខែឆ្នាំបញ្ចូលប្រាក់</th>
+                <th class="px-1 pt-3">ចំណាំ</th>
               </tr>
               <tr class="border-b border-gray-200 dark:border-gray-700">
                 <th class="px-1 py-1 pb-3">#</th>
-                <th class="px-1 py-1 pb-3">Loan</th>
                 <th class="px-1 py-1 pb-3">Customer</th>
+                <th class="px-1 py-1 pb-3">Loan</th>
                 <th class="px-1 py-1 pb-3">Currency</th>
-                <th class="px-1 py-1 pb-3">Totalcash</th>
-                <th class="px-1 py-1 pb-3">Enddate</th>
-                <th class="px-1 py-1 pb-3">Outstanding</th>
-                <th class="px-1 py-1 pb-3">Tag</th>
-                <th class="px-1 py-1 pb-3">Principle</th>
-                <th class="px-1 py-1 pb-3">Interest</th>
-                <th class="px-1 py-1 pb-3">Total</th>
-                <th class="px-1 py-1 pb-3">Cashin</th>
-                <th class="px-1 py-1 pb-3">Preless</th>
-                <th class="px-1 py-1 pb-3">Balance</th>
+                <th class="px-1 py-1 pb-3">PDate</th>
+                <th class="px-1 py-1 pb-3">Invoice</th>
+                <th class="px-1 py-1 pb-3">Cash</th>
+                <th class="px-1 py-1 pb-3">Recipient</th>
+                <th class="px-1 py-1 pb-3">Employee</th>
+                <th class="px-1 py-1 pb-3">DateInput</th>
+                <th class="px-1 py-1 pb-3">Note</th>
               </tr>
             </thead>
 
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
               <tr v-for="(row, i) in data?.data ?? []" :key="row.id" class="text-sm">
                 <td class="px-1 py-1">{{ i + 1 }}</td>
-                <td class="px-1 py-1">{{ row.id }}({{ row.loantype_short }})</td>
                 <td class="px-1 py-1">{{ row.cust_name_1 }}</td>
+                <td class="px-1 py-1">{{ row.id }}</td>
                 <td class="px-1 py-1">{{ row.currency_en }}</td>
-                <td class="px-1 py-1">{{ formatNumber(row.loan_totalcash) }}</td>
-                <td class="px-1 py-1">{{ formatDateForOutput(new Date(row.latest_schedule_paid_date)) }}</td>
-                <td class="px-1 py-1">{{ formatNumber(row.latest_schedule_outstanding) }}</td>
-                <td class="px-1 py-1">{{ row.loan_tag }}</td>
-                <td class="px-1 py-1">{{ formatNumber(row.schedule_principle) }}</td>
-                <td class="px-1 py-1">{{ formatNumber(row.schedule_interest) }}</td>
-                <td class="px-1 py-1">{{ formatNumber(row.schedule_totalpay) }}</td>
-                <td class="px-1 py-1">{{ formatNumber(row.schedule_totalcashin) }}</td>
-                <td class="px-1 py-1">{{ formatNumber(row.schedule_totalpreless) }}</td>
-                <td class="px-1 py-1">{{ formatNumber(row.schedule_lessmoney) }}</td>
+                <td class="px-1 py-1">{{ formatDateForOutput(new Date(row.schedule_principle_date)) }}</td>
+                <td class="px-1 py-1">{{ row.invoice }}</td>
+                <td class="px-1 py-1">{{ formatNumber(row.cash) }}</td>
+                <td class="px-1 py-1">{{ row.recipient }}</td>
+                <td class="px-1 py-1">{{ row.full_name }}</td>
+                <td class="px-1 py-1">{{ formatDateForOutput(new Date(row.created_at)) }}</td>
+                <td class="px-1 py-1">{{ row.note }}</td>
               </tr>
             </tbody>
           </table>

@@ -22,25 +22,28 @@ interface ReportsFormDataResponse {
 
 const reports = [
   {
+    icon: "📊",
     name: "Income",
     url: "/app/dashboard/reports/income",
   },
   {
+    icon: "💰",
     name: "Cash In",
-    // url: "/app/dashboard/reports/cash-in",
-    url: "/app/dashboard/reports/income",
+    url: "/app/dashboard/reports/cashin",
   },
   {
+    icon: "📝",
     name: "Preless",
-    // url: "/app/dashboard/reports/preless",
-    url: "/app/dashboard/reports/income",
+    url: "/app/dashboard/reports/preless",
   },
   {
+    icon: "📋",
     name: "Optional",
     // url: "/app/dashboard/reports/optional",
     url: "/app/dashboard/reports/income",
   },
   {
+    icon: "💸",
     name: "Debt",
     // url: "/app/dashboard/reports/debt",
     url: "/app/dashboard/reports/income",
@@ -186,7 +189,8 @@ function openReport(url: string) {
       <div class="flex flex-row  justify-between gap-3 px-5">
         <a v-for="report in reports" :key="report.name" :href="report.url" target="_blank" rel="noopener noreferrer"
           @click="openReport(report.url)" class="flex cursor-pointer items-center gap-2 text-primary hover:underline">
-          <span>📊 {{ report.name }}</span>
+          <span class="text-xl">{{ report.icon }}</span>
+          <span>{{ report.name }}</span>
         </a>
       </div>
     </CommonComponentCard>
