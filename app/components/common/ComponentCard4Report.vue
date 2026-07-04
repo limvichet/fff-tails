@@ -6,17 +6,17 @@
     ]"
   >
     <!-- Card Header -->
-    <div class="px-6 py-2 cursor-pointer">
-      <h3 @click="$emit('click')">
+    <div class="px-6 py-1 cursor-pointer">
+      <h5 @click="$emit('click')">
         <span class="text-lg font-medium text-blue-900 dark:text-white/90">{{ title }}</span> &nbsp;
         <span v-if="desc" class="mt-1 text-sm text-gray-500 dark:text-gray-400">
           {{ desc }}
         </span>
-      </h3>
+      </h5>
     </div>
 
     <!-- Card Body -->
-    <div class="p-2 border-t border-gray-100 dark:border-gray-800 sm:p-6">
+    <div class="p-1 border-t border-gray-100 dark:border-gray-800 sm:pt-6 sm:px-2">
       <div class="space-y-5">
         <slot></slot>
       </div>

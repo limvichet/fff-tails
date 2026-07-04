@@ -3,7 +3,9 @@ definePageMeta({
   layout: "auth",
   requiresAuth: true,
   breadcrumb: { title: "Roles", subTitle: "Search" },
-  ssr: false
+  ssr: false,
+  middleware: ["role"],
+  roles: ["admin", "ceo"]
 })
 
 useHead({

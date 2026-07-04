@@ -2,6 +2,8 @@
 definePageMeta({
   layout: "auth",
   requiresAuth: true,
+  middleware: ["role"],
+  roles: ["admin", "ceo"]
 })
 
 import { z } from "zod"

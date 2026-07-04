@@ -18,6 +18,7 @@ interface UserResponse {
     hire_date: string | null
     dob: string | null
     gender_id: number | null
+    active: number
     status: {
       id: number
       status_kh: string
@@ -175,7 +176,7 @@ const actionClass = (action: string) => {
                       <span
                         class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-700"
                       >
-                        {{ userInfo.employee.status?.status_kh }}
+                        {{ userInfo.employee.active === 1 ? "Active" : "Inactive" }}
                       </span>
                     </div>
                   </div>

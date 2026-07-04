@@ -53,9 +53,9 @@ const query = computed(() => ({
 }))
 
 const { data, pending, error } = await useAsyncData(
-  "cashin-report",
+  "preless-report",
   () =>
-    $fetch("/api/admin-secure/reports/cashin", {
+    $fetch("/api/admin-secure/reports/preless", {
       query: query.value,
     }),
   {
@@ -84,11 +84,10 @@ const { data, pending, error } = await useAsyncData(
       <!-- Table -->
       <div v-else
         class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] -mt-5">
-        <div class="max-w-full overflow-x-auto custom-scrollbar">
           <table class="min-w-full">
             <thead
               class="bg-slate-50 dark:bg-gray-800 text-slate-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 text-sm text-left">
-              <tr class="border-b border-gray-200 dark:border-gray-700">
+              <tr class="border-b border-gray-200 dark:border-gray-700 text-xs font-bold">
                 <th class="px-1">ល.រ</th>
                 <th class="px-1">អតិថិជន</th>
                 <th class="px-1">កម្ចី</th>
@@ -101,7 +100,7 @@ const { data, pending, error } = await useAsyncData(
                 <th class="px-1">ថ្ងៃខែឆ្នាំបញ្ចូលប្រាក់</th>
                 <th class="px-1">ចំណាំ</th>
               </tr>
-              <tr class="border-b border-gray-200 dark:border-gray-700">
+              <tr class="border-b border-gray-200 dark:border-gray-700 text-xs">
                 <th class="px-1 py-1">#</th>
                 <th class="px-1 py-1">Customer</th>
                 <th class="px-1 py-1">Loan</th>
@@ -117,7 +116,7 @@ const { data, pending, error } = await useAsyncData(
             </thead>
 
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-              <tr v-for="(row, i) in data?.data ?? []" :key="row.id" class="text-sm">
+              <tr v-for="(row, i) in data?.data ?? []" :key="row.id" class="hover:bg-blue-50 text-xs cursor-pointer">
                 <td class="px-1 py-1">{{ i + 1 }}</td>
                 <td class="px-1 py-1">{{ row.cust_name_1 }}</td>
                 <td class="px-1 py-1">{{ row.id }}</td>
@@ -133,7 +132,6 @@ const { data, pending, error } = await useAsyncData(
             </tbody>
           </table>
         </div>
-      </div>
     </ComponentCard4Report>
   </div>
   <div>
