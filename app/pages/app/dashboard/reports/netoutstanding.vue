@@ -3,6 +3,8 @@
 definePageMeta({
   layout: "default",
   requiresAuth: true,
+  middleware: ["role"],
+  roles: ["admin", "ceo"]
 })
 
 useHead({
@@ -84,8 +86,7 @@ const { data, pending, error } = await useAsyncData(
       <!-- Table -->
       <div v-else
         class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] -mt-5">
-        <div class="max-w-full overflow-x-auto custom-scrollbar">
-          <table class="min-w-full">
+          <table class="min-w-full report-table">
             <thead class="bg-slate-50 dark:bg-gray-800 text-slate-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 text-sm text-left">
               <tr class="border-b border-gray-200 dark:border-gray-700">
                 <th class="px-1">ល.រ</th>
@@ -109,7 +110,7 @@ const { data, pending, error } = await useAsyncData(
                 <th class="px-1 py-1">Totalcash</th>
                 <th class="px-1 py-1">Rate</th>
                 <th class="px-1 py-1">Outstanding</th>
-                <th class="px-1 py-1">Last Paided</th>
+                <th class="px-1 py-1">LastPaided</th>
                 <th class="px-1 py-1">Tag</th>
                 <th class="px-1 py-1">EndLoan</th>
                 <th class="px-1 py-1">Debt/Return</th>
@@ -118,15 +119,15 @@ const { data, pending, error } = await useAsyncData(
             </thead>
 
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-              <tr v-for="(row, i) in data?.data ?? []" :key="row.id" class="text-sm">
+              <tr v-for="(row, i) in data?.data ?? []" :key="row.id" class="hover:bg-blue-50 text-sm">
                 <td class="px-1 py-1">{{ i + 1 }}</td>
                 <td class="px-1 py-1">{{ row.id }}({{ row.loantype_short }})</td>
                 <td class="px-1 py-1">{{ row.cust_name_1 }}</td>
                 <td class="px-1 py-1">{{ row.currency_en }}</td>
                 <td class="px-1 py-1">{{ formatNumber(row.loan_totalcash) }}</td>
                 <td class="px-1 py-1">{{ formatNumber(row.loan_interest_rate) }}</td>
-                <td class="px-1 py-1">{{ formatNumber(row.schedule_outstanding) }}</td>
                 <td class="px-1 py-1">{{ formatNumber(row.latest_schedule_outstanding) }}</td>
+                <td class="px-1 py-1">{{ formatDateForOutput(new Date(row.latest_schedule_paid_date)) }}</td>
                 <td class="px-1 py-1">{{ row.loan_tag }}</td>
                 <td class="px-1 py-1">{{ formatDateForOutput(new Date(row.loan_enddate)) }}</td>
                 <td class="px-1 py-1">{{ formatNumber(row.schedule_lessmoney_tt) }}</td>
@@ -134,7 +135,6 @@ const { data, pending, error } = await useAsyncData(
               </tr>
             </tbody>
           </table>
-        </div>
       </div>
     </ComponentCard4Report>
   </div>
@@ -156,3 +156,4 @@ const { data, pending, error } = await useAsyncData(
   </div>
   
 </template>
+

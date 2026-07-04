@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ComponentCard from "@/components/common/ComponentCard.vue"
+const { hasRole } = useAuth()
 
 definePageMeta({
   layout: "auth",
@@ -201,7 +202,7 @@ function openReport(url: string) {
       </div>
     </CommonComponentCard>
 
-    <CommonComponentCard title="Private Reports" class="mt-5">
+    <CommonComponentCard title="Private Reports" class="mt-5" v-if="hasRole('admin') || hasRole('ceo')">
       <div class="flex flex-row  justify-between gap-3 px-5">
         <a v-for="report in private_reports" :key="report.name" :href="report.url" target="_blank" rel="noopener noreferrer"
           @click="openReport(report.url)" class="flex cursor-pointer items-center gap-2 text-primary hover:underline">

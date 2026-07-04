@@ -14,7 +14,6 @@ type DataResponses = {
   loan_totalcash: number
   loan_interest_rate: number
   schedule_enddate: string
-  schedule_outstanding: number
   latest_schedule_outstanding: number
   latest_schedule_paid_date: string
   loan_enddate: string

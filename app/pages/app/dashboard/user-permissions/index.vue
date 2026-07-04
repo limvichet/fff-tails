@@ -3,7 +3,8 @@ definePageMeta({
   layout: "auth",
   requiresAuth: true,
   breadcrumb: { title: "User Permissions", subTitle: "List" },
-  ssr: false
+  ssr: false,
+
 })
 
 useHead({

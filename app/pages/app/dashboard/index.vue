@@ -2,9 +2,9 @@
   definePageMeta({
     layout: "auth",
     requiresAuth: true,
-    // guestOnly: true,
-    // path: '/app/dashboard',
-    //requiresAuth: true,
+    // middleware: [],
+    // roles: ["admin", "manager"],
+    // permissions: ["loan.create"],
   });
 
   useFFFSeo({
