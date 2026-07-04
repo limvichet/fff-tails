@@ -1,1 +1,0 @@
-import{r as t}from"./PIykgnTR.js";const r=t(null),u=t(null);let l=null,o=null;const i=()=>({successMsg:r,errorMsg:u,success:(e,s=3e3)=>{r.value=e,l&&clearTimeout(l),l=setTimeout(()=>{r.value=null},s)},error:(e,s=4e3)=>{u.value=e,o&&clearTimeout(o),o=setTimeout(()=>{u.value=null},s)}});export{i as u};
