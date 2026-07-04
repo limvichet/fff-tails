@@ -1,0 +1,1 @@
+import{az as r,G as n,C as a}from"./PIykgnTR.js";const u=r(o=>{const e=n();if(!e.isAuthenticated.value)return a("/app/signin");const t=o.meta.roles;if(!t?.length)return;if(!t.some(s=>e.hasRole(s)))return a("/403")});export{u as default};
