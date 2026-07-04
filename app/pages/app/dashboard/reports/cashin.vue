@@ -52,7 +52,7 @@ const query = computed(() => ({
   loantype_id: route.query.loantype_id as string | undefined,
 }))
 
-const { data, pending, error } = await useAsyncData(
+const { data, pending, error } = useAsyncData(
   "cashin-report",
   () =>
     $fetch("/api/admin-secure/reports/cashin", {
@@ -74,9 +74,8 @@ const { data, pending, error } = await useAsyncData(
       @click="copyAll"
       >
 
-      <div v-if="pending">
-        Loading...
-      </div>
+      <div v-if="pending" class="loading"><p>Generate Data ...</p></div>
+
 
       <div v-else-if="error">
         {{ error }}
@@ -153,3 +152,11 @@ const { data, pending, error } = await useAsyncData(
   </div>
   
 </template>
+
+
+<style scoped>
+.loading {
+  padding-top: 20px;
+  text-align: center;
+}
+</style>
