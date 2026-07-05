@@ -349,19 +349,25 @@ function calculateScheduleInterest(
 
 <template>
 
-  <!-- ================= MESSAGES ================= -->
-  <div v-if="errorMsg" class="mb-3 p-2 rounded bg-red-500/20 text-red-300 text-sm">
-    {{ errorMsg }}
-  </div>
-
-  <div v-if="successMsg" class="mb-3 p-2 rounded bg-emerald-500/20 text-emerald-300 text-sm">
-    {{ successMsg }}
-  </div>
-
   <template v-if="loan">
 
     <!-- ================= LOAN INFO ================= -->
     <ComponentCard title="1. Loan Information">
+
+        <!-- ================= MESSAGES ================= -->
+      <div v-if="errorMsg" class="mb-3 p-2 rounded bg-red-500/20 text-red-300 text-sm">
+        {{ errorMsg }}
+      </div>
+
+      <div v-if="successMsg" class="mb-3 p-2 rounded bg-emerald-500/20 text-emerald-300 text-sm">
+        {{ successMsg }}
+      </div>
+
+      <!-- Loading -->
+      <div v-if="loading" class="text-center text-gray-400 py-6">
+        Loading...
+      </div>
+
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 
         <div>
