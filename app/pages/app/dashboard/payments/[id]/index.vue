@@ -276,19 +276,6 @@ function onInputPayment<K extends keyof typeof paymentForm>(
 }
 
 
-// watchEffect(() => {
-//   const rate = Number(String(paymentForm.schedule_interest_rate).replace(/,/g, '') || 0)
-//   const outstanding = Number(String(paymentForm.schedule_outstanding).replace(/,/g, '') || 0)
-//   const principle = Number(String(paymentForm.schedule_principle).replace(/,/g, '') || 0)
-//   const totalcashin = Number(String(paymentForm.schedule_totalcashin).replace(/,/g, '') || 0)
-//   const totalpreless = Number(String(paymentForm.schedule_totalpreless).replace(/,/g, '') || 0)
-//   paymentForm.schedule_interest = (rate/100) * outstanding
-//   paymentForm.schedule_totalpay = ((rate/100) * outstanding) + principle
-//   paymentForm.schedule_paidcash = Math.min(totalcashin, (((rate/100) * outstanding) + principle))
-//   paymentForm.schedule_remaincash = totalcashin - (Math.min(totalcashin, (((rate/100) * outstanding) + principle)))
-//   paymentForm.schedule_lessmoney = totalcashin - totalpreless - (((rate/100) * outstanding) + principle)
-// })
-
 const calculatePayment = () => {
 
   const rate = Number(
@@ -1150,5 +1137,10 @@ function calculateScheduleInterest(
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 12px;
+  transition: border-color 0.2s ease;
+}
+.input:focus {
+  outline: none;
+  border-color: #1C398E;
 }
 </style>

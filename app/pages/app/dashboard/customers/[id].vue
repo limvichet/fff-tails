@@ -995,9 +995,13 @@
 <style scoped>
 .label { display: block; margin-bottom: 4px; font-size: 14px; color: #555; }
 .dark .label { color: #ccc; }
-.input { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 8px 12px; }
+.input { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 8px 12px;   transition: border-color 0.2s ease;}
 /* Fix date input */
 input[type="date"] { appearance: none; -webkit-appearance: none;}
 .text-red-500 { color: #f56565; }
 .text-sm { font-size: 12px; }
+.input:focus {
+  outline: none;
+  border-color: #1C398E;
+}
 </style>

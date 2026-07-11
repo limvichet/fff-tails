@@ -908,7 +908,6 @@
   display: block;
   margin-bottom: 4px;
   font-size: 14px;
-  color: #555;
 }
 
 .input {
@@ -917,7 +916,15 @@
   border-radius: 8px;
   padding: 8px 12px;
   font-size: 14px;
+  transition: border-color 0.2s ease;
 }
+
+.input:focus {
+  outline: none;
+  border-color: #1C398E;
+}
+
+
 /* Fix date input */
 input[type="date"] { appearance: none; -webkit-appearance: none;}
 </style>

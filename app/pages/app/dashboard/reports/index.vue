@@ -218,7 +218,7 @@ function openReport(url: string) {
 <style scoped>
 .label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   font-size: 14px;
   font-weight: 600;
 }
@@ -229,15 +229,16 @@ function openReport(url: string) {
 
 .input {
   width: 100%;
-  padding: 10px 12px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
   transition: border-color 0.2s ease;
 }
 
 .input:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: #1C398E;
 }
 
 .generate-reports {
@@ -276,4 +277,7 @@ function openReport(url: string) {
 .generate-reports a span {
   font-weight: 500;
 }
+
+input[type="date"] { appearance: none; -webkit-appearance: none;}
+
 </style>
