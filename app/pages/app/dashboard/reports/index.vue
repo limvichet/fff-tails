@@ -72,7 +72,7 @@ const filters = reactive({
   loan_startdate: getCurrentDate(),
   loan_enddate: getCurrentDate(),
   loantype_id: "",
-  loan_status_id: "1",
+  loan_status_id: "",
 })
 
 const {
