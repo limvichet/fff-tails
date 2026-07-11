@@ -1,1 +1,0 @@
-import{az as n,G as o,C as i}from"./Bc1wAfTg.js";const d=n(t=>{const e=o();if(!e.isAuthenticated.value)return i("/app/signin");const s=t.meta.permissions;if(!s?.length)return;if(!s.some(a=>e.hasPermission(a)))return i("/403")});export{d as default};
