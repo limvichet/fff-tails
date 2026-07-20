@@ -1,1 +1,0 @@
-import{q as s}from"./CTzcugpW.js";const p=s("/imgs/logo.png");export{p as _};
