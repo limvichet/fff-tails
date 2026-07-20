@@ -347,6 +347,7 @@ const waitImageLoad = () => {
           <div class="v-space"></div>
           <div class="sign">
             {{ loanrecord?.customer?.cust_name_1 }}
+            &nbsp;  &nbsp; &nbsp;
             {{ loanrecord?.customer?.cust_name_2 }}
           </div>
         </div>

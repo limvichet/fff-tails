@@ -326,6 +326,8 @@
           <span>ស្នាមមេដៃស្ដាំភាគី"ខ”</span>
           <div class="v-space"></div>
           <span>{{ loanrecord!.customer.cust_name_1 }}</span>
+                    &nbsp;  &nbsp; &nbsp;
+          <span>{{ loanrecord!.customer.cust_name_2 }}</span>
         </div>
         <div></div>
       </div>
