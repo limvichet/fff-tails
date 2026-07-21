@@ -54,7 +54,7 @@ body {
 .mr { margin-right: 10px; }
 .pl {padding-left: 5px;}
 .v-space { height: 90px; }
-.l-space { padding-left: 260px; }
+.l-space { padding-left: 220px; }
 .bold { font-weight: 700;}
 .justify { text-align: justify !important; }
 
