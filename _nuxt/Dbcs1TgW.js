@@ -1,1 +1,0 @@
-import{ar as o}from"./CJaH1YH0.js";const F={title:"FFF tails"},f=({title:e,description:t,ogImageHeadline:a="FFF Website",ogImageComponent:i="EachPage"})=>{o({title:e,description:t,ogSiteName:"fff-admin.io",ogTitle:e,ogDescription:t,twitterTitle:e,twitterSite:"fff-admin.io",twitterDescription:t})};export{F as d,f as u};
