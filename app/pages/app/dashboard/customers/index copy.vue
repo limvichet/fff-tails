@@ -6,10 +6,10 @@ definePageMeta({
   ssr: false
 })
 
-useHead({
-  title: "Search customers",
-  meta: [{ name: "customers", content: "search customers" }],
-})
+  useHead({
+    title: "Search customers",
+    meta: [{ name: "customers", content: "search customers" }],
+  })
 
 import ComponentCard from "@/components/common/ComponentCard.vue"
 
@@ -17,7 +17,7 @@ import { ref, computed, onMounted, watch } from "vue"
 import { useRouter } from "vue-router"
 import { useMessage } from "~/composables/useMessage"
 import { formatDateForOutput } from '~/utils/date'
-import { PencilIcon, TrashIcon } from "@/icons";
+import { PencilIcon, TrashIcon} from "@/icons";
 import { PER_PAGE } from '~/constants/pagination';
 import { useCustomToast } from '~/composables/useCustomToast';
 const { showToast } = useCustomToast();
@@ -56,15 +56,15 @@ type Nametitle = {
 }
 
 type Customer = {
-  id: number;
+  id:           number;
   cust_title_1?: number;
   nametitle1?: Nametitle;
-  cust_name_1: string;
-  cust_dob_1: null | string;
+  cust_name_1:  string;
+  cust_dob_1:   null | string;
   cust_phone_1: string;
   cust_title_2?: number;
   nametitle2?: Nametitle;
-  cust_name_2: string;
+  cust_name_2:  string;
   created_by: number;
   created_at: string;
   createdby: Createdby;
@@ -92,45 +92,8 @@ type ApiResponse = {
 const customers = ref<Customer[]>([])
 const loading = ref(false)
 
-// const searchInput = ref("")
-// const searchQuery = ref("")
-
-const searchWord = ref("")
-const searchTags = ref<string[]>([])
-
-const addTag = () => {
-  const word = searchWord.value.trim()
-
-  if (!word) return
-
-  if (!searchTags.value.includes(word)) {
-    searchTags.value.push(word)
-  }
-
-  searchWord.value = ""
-
-  fetchCustomers()
-}
-
-
-const handleBackspace = () => {
-
-    // Only remove a tag when the input is empty
-    if (searchWord.value !== "") return;
-
-    if (searchTags.value.length === 0) return;
-
-    searchTags.value.pop();
-
-    page.value = 1;
-    fetchCustomers();
-};
-
-const removeTag = (index: number) => {
-  searchTags.value.splice(index, 1)
-
-  fetchCustomers()
-}
+const searchInput = ref("")
+const searchQuery = ref("")
 
 const page = ref(1)
 const perPage = PER_PAGE
@@ -150,10 +113,7 @@ const fetchCustomers = async () => {
         method: "GET",
         query: {
           page: page.value,
-          param:
-            [...searchTags.value, searchWord.value.trim()]
-              .filter(Boolean)
-              .join(" ") || undefined,
+          param: searchQuery.value || undefined,
         },
       }
     )
@@ -181,15 +141,15 @@ const paginated = computed(() => customers.value)
 // Search (debounce)
 let debounceTimeout: ReturnType<typeof setTimeout> | null = null
 
-// watch(searchInput, (val) => {
-//   if (debounceTimeout) clearTimeout(debounceTimeout)
+watch(searchInput, (val) => {
+  if (debounceTimeout) clearTimeout(debounceTimeout)
 
-//   debounceTimeout = setTimeout(() => {
-//     searchQuery.value = val
-//     page.value = 1
-//     fetchCustomers()
-//   }, 400)
-// })
+  debounceTimeout = setTimeout(() => {
+    searchQuery.value = val
+    page.value = 1
+    fetchCustomers()
+  }, 400)
+})
 
 // Pagination
 const prevPage = () => {
@@ -261,35 +221,18 @@ const deleteCustomer = async () => {
     <div class="space-y-4">
       <ComponentCard title="Customers">
         <!-- Search -->
-        <div class="border border-gray-300 rounded-lg px-3 py-1 flex flex-wrap items-center gap-2">
-
-          <!-- Search Icon -->
-          <svg class="w-4 h-4 text-gray-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2"
-            viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round"
+        <div class="relative">
+          <!-- Icon -->
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <path 
+              stroke-linecap="round" 
+              stroke-linejoin="round"
               d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z" />
           </svg>
 
-          <!-- Tags -->
-          <span v-for="(tag, index) in searchTags" :key="index"
-            class="flex items-center bg-blue-400 text-white rounded-lg px-2 py-1 text-sm">
-            {{ tag }}
-
-            <button type="button" class="ml-2 font-bold hover:text-gray-200" @click="removeTag(index)">
-              ×
-            </button>
-          </span>
-
-          <!-- Input -->
-          <input
-              v-model="searchWord"
-              @keydown.space.prevent="addTag"
-              @keydown.enter.prevent="addTag"
-              @keydown.backspace="handleBackspace"
-              class="flex-1 min-w-[120px] border-0 outline-none bg-transparent"
-              placeholder="Search customers..."
-          >
-
+          <!-- Search Input -->
+          <input v-model="searchInput" type="text" placeholder="Search records..." class="input !pl-9" />
         </div>
 
         <!-- Messages -->
@@ -308,20 +251,17 @@ const deleteCustomer = async () => {
         <!-- Table -->
         <div v-else
           class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
-          <div class="max-w-full overflow-x-auto custom-scrollbar">
+          <div class="max-w-full overflow-x-auto custom-scrollbar"> 
             <table class="min-w-full">
               <thead>
                 <tr class="border-b border-gray-200 dark:border-gray-700">
                   <th class="px-4 py-2 text-sm font-semibold text-left w-[3%]">#</th>
                   <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[13%] w-[40%]">Name1</th>
                   <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[13%] w-[40%]">Name2</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[8%] w-[20%] hidden sm:table-cell">Phone1
-                  </th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[8%] w-[20%] hidden sm:table-cell">Phone1</th>
                   <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[8%] w-[20%] hidden sm:table-cell">DOB</th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[12%] w-[20%] hidden sm:table-cell">Created
-                  </th>
-                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[12%] w-[20%] hidden sm:table-cell">Updated
-                  </th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[12%] w-[20%] hidden sm:table-cell">Created</th>
+                  <th class="px-2 py-2 text-sm font-semibold text-left sm:w-[12%] w-[20%] hidden sm:table-cell">Updated</th>
                   <th class="px-2 py-2 text-sm font-semibold text-center sm:w-[15%] w-[15%]">Actions</th>
                 </tr>
               </thead>
@@ -352,13 +292,11 @@ const deleteCustomer = async () => {
                   </td>
 
                   <td class="px-1 py-2 text-sm hidden sm:table-cell">
-                    <span class="font-semibold">{{ c.createdby.employee.full_name }}</span> - {{ formatDateForOutput(new
-                      Date(c.created_at)) }}
+                    <span class="font-semibold">{{ c.createdby.employee.full_name }}</span> - {{ formatDateForOutput(new Date(c.created_at)) }}
                   </td>
 
                   <td class="px-1 py-2 text-sm hidden sm:table-cell">
-                    <span class="font-semibold">{{ c.updatedby.employee.full_name }}</span> - {{ formatDateForOutput(new
-                      Date(c.updated_at)) }}
+                    <span class="font-semibold">{{ c.updatedby.employee.full_name }}</span> - {{ formatDateForOutput(new Date(c.updated_at)) }}
                   </td>
 
                   <td class="flex items-center justify-end gap-1 px-1 py-2">
@@ -391,12 +329,13 @@ const deleteCustomer = async () => {
                 </tr>
               </tbody>
             </table>
-          </div>
+          </div>  
         </div>
 
         <!-- Pagination -->
         <div class="mt-6 flex items-center justify-between">
-          <button @click="prevPage" :disabled="page === 1" class="btn-pagination disabled:opacity-50">
+          <button @click="prevPage" :disabled="page === 1"
+            class="btn-pagination disabled:opacity-50">
             Prev
           </button>
 
@@ -405,7 +344,8 @@ const deleteCustomer = async () => {
             Total Records: <b>{{ total }}</b>
           </span>
 
-          <button @click="nextPage" :disabled="page === lastPageValue" class="btn-pagination disabled:opacity-50">
+          <button @click="nextPage" :disabled="page === lastPageValue"
+            class="btn-pagination disabled:opacity-50">
             Next
           </button>
 
@@ -499,12 +439,10 @@ const deleteCustomer = async () => {
   background-color: transparent;
   cursor: pointer;
 }
-
 .btn-pagination:not(:disabled):hover {
   background-color: #f5f5f5;
   border-color: #ccc;
 }
-
 .btn-pagination:disabled {
   cursor: not-allowed;
 }
