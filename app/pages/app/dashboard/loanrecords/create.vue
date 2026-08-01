@@ -167,7 +167,7 @@ const baseSchema = z.object({
   loan_startdate:z.string().nonempty("Required"),
   loan_first_paid_date:z.string().nonempty("Required"),
   loan_enddate:z.string().nonempty("Required"),
-  loan_interest_rate:z.coerce.number().min(0.000001,"Required"),
+  loan_interest_rate:z.coerce.number().min(0.0,"Required"),
   invoice_id:z.string().optional(),
   loan_status_id:z.number().min(1,"Required"),
   loan_check_status:z.number().optional(),

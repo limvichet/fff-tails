@@ -272,7 +272,7 @@ const deleteCustomer = async () => {
 
           <!-- Tags -->
           <span v-for="(tag, index) in searchTags" :key="index"
-            class="flex items-center bg-blue-400 text-white rounded-lg px-2 py-1 text-sm">
+            class="flex items-center bg-blue-500 text-white rounded-lg px-2 py-1 text-sm">
             {{ tag }}
 
             <button type="button" class="ml-2 font-bold hover:text-gray-200" @click="removeTag(index)">
@@ -287,7 +287,7 @@ const deleteCustomer = async () => {
               @keydown.enter.prevent="addTag"
               @keydown.backspace="handleBackspace"
               class="flex-1 min-w-[120px] border-0 outline-none bg-transparent"
-              placeholder="Search customers..."
+              placeholder="Search ..."
           >
 
         </div>
