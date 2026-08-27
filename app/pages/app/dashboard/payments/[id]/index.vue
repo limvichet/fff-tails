@@ -585,7 +585,6 @@ function calculateScheduleInterest(
 
       </div>
 
-    <!-- </ComponentCard> -->
 
 
     <!-- PAYMENT CASHIN MODAL -->
@@ -708,19 +707,6 @@ function calculateScheduleInterest(
         </div>
 
         <!-- FOOTER -->
-        <!-- <div v-if="paymentCashinShowSaveButton" class="px-6 py-4 flex justify-end gap-2 border-t">
-          <button @click="handleCashinClose" class="px-4 py-2 bg-gray-400 text-white rounded-lg">
-            Cancel
-          </button>
-
-          <button @click="paymentCashinSubmitForm" 
-            :disabled="paymentCashinLoading"
-            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition flex items-center justify-center gap-2">
-              <Icon v-if="paymentCashinLoading" name="svg-spinners:180-ring-with-bg" class="text-lg" />
-              <span v-if="paymentCashinLoading">Progress...</span>
-              <span v-else>{{ paymentCashinIsEditMode ? "Update" : "Save" }}</span>
-          </button>
-        </div> -->
         <div class="px-6 py-4 flex justify-end gap-2 border-t">
           <button @click="handleCashinClose" class="px-4 py-2 bg-gray-200 text-white rounded-lg">
             Cancel

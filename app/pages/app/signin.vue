@@ -31,8 +31,15 @@ const { fields, meta, handleSubmit, errors } = useCustomFields({
 });
 
 onMounted(async () => {
-  const { deviceId } = await generateAdvancedDeviceIdentifier()
-  fields.identifier_token.model.value = deviceId
+  try {
+    const device = await generateAdvancedDeviceIdentifier();
+
+    if (device) {
+      fields.identifier_token.model.value = device.deviceId;
+    }
+  } catch (error) {
+    console.error('Failed to generate device identifier:', error);
+  }
 })
 
 const submitForm = handleSubmit(
