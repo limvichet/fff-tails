@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
     // Updated URL to the endpoint that returns the titles, occupations, etc.
     // Replace '/admin-secure/staffs/metadata' with your actual target route
     const res = await $fetch<APIResponse>(
-      `${apiBaseUrl}/api/admin-secure/employees-form-data`, 
+      `${apiBaseUrl}/admin-secure/employees-form-data`, 
       {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` }

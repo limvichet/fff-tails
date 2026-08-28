@@ -48,7 +48,7 @@ export default defineEventHandler(async (event: H3Event) => {
       }
     }
 
-    const res = await $fetch<Employee>(`${apiBaseUrl}/api/admin-secure/employees`, {
+    const res = await $fetch<Employee>(`${apiBaseUrl}/admin-secure/employees`, {
       method: "POST",
       body: formData,
       headers: {

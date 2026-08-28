@@ -177,7 +177,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> =
   try {
     
     const res = await $fetch<ApiResponse>(
-      `${apiBaseUrl}/api/admin-secure/loanrecords/${lid}/print-contract2`, {
+      `${apiBaseUrl}/admin-secure/loanrecords/${lid}/print-contract2`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

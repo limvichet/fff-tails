@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
     const body = await readBody<DataRequest>(event)
 
     const response = await $fetch<ApiResponse>(
-      `${apiBaseUrl}/api/admin-secure/change-password`,
+      `${apiBaseUrl}/admin-secure/change-password`,
       {
         method: "POST",
         headers: {

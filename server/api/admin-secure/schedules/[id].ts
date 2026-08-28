@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   if (!id) throw createError({ statusCode: 400, statusMessage: "Missing product ID" })
   if (!token) throw createError({ statusCode: 401, statusMessage: "Unauthorized" })
 
-  const url = `${config.apiBaseUrl}/api/admin-secure/schedules/${id}`
+  const url = `${config.apiBaseUrl}/admin-secure/schedules/${id}`
   const method = event.method
 
 

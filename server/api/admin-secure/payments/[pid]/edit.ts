@@ -59,7 +59,7 @@ export default defineEventHandler(async (event) => {
   if (!pid) throw createError({ statusCode: 400, statusMessage: "Missing ID" })
   if (!token) throw createError({ statusCode: 401, statusMessage: "Unauthorized" })
 
-  const url = `${config.apiBaseUrl}/api/admin-secure/payments/${pid}/edit`
+  const url = `${config.apiBaseUrl}/admin-secure/payments/${pid}/edit`
   const method = event.method
 
 

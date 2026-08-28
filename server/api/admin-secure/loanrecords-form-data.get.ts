@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
     // Updated URL to the endpoint that returns the titles, occupations, etc.
     // Replace '/admin-secure/staffs/metadata' with your actual target route
     const res = await $fetch<LoanrecordFormDataResponse>(
-      `${apiBaseUrl}/api/admin-secure/loanrecords-form-data`, 
+      `${apiBaseUrl}/admin-secure/loanrecords-form-data`, 
       {
         method: "GET",
         headers: {

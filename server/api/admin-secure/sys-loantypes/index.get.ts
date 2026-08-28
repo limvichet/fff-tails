@@ -73,7 +73,7 @@ export default defineEventHandler(async (event) => {
       
   try {
 
-    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/sys-loantypes?page=${page}&param=${param}`, {
+    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/admin-secure/sys-loantypes?page=${page}&param=${param}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

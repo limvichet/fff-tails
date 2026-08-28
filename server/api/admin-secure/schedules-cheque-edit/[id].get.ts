@@ -53,7 +53,7 @@ export default defineEventHandler(async (event) => {
     // Updated URL to the endpoint that returns the titles, occupations, etc.
     // Replace '/admin-secure/staffs/metadata' with your actual target route
     const res = await $fetch<APIResponse>(
-      `${apiBaseUrl}/api/admin-secure/schedules-cheque-edit/${id}`, 
+      `${apiBaseUrl}/admin-secure/schedules-cheque-edit/${id}`, 
       {
         method: "GET",
         headers: {

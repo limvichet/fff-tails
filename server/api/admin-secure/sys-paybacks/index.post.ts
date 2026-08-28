@@ -58,7 +58,7 @@ export default defineEventHandler(async (event: H3Event) => {
       }
     }
 
-    const res = await $fetch<Data>(`${apiBaseUrl}/api/admin-secure/sys-paybacks`, {
+    const res = await $fetch<Data>(`${apiBaseUrl}/admin-secure/sys-paybacks`, {
       method: "POST",
       body: formData,
       headers: {

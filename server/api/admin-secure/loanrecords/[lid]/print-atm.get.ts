@@ -64,7 +64,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> =
 
   try {
     const res = await $fetch<any>(
-      `${apiBaseUrl}/api/admin-secure/loanrecords/${lid}/print-atm`, {
+      `${apiBaseUrl}/admin-secure/loanrecords/${lid}/print-atm`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

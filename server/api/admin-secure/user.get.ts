@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
       statusMessage: "Unauthorized - Please login again.",
     });
 
-    const res = await $fetch<User>(`${apiBaseUrl}/api/admin-secure/user`, {
+    const res = await $fetch<User>(`${apiBaseUrl}/admin-secure/user`, {
       method: "GET",
       headers: {
         Accept: "application/json",

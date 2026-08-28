@@ -1,5 +1,5 @@
 
-// server/api/loanrecords-need-approval.get.ts
+// server/loanrecords-need-approval.get.ts
 import { getCookie, createError, type H3Event } from "h3"
 
 type LoanRecord = {
@@ -37,7 +37,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> =
 
   try {
     // Call your Laravel API via proxy
-    const res = await $fetch(`${apiBaseUrl}/api/admin-secure/loanrecords-need-approval`, {
+    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/admin-secure/loanrecords-need-approval`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -46,7 +46,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> =
     })
 
     return res
-    
+
   } catch (err: any) {
     const message = err?.data?.message || err?.message || "Failed to fetch loan records"
     throw createError({

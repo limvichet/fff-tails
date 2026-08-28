@@ -36,7 +36,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     // 4️⃣ Forward request to Laravel
     const res = await $fetch<Loanrecord>(
-      `${apiBaseUrl}/api/admin-secure/loanrecords/${id}`,
+      `${apiBaseUrl}/admin-secure/loanrecords/${id}`,
       {
         method: "PUT",
         body,

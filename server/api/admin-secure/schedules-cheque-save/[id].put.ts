@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
     // Replace '/admin-secure/staffs/metadata' with your actual target route
     
     const res = await $fetch<any>(
-      `${apiBaseUrl}/api/admin-secure/schedules-cheque-save/${id}`, 
+      `${apiBaseUrl}/admin-secure/schedules-cheque-save/${id}`, 
       {
         method: "PUT",
         body,

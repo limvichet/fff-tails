@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
         statusMessage: UNAUTHORIZED.message,
     });
 
-    await $fetch(`${apiBaseUrl}/api/admin-secure/logout`, {
+    await $fetch(`${apiBaseUrl}/admin-secure/logout`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${getCookie(event, "token")!}`,

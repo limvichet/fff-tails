@@ -57,7 +57,7 @@ export default defineEventHandler(async (event) => {
     //   })
     // }
 
-    const { token, user } = await $fetch<LoginResponse>(`${apiBaseUrl}/api/admin-public/login`, {
+    const { token, user } = await $fetch<LoginResponse>(`${apiBaseUrl}/admin-public/login`, {
       method: "POST",
       headers: { Accept: "application/json", "Content-Type": "application/json" },
       body: body,

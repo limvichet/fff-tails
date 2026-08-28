@@ -60,7 +60,7 @@ export default defineEventHandler(async (event: H3Event) => {
     formData.append("_method", "PUT")
 
     // Send PUT request to Laravel update endpoint
-    const res = await $fetch<Employee>(`${apiBaseUrl}/api/admin-secure/employees/${id}`, {
+    const res = await $fetch<Employee>(`${apiBaseUrl}/admin-secure/employees/${id}`, {
       method: "POST",
       body: formData,
       headers: {

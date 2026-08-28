@@ -85,7 +85,7 @@ export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> =
 
   try {
 
-    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/api/admin-secure/employees?page=${page}&param=${param}`, {
+    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/admin-secure/employees?page=${page}&param=${param}`, {
       method: "GET",
       // query: {
       //   page: query.page || 1,

@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   if (!id) throw createError({ statusCode: 400, statusMessage: "Missing data id" })
   if (!token) throw createError({ statusCode: 401, statusMessage: "Unauthorized" })
 
-  const url = `${config.apiBaseUrl}/api/admin-secure/employees/${id}`
+  const url = `${config.apiBaseUrl}/admin-secure/employees/${id}`
   const method = event.method
 
 

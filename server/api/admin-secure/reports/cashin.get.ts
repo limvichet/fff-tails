@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const res = await $fetch<ApiResponse>(
-      `${apiBaseUrl}/api/admin-secure/reports-cashin`,
+      `${apiBaseUrl}/admin-secure/reports-cashin`,
       {
         method: "GET",
         query: {

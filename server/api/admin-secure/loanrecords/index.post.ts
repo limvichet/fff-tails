@@ -48,7 +48,7 @@ export default defineEventHandler(async (event: H3Event) => {
       }
     }
 
-    const res = await $fetch<Loanrecord>(`${apiBaseUrl}/api/admin-secure/loanrecords`, {
+    const res = await $fetch<Loanrecord>(`${apiBaseUrl}/admin-secure/loanrecords`, {
       method: "POST",
       body: formData,
       headers: {

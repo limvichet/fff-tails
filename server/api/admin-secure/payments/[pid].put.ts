@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const url = `${config.apiBaseUrl}/api/admin-secure/payments/${pid}`
+  const url = `${config.apiBaseUrl}/admin-secure/payments/${pid}`
 
   try {
     if (event.node.req.method === "PUT") {

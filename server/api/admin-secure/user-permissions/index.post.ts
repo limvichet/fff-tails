@@ -1,4 +1,4 @@
-/* ~/server/api/schedules.post.ts */
+/* ~/server/schedules.post.ts */
 
 import { getCookie, createError, type H3Event, readBody, type EventHandler } from "h3"
 
@@ -20,7 +20,7 @@ const handler: EventHandler = async (event: H3Event) => {
     const body = await readBody(event)
 
     // ✅ Send POST request to Laravel
-    const res = await $fetch(`${apiBaseUrl}/api/admin-secure/user-permissions`, {
+    const res = await $fetch(`${apiBaseUrl}/admin-secure/user-permissions`, {
       method: "POST",
       body: body,
       headers: {
