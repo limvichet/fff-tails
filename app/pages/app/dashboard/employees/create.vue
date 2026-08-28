@@ -82,7 +82,7 @@
 
   // 👉 fetch metadata
   const fetchFormData = async () => {
-    const res = await $fetch<APIResponse>("/api/admin-secure/employees-form-data")
+    const res = await $fetch<APIResponse>("/admin-secure/employees-form-data")
     const map = (obj:any)=>
       Object.entries(obj).map(([id,label])=>({
           id:Number(id),
@@ -326,7 +326,7 @@
         }
       })
 
-      const res = await $fetch("/api/admin-secure/employees", {
+      const res = await $fetch("/admin-secure/employees", {
         headers: {
           Accept: "application/json",
         },

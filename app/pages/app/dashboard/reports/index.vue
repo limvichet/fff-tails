@@ -84,7 +84,7 @@ const {
   "reports-form-data",
   () =>
     $fetch<ReportsFormDataResponse>(
-      "/api/admin-secure/reports-form-data"
+      "/admin-secure/reports-form-data"
     ),
   {
     default: () => ({

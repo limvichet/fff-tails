@@ -52,10 +52,28 @@ const query = computed(() => ({
   loantype_id: route.query.loantype_id as string | undefined,
 }))
 
-const { data, pending, error } = useAsyncData(
+interface CashinReportRow {
+  id: string | number
+  cust_name_1: string
+  currency_en: string
+  schedule_principle_date: string
+  invoice: string
+  cash: number
+  recipient: string
+  full_name: string
+  created_at: string
+  note: string
+}
+
+interface CashinReport {
+  count: number
+  data: CashinReportRow[]
+}
+
+const { data, pending, error } = useAsyncData<CashinReport>(
   "cashin-report",
   () =>
-    $fetch("/api/admin-secure/reports/cashin", {
+    $fetch("/admin-secure/reports/cashin" as string, {
       query: query.value,
     }),
   {

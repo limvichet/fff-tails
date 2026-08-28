@@ -78,7 +78,7 @@ const fetchEmployees = async () => {
   errorMsg.value = null
 
   try {
-    const res = await $fetch<ApiResponse>("/api/admin-secure/employees", {
+    const res = await $fetch<ApiResponse>("/admin-secure/employees", {
       method: "GET",
       query: {
         page: page.value,
@@ -131,7 +131,7 @@ const closeModal = () => {
 const deleteEmployee = async () => {
   if (!selectedEmployeeId.value) return
   try {
-    await $fetch(`/api/admin-secure/employees/${selectedEmployeeId.value}`, { method: "DELETE" })
+    await $fetch(`/admin-secure/employees/${selectedEmployeeId.value}`, { method: "DELETE" })
     closeModal()
     fetchEmployees()
     success("Employee removed successfully")

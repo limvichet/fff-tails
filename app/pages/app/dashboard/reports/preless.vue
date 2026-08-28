@@ -55,7 +55,7 @@ const query = computed(() => ({
 const { data, pending, error } = useAsyncData(
   "preless-report",
   () =>
-    $fetch("/api/admin-secure/reports/preless", {
+    $fetch("/admin-secure/reports/preless", {
       query: query.value,
     }),
   {

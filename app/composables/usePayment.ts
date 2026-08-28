@@ -203,7 +203,7 @@ export const usePayment = () => {
 
     try {
       const res = await $fetch<ApiResponse>(
-        `/api/admin-secure/payments/${pid}/edit`
+        `/admin-secure/payments/${pid}/edit`
       )
 
       const data = res.data
@@ -280,7 +280,7 @@ export const usePayment = () => {
 
       console.log(payload)
 
-      await $fetch(`/api/admin-secure/payments/${paymentForm.id}`, {
+      await $fetch(`/admin-secure/payments/${paymentForm.id}`, {
         method: "PUT",
         body: payload,
       })

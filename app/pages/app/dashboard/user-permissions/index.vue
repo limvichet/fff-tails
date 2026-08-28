@@ -59,7 +59,7 @@ const fetchUsers = async () => {
   errorMsg.value = null
 
   try {
-    const res = await $fetch<ApiResponse>("/api/admin-secure/user-permissions", {
+    const res = await $fetch<ApiResponse>("/admin-secure/user-permissions", {
       method: "GET",
       query: {
         page: page.value,

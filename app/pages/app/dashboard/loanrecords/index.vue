@@ -170,7 +170,7 @@ const fetchLoanrecords = async () => {
 
   try {
     const { data } = await $fetch<ApiResponse>(
-      "/api/admin-secure/loanrecords",
+      "/admin-secure/loanrecords",
       {
         method: "GET",
         query: {
@@ -265,7 +265,7 @@ const deleteLoan = async () => {
   if (!selectedLoanId.value) return
 
   try {
-    await $fetch(`/api/admin-secure/loanrecords/${selectedLoanId.value}`, {
+    await $fetch(`/admin-secure/loanrecords/${selectedLoanId.value}`, {
       method: "DELETE",
     })
 

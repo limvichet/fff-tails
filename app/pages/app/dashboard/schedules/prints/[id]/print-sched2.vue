@@ -117,7 +117,7 @@ const fetchData = async () => {
   loading.value = true
 
   try {
-    const { data } = await $fetch<ApiResponse>(`/api/admin-secure/schedules/${id}/print-sched2`)
+    const { data } = await $fetch<ApiResponse>(`/admin-secure/schedules/${id}/print-sched2`)
     dd.value = data
   } finally {
     loading.value = false

@@ -46,7 +46,7 @@ const loanGroupPositions = ref<any[]>([])
 /* FETCH FORM DATA */
 const fetchFormData = async () => {
   const data = await $fetch<LoanrecordFormDataResponse>(
-    "/api/admin-secure/loanrecords-form-data"
+    "/admin-secure/loanrecords-form-data"
   )
 
   const map = (obj:any)=>
@@ -126,7 +126,7 @@ const headers = useRequestHeaders(["cookie"])
 
 const { data } = await useAsyncData(
   `loanrecord-${id}`,
-  () => $fetch<ApiResponse<any>>(`/api/admin-secure/loanrecords/${id}`,{ headers })
+  () => $fetch<ApiResponse<any>>(`/admin-secure/loanrecords/${id}`,{ headers })
 )
 
 const loanrecord = computed(()=>data.value?.data ?? null)
@@ -400,7 +400,7 @@ const updateForm = async () => {
     fd.append("_method", "PUT")
 
     /* ✅ REQUEST */
-    await $fetch(`/api/admin-secure/loanrecords/${id}`, {
+    await $fetch(`/admin-secure/loanrecords/${id}`, {
       method: "POST",
       body: fd
     })
@@ -414,7 +414,7 @@ const updateForm = async () => {
     )
 
     // ✅ REFRESH IMAGE FROM BACKEND
-    const refreshed = await $fetch<{ succes: number, data: any }>(`/api/admin-secure/loanrecords/${id}`)
+    const refreshed = await $fetch<{ succes: number, data: any }>(`/admin-secure/loanrecords/${id}`)
     updateFromBackend("loan_collateral_doc_1", refreshed.data.loan_collateral_doc_1_url)
     updateFromBackend("loan_collateral_doc_2", refreshed.data.loan_collateral_doc_2_url)
 

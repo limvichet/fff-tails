@@ -55,7 +55,7 @@ const query = computed(() => ({
 const { data, pending, error } = useAsyncData(
   "debt-report",
   () =>
-    $fetch("/api/admin-secure/reports/debt", {
+    $fetch("/admin-secure/reports/debt", {
       query: query.value,
     }),
   {

@@ -57,7 +57,7 @@ const fetchRoles = async () => {
 
   try {
     const res = await $fetch<ApiResponse>(
-      "/api/admin-secure/roles",
+      "/admin-secure/roles",
       {
         method: "GET",
         query: {

@@ -57,7 +57,7 @@ const query = computed(() => ({
 const { data, pending, error } = useAsyncData(
   "income-report",
   () =>
-    $fetch("/api/admin-secure/reports/netoutstanding", {
+    $fetch("/admin-secure/reports/netoutstanding", {
       query: query.value,
     }),
   {

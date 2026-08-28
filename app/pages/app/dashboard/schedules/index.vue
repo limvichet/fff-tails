@@ -94,7 +94,7 @@ const fetchSchedules = async () => {
   errorMsg.value = null
 
   try {
-    const res = await $fetch<ApiResponse>("/api/admin-secure/schedules", {
+    const res = await $fetch<ApiResponse>("/admin-secure/schedules", {
       method: "GET",
       query: {
         page: page.value,
@@ -182,7 +182,7 @@ const deleteSchedule = async () => {
   if (!selectedId.value) return
 
   try {
-    await $fetch(`/api/admin-secure/schedules/${selectedId.value}`, {
+    await $fetch(`/admin-secure/schedules/${selectedId.value}`, {
       method: "DELETE",
     })
 
@@ -309,8 +309,8 @@ const deleteSchedule = async () => {
                 <td class="px-2 py-1 text-left">
                   <button class="px-2 py-1 bg-blue-600 text-white rounded text-xs mr-1"
                   @click="openModal(
-                    `/api/admin-secure/schedules-cheque-data/${s.id}`,
-                    `/api/admin-secure/schedules-cheque-edit/${s.id}`
+                    `/admin-secure/schedules-cheque-data/${s.id}`,
+                    `/admin-secure/schedules-cheque-edit/${s.id}`
                   )">
                     Cheque
                   </button>

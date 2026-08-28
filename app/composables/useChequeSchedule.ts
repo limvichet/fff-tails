@@ -292,7 +292,7 @@ export const useChequeSchedule = () => {
         }))
       }
 
-      await $fetch(`/api/admin-secure/schedules-cheque-save/${form.chequeschedule_loan_id}`, {
+      await $fetch(`/admin-secure/schedules-cheque-save/${form.chequeschedule_loan_id}`, {
         method: "PUT",
         body: payload
       })
@@ -322,7 +322,7 @@ export const useChequeSchedule = () => {
 
   try {
     const res = await $fetch<any>(
-      `/api/admin-secure/schedules-cheque-edit/${id}`
+      `/admin-secure/schedules-cheque-edit/${id}`
     )
 
     const data = res?.data ?? res

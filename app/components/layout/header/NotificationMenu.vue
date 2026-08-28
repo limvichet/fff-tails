@@ -73,7 +73,7 @@ const loadNotifications = async () => {
   if (!hasRole("admin")) return
 
   try {
-    const res = await $fetch<ApiResponse>("/api/admin-secure/loanrecords-need-approval")
+    const res = await $fetch<ApiResponse>("/admin-secure/loanrecords-need-approval")
     const newData = Array.isArray(res.data) ? res.data : []
     const newCount = newData.length
 

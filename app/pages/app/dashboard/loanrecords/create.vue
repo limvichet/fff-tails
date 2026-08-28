@@ -44,7 +44,7 @@
   const fetchFormData = async () => {
     try {
       const data = await $fetch<LoanrecordFormDataResponse>(
-        "/api/admin-secure/loanrecords-form-data"
+        "/admin-secure/loanrecords-form-data"
       )
       const map = (obj:any)=>
         Object.entries(obj).map(([id,label])=>({
@@ -322,7 +322,7 @@ Object.keys(baseSchema.shape).forEach((field) => {
       if (form.loan_collateral_doc_1_check) fd.append("loan_collateral_doc_1_check", "1")
       if (form.loan_collateral_doc_2_check) fd.append("loan_collateral_doc_2_check", "1")
 
-      const res = await $fetch<{ success: boolean; message: string; id: number }>("/api/admin-secure/loanrecords",{
+      const res = await $fetch<{ success: boolean; message: string; id: number }>("/admin-secure/loanrecords",{
         method:"POST",
         body: fd
       })

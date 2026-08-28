@@ -100,7 +100,7 @@ const fetchSysSourcemoneys = async () => {
   errorMsg.value = null
 
   try {
-    const res = await $fetch<ApiResponse>("/api/admin-secure/sys-sourcemoneys", {
+    const res = await $fetch<ApiResponse>("/admin-secure/sys-sourcemoneys", {
       method: "GET",
       query: {
         page: page.value,
@@ -171,13 +171,13 @@ const saveSysSourcemoney = async () => {
 
     if (isEditMode.value && selectedId.value) {
       formData.append("_method", "PUT")
-      await $fetch(`/api/admin-secure/sys-sourcemoneys/${selectedId.value}`, {
+      await $fetch(`/admin-secure/sys-sourcemoneys/${selectedId.value}`, {
         method: "POST",
         body: formData,
       })
       showToast("Update successful", "Data updated successfully", "success")
     } else {
-      await $fetch("/api/admin-secure/sys-sourcemoneys", {
+      await $fetch("/admin-secure/sys-sourcemoneys", {
         method: "POST",
         body: formData,
       })

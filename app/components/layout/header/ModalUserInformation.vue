@@ -41,7 +41,7 @@ const userInfo = ref<UserResponse | null>(null)
 const loadUserInformation = async () => {
   try {
     loading.value = true
-    userInfo.value = await $fetch<UserResponse>("/api/admin-secure/user")
+    userInfo.value = await $fetch<UserResponse>("/admin-secure/user")
   } finally {
     loading.value = false
   }

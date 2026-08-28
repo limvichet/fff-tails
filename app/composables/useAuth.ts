@@ -21,7 +21,7 @@ export const useAuth = () => {
 
     try {
       loading.value = true;
-      const res = await $fetch("/api/auth/login", { method: "POST", body: credentials });
+      const res = await $fetch("/auth/login", { method: "POST", body: credentials });
 
       // ✅ store everything
       user.value = res.user
@@ -43,7 +43,7 @@ export const useAuth = () => {
   const logout = async () => {
     try {
       // 1. Tell the server to kill the session
-      await $fetch("/api/auth/logout", { method: "POST" });
+      await $fetch("/auth/logout", { method: "POST" });
 
       // 2. Clear the local cookie/state
       const token = useCookie('token', { path: '/' }); // Match the path!
@@ -67,7 +67,7 @@ export const useAuth = () => {
         user: User;
         roles: string[];
         permissions: string[];
-      }>("/api/admin-secure/user", { headers });
+      }>("/admin-secure/user", { headers });
 
       user.value = res.user;
       roles.value = res.roles || [];

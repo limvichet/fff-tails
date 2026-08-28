@@ -100,7 +100,7 @@ const fetchSysTitles = async () => {
   errorMsg.value = null
 
   try {
-    const res = await $fetch<ApiResponse>("/api/admin-secure/sys-identifications", {
+    const res = await $fetch<ApiResponse>("/admin-secure/sys-identifications", {
       method: "GET",
       query: {
         page: page.value,
@@ -171,13 +171,13 @@ const saveSysIdentification = async () => {
 
     if (isEditMode.value && selectedId.value) {
       formData.append("_method", "PUT")
-      await $fetch(`/api/admin-secure/sys-identifications/${selectedId.value}`, {
+      await $fetch(`/admin-secure/sys-identifications/${selectedId.value}`, {
         method: "POST",
         body: formData,
       })
       showToast("Update successful", "Data updated successfully", "success")
     } else {
-      await $fetch("/api/admin-secure/sys-identifications", {
+      await $fetch("/admin-secure/sys-identifications", {
         method: "POST",
         body: formData,
       })

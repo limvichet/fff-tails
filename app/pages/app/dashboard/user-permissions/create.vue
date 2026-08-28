@@ -82,7 +82,7 @@ const initializePermissions = () => {
 // =============================
 const fetchFormData = async () => {
   try {
-    const res = await $fetch<APIResponse>("/api/admin-secure/user-permissions-form-data")
+    const res = await $fetch<APIResponse>("/admin-secure/user-permissions-form-data")
 
     const map = (obj: Record<string, string>) =>
       Object.entries(obj).map(([id, label]) => ({
@@ -195,7 +195,7 @@ const submitForm = async () => {
     }
 
 
-      const res = await $fetch("/api/admin-secure/user-permissions", {
+      const res = await $fetch("/admin-secure/user-permissions", {
         method: "POST",
         body: payload
       })

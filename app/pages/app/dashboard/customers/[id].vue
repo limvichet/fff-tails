@@ -33,7 +33,7 @@
   const fetchCustomerFormData = async () => {
     try {
       const data = await $fetch<CustomerFormDataResponse>(
-        "/api/admin-secure/customers-form-data"
+        "/admin-secure/customers-form-data"
       )
 
       const mapOptions = (obj: any) =>
@@ -117,7 +117,7 @@
   const headers = useRequestHeaders(["cookie"]);
   const { data } = await useAsyncData(
     `customer-${id}`,
-    () => $fetch<ApiResponse<Customer>>(`/api/admin-secure/customers/${id}`, { headers }),
+    () => $fetch<ApiResponse<Customer>>(`/admin-secure/customers/${id}`, { headers }),
   )
 
   const customer = computed(() => data.value?.data ?? null)
@@ -547,7 +547,7 @@
       fd.append("_method", "PUT")
 
       /* ✅ REQUEST */
-      await $fetch(`/api/admin-secure/customers/${id}`, {
+      await $fetch(`/admin-secure/customers/${id}`, {
         method: "POST",
         body: fd,
       })
@@ -555,7 +555,7 @@
       successMsg.value = "Customer updated successfully!"
 
       // ✅ REFRESH IMAGE FROM BACKEND
-      const refreshed = await $fetch<{succes:number, data:any}>(`/api/admin-secure/customers/${id}`)
+      const refreshed = await $fetch<{succes:number, data:any}>(`/admin-secure/customers/${id}`)
       updateFromBackend("img1", refreshed.data.img1_url)
       updateFromBackend("img2", refreshed.data.img2_url)
       updateFromBackend("photo1", refreshed.data.photo1_url)

@@ -137,7 +137,7 @@ export const usePaymentPreless = () => {
     paymentPrelessForm.schedule_id = schedule_id
 
     try {
-      const res = await $fetch<ApiResponse>(`/api/admin-secure/payment-prelesses?param=${schedule_id}`)
+      const res = await $fetch<ApiResponse>(`/admin-secure/payment-prelesses?param=${schedule_id}`)
       const data = res?.data ?? res
       paymentPrelessItems.value = data?.prelesses ?? []
       paymentPrelessScheduleItem.value = data?.schedule ?? null
@@ -202,7 +202,7 @@ export const usePaymentPreless = () => {
 
       if (paymentPrelessIsEditMode.value) {
         // UPDATE
-        await $fetch(`/api/admin-secure/payment-prelesses/${paymentPrelessForm.id}`, {
+        await $fetch(`/admin-secure/payment-prelesses/${paymentPrelessForm.id}`, {
           method: "PUT",
           body
         })
@@ -210,7 +210,7 @@ export const usePaymentPreless = () => {
         showToast("Updated", "Cash-in updated", "success")
       } else {
         // CREATE
-        await $fetch(`/api/admin-secure/payment-prelesses`, {
+        await $fetch(`/admin-secure/payment-prelesses`, {
           method: "POST",
           body
         })
@@ -237,7 +237,7 @@ export const usePaymentPreless = () => {
     if (!confirm("Delete this item?")) return
 
     try {
-      await $fetch(`/api/admin-secure/payment-prelesses/${id}`, {
+      await $fetch(`/admin-secure/payment-prelesses/${id}`, {
         method: "DELETE"
       })
 

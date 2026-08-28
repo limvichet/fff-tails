@@ -82,7 +82,7 @@ const fetchData = async () => {
   loading.value = true
 
   try {
-    const { data } =  await $fetch<ApiResponse>(`/api/admin-secure/loanrecords/${lid}/print-atm`)
+    const { data } =  await $fetch<ApiResponse>(`/admin-secure/loanrecords/${lid}/print-atm`)
     dd.value = data
   } finally {
     loading.value = false

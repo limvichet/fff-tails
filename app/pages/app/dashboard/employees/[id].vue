@@ -40,8 +40,8 @@ const statuses = ref<any[]>([])
 const fetchInitialData = async () => {
   try {
     const [meta, empRes] = await Promise.all([
-      $fetch<any>("/api/admin-secure/employees-form-data"),
-      $fetch<any>(`/api/admin-secure/employees/${id}`)
+      $fetch<any>("/admin-secure/employees-form-data"),
+      $fetch<any>(`/admin-secure/employees/${id}`)
     ])
 
     const map = (obj: any) => Object.entries(obj).map(([id, label]) => ({ id: Number(id), label: String(label) }))
@@ -181,10 +181,10 @@ const updateForm = async () => {
     fd.append("photo1_check", form.photo1_check ? "1" : "0")
     fd.append("_method", "PUT")
 
-    await $fetch(`/api/admin-secure/employees/${id}`, { method: "POST", body: fd })
+    await $fetch(`/admin-secure/employees/${id}`, { method: "POST", body: fd })
     
     success("Employee updated successfully!")
-    const refreshed = await $fetch<any>(`/api/admin-secure/employees/${id}`)
+    const refreshed = await $fetch<any>(`/admin-secure/employees/${id}`)
     syncFormWithData(refreshed.data || refreshed)
     
   } catch (err: any) {

@@ -56,7 +56,7 @@ const fetchPermissions = async () => {
 
   try {
     const res = await $fetch<ApiResponse>(
-      "/api/admin-secure/permissions",
+      "/admin-secure/permissions",
       {
         method: "GET",
         query: {

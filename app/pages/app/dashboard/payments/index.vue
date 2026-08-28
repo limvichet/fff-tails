@@ -89,7 +89,7 @@ const fetchPayments = async () => {
   errorMsg.value = null
 
   try {
-    const res = await $fetch<ApiResponse>("/api/admin-secure/payments", {
+    const res = await $fetch<ApiResponse>("/admin-secure/payments", {
       method: "GET",
       query: {
         page: page.value,

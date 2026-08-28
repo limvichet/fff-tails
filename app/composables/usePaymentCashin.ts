@@ -137,7 +137,7 @@ export const usePaymentCashin = () => {
     paymentCashinForm.schedule_id = schedule_id
 
     try {
-      const res = await $fetch<ApiResponse>(`/api/admin-secure/payment-cashins?param=${schedule_id}`)
+      const res = await $fetch<ApiResponse>(`/admin-secure/payment-cashins?param=${schedule_id}`)
       const data = res?.data ?? res
       paymentCashinItems.value = data?.cashins ?? []
       paymentCashinScheduleItem.value = data?.schedule ?? null
@@ -202,7 +202,7 @@ export const usePaymentCashin = () => {
 
       if (paymentCashinIsEditMode.value) {
         // UPDATE
-        await $fetch(`/api/admin-secure/payment-cashins/${paymentCashinForm.id}`, {
+        await $fetch(`/admin-secure/payment-cashins/${paymentCashinForm.id}`, {
           method: "PUT",
           body
         })
@@ -210,7 +210,7 @@ export const usePaymentCashin = () => {
         showToast("Updated", "Cash-in updated", "success")
       } else {
         // CREATE
-        await $fetch(`/api/admin-secure/payment-cashins`, {
+        await $fetch(`/admin-secure/payment-cashins`, {
           method: "POST",
           body
         })
@@ -237,7 +237,7 @@ export const usePaymentCashin = () => {
     if (!confirm("Delete this item?")) return
 
     try {
-      await $fetch(`/api/admin-secure/payment-cashins/${id}`, {
+      await $fetch(`/admin-secure/payment-cashins/${id}`, {
         method: "DELETE"
       })
 

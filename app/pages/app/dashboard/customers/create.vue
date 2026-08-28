@@ -36,7 +36,7 @@
   const fetchCustomerFormData = async () => {
     try {
       const data = await $fetch<CustomerFormDataResponse>(
-        "/api/admin-secure/customers-form-data"
+        "/admin-secure/customers-form-data"
       )
 
       const mapOptions = (obj: any) =>
@@ -305,7 +305,7 @@
       if (form.photo1_check) fd.append("photo1_check", "1")
       if (form.photo2_check) fd.append("photo2_check", "1")
 
-      const res = await $fetch("/api/admin-secure/customers", {
+      const res = await $fetch("/admin-secure/customers", {
         method: "POST",
         body: fd,
       })

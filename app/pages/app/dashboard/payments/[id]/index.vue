@@ -206,7 +206,7 @@ const fetchData = async () => {
 
   try {
     const res = await $fetch<any>(
-      `/api/admin-secure/payments/${route.params.id}`
+      `/admin-secure/payments/${route.params.id}`
     )
 
     loan.value = res.loanrecord

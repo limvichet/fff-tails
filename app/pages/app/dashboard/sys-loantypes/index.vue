@@ -109,7 +109,7 @@ const fetchSysLoantypes = async () => {
   errorMsg.value = null
 
   try {
-    const res = await $fetch<ApiResponse>("/api/admin-secure/sys-loantypes", {
+    const res = await $fetch<ApiResponse>("/admin-secure/sys-loantypes", {
       method: "GET",
       query: {
         page: page.value,
@@ -201,13 +201,13 @@ const saveSysLoantype = async () => {
 
     if (isEditMode.value && selectedId.value) {
       formData.append("_method", "PUT")
-      await $fetch(`/api/admin-secure/sys-loantypes/${selectedId.value}`, {
+      await $fetch(`/admin-secure/sys-loantypes/${selectedId.value}`, {
         method: "POST",
         body: formData,
       })
       showToast("Update successful", "Data updated successfully", "success")
     } else {
-      await $fetch("/api/admin-secure/sys-loantypes", {
+      await $fetch("/admin-secure/sys-loantypes", {
         method: "POST",
         body: formData,
       })

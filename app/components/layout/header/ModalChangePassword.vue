@@ -96,7 +96,7 @@ const handleSubmit = async () => {
     const response = await $fetch<{
       message: string
       code: number
-    }>("/api/account/change-password", {
+    }>("/account/change-password", {
       method: "POST",
       body: form.value,
     })

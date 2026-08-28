@@ -79,7 +79,7 @@ const initializePermissions = () => {
 // =============================
 const fetchFormData = async () => {
   const res = await $fetch<APIResponse>(
-    "/api/admin-secure/user-permissions-form-data-all"
+    "/admin-secure/user-permissions-form-data-all"
   )
 
   const map = (obj: Record<string, string>) =>
@@ -105,7 +105,7 @@ const loadUser = async () => {
     loading.value = true
 
     const res = await $fetch<any>(
-      `/api/admin-secure/user-permissions/${userId}`
+      `/admin-secure/user-permissions/${userId}`
     )
 
     user.value = res?.data?.user
@@ -251,7 +251,7 @@ const submitForm = async () => {
     }
 
     await $fetch(
-      `/api/admin-secure/user-permissions/${userId}`,
+      `/admin-secure/user-permissions/${userId}`,
       {
         method: "PUT",
         body: payload,

@@ -108,7 +108,7 @@ const fetchCustomers = async () => {
 
   try {
     const res = await $fetch<ApiResponse>(
-      "/api/admin-secure/customers",
+      "/admin-secure/customers",
       {
         method: "GET",
         query: {
@@ -192,7 +192,7 @@ const deleteCustomer = async () => {
   if (!selectedCustomerId.value) return
 
   try {
-    await $fetch(`/api/admin-secure/customers/${selectedCustomerId.value}`, {
+    await $fetch(`/admin-secure/customers/${selectedCustomerId.value}`, {
       method: "DELETE",
     })
 

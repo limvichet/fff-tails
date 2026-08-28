@@ -100,7 +100,7 @@ const fetchFormData = async () => {
     const res = await $fetch<{
       customers: { [key: string]: string },
       loanrecords: Loanrecord[]
-    }>("/api/admin-secure/schedules-form-data", {
+    }>("/admin-secure/schedules-form-data", {
       params: {
         t: Date.now() // ✅ cache buster
       }
@@ -199,7 +199,7 @@ const submitForm = async () => {
   // console.log("Payload:", payload)                   // ✅ direct object
   // console.log("Payload JSON:", JSON.stringify(payload, null, 2))
   try {
-    const res = await $fetch<{ success: boolean; message: string; loan_id: number }>("/api/admin-secure/schedules", {
+    const res = await $fetch<{ success: boolean; message: string; loan_id: number }>("/admin-secure/schedules", {
       method: "POST",
       body: payload,
     })
