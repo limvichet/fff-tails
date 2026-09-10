@@ -54,7 +54,7 @@ export default defineNuxtConfig({
   },
   $production: {
     runtimeConfig: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL,
+      apiBaseUrl: process.env.API_BASE_URL_INTERNAL,
       public: { 
         siteUrl: process.env.NUXT_PUBLIC_SITE_URL
       }
