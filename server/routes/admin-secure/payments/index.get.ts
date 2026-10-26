@@ -31,7 +31,9 @@ type Schedule = {
     updated_by: string
     updated_at: string
     latest_schedule_paid_date: string
+    next_outstanding_date: string
     latest_schedule_outstanding: number
+    payment_status: number
     schedule_principle_payment_tt: string;
     schedule_principle_tt: string;
     schedule_totalpay_tt: string;
@@ -62,15 +64,35 @@ export default defineEventHandler(async (event: H3Event): Promise<ApiResponse> =
   const param =
     typeof query.param === "string" && query.param.trim()
       ? query.param
-      : ""
+      : undefined
+
+  // Payment status: 0 = Finished, 1 = Active, undefined = All Status
+  const paymentStatus =
+    query.payment_status === "0" || query.payment_status === "1"
+      ? query.payment_status
+      : undefined
+
+
+  // Sorting parameters
+  const sortBy =
+    typeof query.sort_by === "string" && query.sort_by.trim()
+      ? query.sort_by
+      : "loan_id"
+
+  const sortDirection =
+    query.sort_direction === "asc" || query.sort_direction === "desc"
+      ? query.sort_direction
+      : "desc"
 
   try {
 
-    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/admin-secure/payments?page=${page}&param=${param}`, {
-      method: "GET",
+    // const res = await $fetch<ApiResponse>(`${apiBaseUrl}/admin-secure/payments?page=${page}&param=${param}&payment_status=${paymentStatus}`, {
+    const res = await $fetch<ApiResponse>(`${apiBaseUrl}/admin-secure/payments?page=${page}${param ? `&param=${encodeURIComponent(param)}` : ''}${paymentStatus !== undefined ? `&payment_status=${paymentStatus}` : ''}${sortBy ? `&sort_by=${encodeURIComponent(sortBy)}` : ''}${sortDirection ? `&sort_direction=${encodeURIComponent(sortDirection)}` : ''}`, {  
+    method: "GET",
       // query: {
       //   page: query.page || 1,
       //   param: query.param || undefined,
+      //   payment_status: paymentStatus || undefined,
       // },
       headers: {
         Authorization: `Bearer ${token}`,

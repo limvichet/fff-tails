@@ -3,7 +3,7 @@ import type { User } from "~/types/auth";
 
 const useUser = () => useState<User | null>("user", () => null);
 const useRoles = () => useState<string[]>("roles", () => []);
-const usePermissions = () => useState<string[]>("permissions", () => []);
+const usePermissions = () => useState<string[]>("permissions`", () => []);
 
 export const useAuth = () => {
   const user = useUser();

@@ -44,7 +44,9 @@ type Schedule = {
   updated_at: string
 
   latest_schedule_paid_date: string
+  next_outstanding_date: string
   latest_schedule_outstanding: number
+  payment_status: number
   schedule_principle_payment_tt: string
   schedule_principle_tt: string
   schedule_totalpay_tt: string
@@ -73,6 +75,8 @@ const loading = ref(false)
 
 const searchInput = ref("")
 const searchQuery = ref("")
+const paymentStatus = ref('')
+
 
 const page = ref(1)
 const perPage = PER_PAGE
@@ -94,6 +98,12 @@ const fetchPayments = async () => {
       query: {
         page: page.value,
         param: searchQuery.value || undefined,
+        payment_status: paymentStatus.value === ''
+          ? undefined
+          : paymentStatus.value,
+            // New sorting parameters
+        sort_by: sortBy.value,
+        sort_direction: sortDirection.value,
       },
     })
 
@@ -129,6 +139,11 @@ watch(searchInput, (val) => {
     page.value = 1
     fetchPayments()
   }, 400)
+})
+
+watch(paymentStatus, () => {
+  page.value = 1
+  fetchPayments()
 })
 
 // =====================
@@ -207,6 +222,30 @@ const getPaymentStatus = (p: Schedule) => {
   return status
 }
 
+
+  // Sorting
+  const sortBy = ref('loan_id')
+  const sortDirection = ref<'asc' | 'desc'>('desc')
+
+  const toggleSort = (column: string) => {
+    // if (sortBy.value === column) {
+    //   // Click the same column to switch direction
+    //   sortDirection.value =
+    //     sortDirection.value === 'asc' ? 'desc' : 'asc'
+    // } else {
+    //   // A new column starts with ascending order
+    //   sortBy.value = column
+    //   sortDirection.value = 'asc'
+    // }
+
+    // page.value = 1
+    // fetchPayments()
+  }
+
+  const sortIcon = (column: string) => {
+    if (sortBy.value !== column) return '↕'
+    return sortDirection.value === 'asc' ? '↑' : '↓'
+  }
 </script>
 
 <template>
@@ -214,30 +253,50 @@ const getPaymentStatus = (p: Schedule) => {
 
     <ComponentCard title="Payments">
 
-      <!-- Search -->
-      <div class="relative">
-        <!-- Icon -->
-        <svg
-          class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"
+      <div class="flex items-end gap-4">
+        <!-- Search -->
+        <div class="relative w-7/10">
+          <!-- Icon -->
+          <svg
+            class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"
+            />
+          </svg>
+          <!-- Search Input -->
+          <input
+            v-model="searchInput"
+            type="text"
+            placeholder="Search records..."
+            class="input !pl-9 text-sm"
           />
-        </svg>
+        </div>
 
-        <!-- Search Input -->
-        <input
-          v-model="searchInput"
-          type="text"
-          placeholder="Search records..."
-          class="input !pl-9 text-sm"
-        />
+        <!-- Payment Status -->
+        <div class="w-3/10">
+
+          <select v-model="paymentStatus" class="input">
+            <option value="">
+              All Status
+            </option>
+
+            <option value="0">
+              Finished
+            </option>
+
+            <option value="1">
+              Active
+            </option>
+          </select>
+        </div>
+
       </div>
 
 
@@ -256,18 +315,75 @@ const getPaymentStatus = (p: Schedule) => {
         <table class="min-w-full text-sm">
           <thead class="bg-gray-100 dark:bg-gray-800 border-b text-left">
             <tr>
-              <th class="px-2 py-2">#</th>
-              <th class="px-2 py-2">Loan</th>
-              <th class="px-2 py-2">Customer</th>
-              <th class="px-2 py-2">Total Loan</th>
-              <th class="px-2 py-2">Rate</th>
-              <th class="px-2 py-2">Outstanding</th>
-              <th class="px-2 py-2">LastPaided</th>
-              <th class="px-2 py-2">End</th>
-              <th class="px-2 py-2">Tag</th>
-              <th class="px-2 py-2">DebtReturn</th>
-              <th class="px-2 py-2">Status</th>
-              <th class="px-2 py-2">Actions</th>
+              <th class="px-1 py-2">#</th>
+
+              <th class="px-1 py-2">
+                <button @click="toggleSort('loan_id')" class="sort-header"   :class="{ 'sort-active': sortBy === 'loan_id' }">
+                  Loan <span>{{ sortIcon('loan_id') }}</span>
+                </button>
+              </th>
+
+              <th class="px-1 py-2">
+                <button @click="toggleSort('customer')" class="sort-header"  :class="{ 'sort-active': sortBy === 'customer' }">
+                  Customer <span>{{ sortIcon('customer') }}</span>
+                </button>
+              </th>
+
+              <th class="px-1 py-2">
+                <button @click="toggleSort('loan_totalcash')" class="sort-header" :class="{ 'sort-active': sortBy === 'loan_totalcash' }">
+                  Total Loan <span>{{ sortIcon('loan_totalcash') }}</span>
+                </button>
+              </th>
+
+              <th class="px-1 py-2">
+                <button @click="toggleSort('loan_interest_rate')" class="sort-header" :class="{ 'sort-active': sortBy === 'loan_interest_rate' }">
+                  Rate <span>{{ sortIcon('loan_interest_rate') }}</span>
+                </button>
+              </th>
+
+              <th class="px-1 py-2">
+                <button @click="toggleSort('outstanding')" class="sort-header" :class="{ 'sort-active': sortBy === 'outstanding' }">
+                  Outstanding <span>{{ sortIcon('outstanding') }}</span>
+                </button>
+              </th>
+
+              <th class="px-1 py-2">
+                <button @click="toggleSort('last_paid')" class="sort-header" :class="{ 'sort-active': sortBy === 'last_paid' }">
+                  LastPaided <span>{{ sortIcon('last_paid') }}</span>
+                </button>
+              </th>
+
+              <th class="px-1 py-2">
+                <button @click="toggleSort('next_outstanding')" class="sort-header" :class="{ 'sort-active': sortBy === 'next_outstanding' }">
+                  NextOutstanding <span>{{ sortIcon('next_outstanding') }}</span>
+                </button>
+              </th>
+
+              <th class="px-1 py-2">
+                <button @click="toggleSort('loan_enddate')" class="sort-header" :class="{ 'sort-active': sortBy === 'loan_enddate' }">
+                  End <span>{{ sortIcon('loan_enddate') }}</span>
+                </button>
+              </th>
+
+              <th class="px-1 py-2">
+                <button @click="toggleSort('loan_tag')" class="sort-header" :class="{ 'sort-active': sortBy === 'loan_tag' }">
+                  Tag <span>{{ sortIcon('loan_tag') }}</span>
+                </button>
+              </th>
+
+              <th class="px-1 py-2">
+                <button @click="toggleSort('debt_return')" class="sort-header" :class="{ 'sort-active': sortBy === 'debt_return' }">
+                  DebtReturn <span>{{ sortIcon('debt_return') }}</span>
+                </button>
+              </th>
+
+              <th class="px-1 py-2">
+                <button @click="toggleSort('payment_status')" class="sort-header" :class="{ 'sort-active': sortBy === 'payment_status' }">
+                  Status <span>{{ sortIcon('payment_status') }}</span>
+                </button>
+              </th>
+
+              <th class="px-1 py-2">Actions</th>
             </tr>
           </thead>
 
@@ -277,45 +393,49 @@ const getPaymentStatus = (p: Schedule) => {
               :key="p.id"
               class="border-b hover:bg-blue-100/20"
             >
-              <td class="px-2 py-1">
+              <td class="px-1 py-2">
                 {{ (page - 1) * perPage + i + 1 }}
               </td>
 
-              <td class="px-2 py-1">
+              <td class="px-1 py-2">
                 {{ p.loan_id }}({{ p.loantype_short }})
               </td>
 
-              <td class="px-2 py-1">
+              <td class="px-1 py-2">
                 {{ p.cust_name_1 }}
                 <span v-if="p.cust_name_2"></span>
               </td>
 
 
-              <td class="px-2 py-1">
+              <td class="px-1 py-2">
                 <small>{{ p.currency_en }}</small> {{ formatNumber(p.loan_totalcash) }}
               </td>
 
-              <td class="px-2 py-1">
+              <td class="px-1 py-2">
                 {{ formatNumber(p.loan_interest_rate) }}
               </td>
 
-              <td class="px-2 py-1">
+              <td class="px-1 py-2">
                 {{ formatNumber(p.latest_schedule_outstanding) }}
               </td>
-
-              <td class="px-2 py-1">
+              
+              <td class="px-1 py-2">
                 {{ p.latest_schedule_paid_date ? formatDateForOutput(new Date(p.latest_schedule_paid_date)) : "" }}              
               </td>
 
-              <td class="px-2 py-1">
+              <td class="px-1 py-2">
+                {{ p.next_outstanding_date ? formatDateForOutput(new Date(p.next_outstanding_date)) : "" }}              
+              </td>
+
+              <td class="px-1 py-2">
                 {{ formatDateForOutput(new Date(p.loan_enddate)) }}
               </td>
 
-              <td class="px-2 py-1">
+              <td class="px-1 py-2">
                 {{ p.loan_tag }}
               </td>
 
-              <td class="px-2 py-1 text-left">
+              <td class="px-1 py-2 text-left">
                 <span 
                   :class="Number(p.schedule_lessmoney_tt) < 0 
                     ? 'bg-red-600 text-white text-xs font-normal rounded px-2 py-1' 
@@ -325,7 +445,7 @@ const getPaymentStatus = (p: Schedule) => {
                 </span>
               </td>
 
-              <td class="px-2 py-1">
+              <td class="px-1 py-2 text-left">
                   <span
                     :class="getPaymentStatus(p) === 1 
                       ? 'bg-blue-600 text-white text-xs font-normal rounded px-2 py-1' 
@@ -335,7 +455,7 @@ const getPaymentStatus = (p: Schedule) => {
                   </span>
               </td>
 
-              <td class="px-2 py-1">
+              <td class="px-1 py-2">
                 <button 
                   @click="showPayment(p.id)"
                   class="bg-blue-500 text-white text-xs font-normal rounded px-2 py-1">
@@ -390,15 +510,21 @@ const getPaymentStatus = (p: Schedule) => {
 <style scoped>
 .input {
   width: 100%;
-  border: 1px solid #ddd;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
   padding: 8px 12px;
+  font-size: 12px;
+  transition: border-color 0.2s ease;
 }
 
+.input:focus {
+  outline: none;
+  border-color: #1C398E;
+}
 
 .btn-pagination {
   padding: 6px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 12px;
   background-color: transparent;
@@ -411,4 +537,20 @@ const getPaymentStatus = (p: Schedule) => {
 .btn-pagination:disabled {
   cursor: not-allowed;
 }
+
+.sort-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  font-weight: 600;
+  cursor: pointer;
+}
+.sort-header:hover {
+  color: #1C398E;
+}
+.sort-active {
+  color: #2563eb;
+}
+
 </style>
