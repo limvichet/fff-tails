@@ -523,7 +523,7 @@ const getPaymentStatus = (p: Schedule) => {
   transition: border-color 0.2s ease;
 }
 
-button {
+.button {
   width: 100%;
   border-bottom: 1px solid #d1d5db;
   border-radius: 8px;
