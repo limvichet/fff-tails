@@ -361,7 +361,7 @@ const getPaymentStatus = (p: Schedule) => {
 
               <th class="px-1 py-2">
                 <button @click="toggleSort('next_outstanding')" class="sort-header" :class="{ 'sort-active': sortBy === 'next_outstanding' }">
-                  NextOutstanding <span>{{ sortIcon('next_outstanding') }}</span>
+                  NextPay <span>{{ sortIcon('next_outstanding') }}</span>
                 </button>
               </th>
 
