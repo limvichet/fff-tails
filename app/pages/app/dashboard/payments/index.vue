@@ -228,23 +228,29 @@ const getPaymentStatus = (p: Schedule) => {
   const sortDirection = ref<'asc' | 'desc'>('desc')
 
   const toggleSort = (column: string) => {
-    // if (sortBy.value === column) {
-    //   // Click the same column to switch direction
-    //   sortDirection.value =
-    //     sortDirection.value === 'asc' ? 'desc' : 'asc'
-    // } else {
-    //   // A new column starts with ascending order
-    //   sortBy.value = column
-    //   sortDirection.value = 'asc'
-    // }
+    if (sortBy.value === column) {
+      // Click the same column to switch direction
+      sortDirection.value =
+        sortDirection.value === 'asc' ? 'desc' : 'asc'
+    } else {
+      // A new column starts with ascending order
+      sortBy.value = column
+      sortDirection.value = 'asc'
+    }
 
-    // page.value = 1
-    // fetchPayments()
+    page.value = 1
+    fetchPayments()
   }
 
+  // const sortIcon = (column: string) => {
+  //   if (sortBy.value !== column) return '↕'
+  //   return sortDirection.value === 'asc' ? '↑' : '↓'
+  // }
+
   const sortIcon = (column: string) => {
-    if (sortBy.value !== column) return '↕'
-    return sortDirection.value === 'asc' ? '↑' : '↓'
+    // if (sortBy.value !== column) return '⇅'
+    if (sortBy.value !== column) return ''
+    return sortDirection.value === 'asc' ? '▲' : '▼'
   }
 </script>
 
@@ -515,6 +521,19 @@ const getPaymentStatus = (p: Schedule) => {
   padding: 8px 12px;
   font-size: 12px;
   transition: border-color 0.2s ease;
+}
+
+button {
+  width: 100%;
+  border-bottom: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 13px;
+  transition: border-color 0.2s ease;
+}
+button > span {
+  margin-left: 4px;
+  font-size: 10px;
+  font-size: 10px;
 }
 
 .input:focus {
